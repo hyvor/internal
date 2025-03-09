@@ -19,7 +19,7 @@ Then, add the bundle to your project:
 // config/bundles.php
 return [
     // ...
-    \Hyvor\Internal\Bundle\src\HyvorInternalBundle::class => ['all' => true],
+    \Hyvor\Internal\Bundle\HyvorInternalBundle::class => ['all' => true],
 ];
 ```
 
@@ -28,6 +28,7 @@ return [
 ### Step 1: Setup Firewall and Access Control
 
 ```php
+// config/packages/security.php
 <?php
 
 use Hyvor\Internal\Bundle\Security\HyvorAuthenticator;
@@ -53,6 +54,32 @@ return static function (ContainerBuilder $container, SecurityConfig $security): 
 };
 ```
 
+### Step 2: Use general Symfony Operations
+
+```php
+// src/Controller/ConsoleController.php
+use Hyvor\Internal\Bundle\Security\UserRole;
+
+$user = $this->getUser(UserRole::USER);
+$this->denyAccessUnlessGranted(UserRole::USER);
+```
+
+## Exception Listener
+
+It is recommended to have an Exception listener per API.
+
+```php
+// src/Api/Console/ExceptionListener.php
+#[AsEventListener(event: KernelEvents::EXCEPTION)]
+class ExceptionListener extends AbstractApiExceptionListener
+{
+    protected function prefix(): string
+    {
+        return '/api/console';
+    }
+}
+```
+
 ## Testing
 
 ### Step 1: Faking Authentication
@@ -70,6 +97,9 @@ class WebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
         
         // sets the user to a user with ID 1 and other default values
         AuthFake::enableForSymfony($this->getContainer(), ['id' => 1]);
+        
+        // to logout
+        AuthFake::disableForSymfony($this->getContainer(), null);
     }
 }
 ```
