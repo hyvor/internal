@@ -59,14 +59,14 @@ class BlogsPlan extends PlanAbstract
             );
         });
 
-        // Version 2: 2025-01
+        // Version 2: 2025-02
         $this->version(2, function () {
             $this->plan(
                 'starter',
                 12,
                 new BlogsLicense(
-                    users: 2,
-                    storage: 2 * self::GB,
+                    users: 5,
+                    storage: 5 * self::GB,
                     aiTokens: 0,
                     autoTranslationsChars: 0,
                     talkCredits: 0,
@@ -79,8 +79,8 @@ class BlogsPlan extends PlanAbstract
                 'growth',
                 40,
                 new BlogsLicense(
-                    users: 10,
-                    storage: 100 * self::GB,
+                    users: 15,
+                    storage: 150 * self::GB,
                     aiTokens: 100_000,
                     autoTranslationsChars: 100_000,
                     talkCredits: 100_000,

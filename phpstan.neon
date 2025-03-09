@@ -3,7 +3,5 @@ parameters:
 	paths:
 		- src
 		- tests
-	excludePaths:
-	    - tests/Unit/PHPStan/data
 includes:
 	- extension.neon

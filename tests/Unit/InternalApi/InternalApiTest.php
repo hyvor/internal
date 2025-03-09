@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Tests\Unit\InternalApi;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalApi\InternalApi;
@@ -25,7 +25,7 @@ class InternalApiTest extends TestCase
         ]);
 
         InternalApi::call(
-            ComponentType::TALK,
+            Component::TALK,
             'POST',
             'delete-user',
             ['user_id' => 123]
@@ -56,7 +56,7 @@ class InternalApiTest extends TestCase
         ]);
 
         $response = InternalApi::call(
-            ComponentType::TALK,
+            Component::TALK,
             InternalApiMethod::GET,
             '/sudo/users',
             ['user_id' => 123]
@@ -89,7 +89,7 @@ class InternalApiTest extends TestCase
         );
 
         InternalApi::call(
-            ComponentType::TALK,
+            Component::TALK,
             'POST',
             'delete-user',
             ['user_id' => 123]
@@ -110,7 +110,7 @@ class InternalApiTest extends TestCase
         );
 
         InternalApi::call(
-            ComponentType::TALK,
+            Component::TALK,
             'POST',
             'delete-user',
             ['user_id' => 123]
@@ -222,6 +222,6 @@ class InternalApiTest extends TestCase
             ]
         );
 
-        $this->assertEquals(ComponentType::TALK, InternalApi::getRequestingComponent($request));
+        $this->assertEquals(Component::TALK, InternalApi::getRequestingComponent($request));
     }
 }

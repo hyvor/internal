@@ -4,7 +4,7 @@ namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Billing\BillingFake;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Resource\ResourceFake;
 use Illuminate\Support\Facades\App;
@@ -64,7 +64,7 @@ class InternalServiceProvider extends ServiceProvider
         AuthFake::enable($user);
 
         // fake billing
-        BillingFake::enable(license: function (int $userId, ?int $resourceId, ComponentType $component) use ($fakeConfig
+        BillingFake::enable(license: function (int $userId, ?int $resourceId, Component $component) use ($fakeConfig
         ) {
             return $fakeConfig->license($userId, $resourceId, $component);
         });

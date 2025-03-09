@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Resource;
 
 use Carbon\Carbon;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
 
@@ -16,7 +16,7 @@ class Resource
         ?Carbon $at = null
     ): void {
         InternalApi::call(
-            ComponentType::CORE,
+            Component::CORE,
             InternalApiMethod::POST,
             '/resource/register',
             [
@@ -30,7 +30,7 @@ class Resource
     public function delete(int $resourceId): void
     {
         InternalApi::call(
-            ComponentType::CORE,
+            Component::CORE,
             InternalApiMethod::POST,
             '/resource/delete',
             [

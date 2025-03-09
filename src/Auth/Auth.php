@@ -2,9 +2,9 @@
 
 namespace Hyvor\Internal\Auth;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Component\ComponentUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
-use Hyvor\Internal\InternalApi\InstanceUrl;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
 use Illuminate\Http\RedirectResponse;
@@ -15,24 +15,23 @@ use Illuminate\Support\Collection;
 /**
  * @phpstan-import-type AuthUserArray from AuthUser
  */
-class Auth
+class Auth implements AuthInterface
 {
+
+    public function __construct(
+        private InternalApi $internalApi
+    ) {
+    }
 
     public const HYVOR_SESSION_COOKIE_NAME = 'authsess';
 
     /**
      * @throws InternalApiCallFailedException
      */
-    public function check(): false|AuthUser
+    public function check(string $cookie): false|AuthUser
     {
-        $cookie = $_COOKIE[self::HYVOR_SESSION_COOKIE_NAME] ?? null;
-
-        if (!$cookie) {
-            return false;
-        }
-
-        $response = InternalApi::call(
-            ComponentType::CORE,
+        $response = $this->internalApi->call(
+            Component::CORE,
             InternalApiMethod::POST,
             '/auth/check',
             [
@@ -68,7 +67,7 @@ class Auth
             urlencode($redirectUrl);
 
         return redirect(
-            InstanceUrl::getInstanceUrl() .
+            ComponentUrlResolver::getInstanceUrl() .
             '/' .
             $page .
             $redirect
@@ -99,7 +98,7 @@ class Auth
     protected function getUsersByField(string $field, iterable $values): Collection
     {
         $response = InternalApi::call(
-            ComponentType::CORE,
+            Component::CORE,
             InternalApiMethod::POST,
             '/auth/users/from/' . $field,
             [

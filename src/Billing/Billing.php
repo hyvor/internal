@@ -3,8 +3,8 @@
 namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\InternalApi\ComponentType;
-use Hyvor\Internal\InternalApi\InstanceUrl;
+use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Component\ComponentUrlResolver;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
 
@@ -19,9 +19,9 @@ class Billing
         int $userId,
         string $planName,
         bool $isAnnual,
-        ?ComponentType $component = null,
+        ?Component $component = null,
     ): array {
-        $component ??= ComponentType::current();
+        $component ??= Component::current();
 
         // this validates the plan name as well
         $plan = $component->plans()->getPlan($planName);
@@ -37,7 +37,7 @@ class Billing
 
         $token = $object->encrypt();
 
-        $baseUrl = InstanceUrl::getInstanceUrl() . '/account/billing/subscription?token=' . $token;
+        $baseUrl = ComponentUrlResolver::getInstanceUrl() . '/account/billing/subscription?token=' . $token;
 
         return [
             'token' => $token,
@@ -52,12 +52,12 @@ class Billing
     public function license(
         int $userId,
         ?int $resourceId,
-        ?ComponentType $component = null,
+        ?Component $component = null,
     ): ?License {
-        $component ??= ComponentType::current();
+        $component ??= Component::current();
 
         $response = InternalApi::call(
-            ComponentType::CORE,
+            Component::CORE,
             InternalApiMethod::GET,
             '/billing/license',
             [

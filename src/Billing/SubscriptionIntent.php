@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Billing;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Util\Transfer\Encryptable;
 
 /**
@@ -20,12 +20,12 @@ class SubscriptionIntent
          * Ex: `ComponentType::TALK` in talk
          * Ex: `ComponentType::BLOG` in blogs
          */
-        public ComponentType $component,
+        public Component $component,
 
         /**
          * Version of the subscription plan as defined in each component's plan class.
          */
-        public int           $planVersion,
+        public int $planVersion,
 
         /**
          * Name of the subscription plan.
@@ -33,24 +33,23 @@ class SubscriptionIntent
          * Ex: `premium_1` in talk
          * Ex: `premium` in blogs
          */
-        public string        $plan,
+        public string $plan,
 
         /**
          * User requesting the subscription
          */
-        public int           $userId,
+        public int $userId,
 
         /**
          * Monthly price of the subscription
          */
-        public float         $monthlyPrice,
+        public float $monthlyPrice,
 
         /**
          * Is this an annual subscription?
          */
-        public bool          $isAnnual,
-    )
-    {
+        public bool $isAnnual,
+    ) {
     }
 
 

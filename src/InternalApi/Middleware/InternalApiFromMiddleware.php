@@ -2,17 +2,16 @@
 
 namespace Hyvor\Internal\InternalApi\Middleware;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Illuminate\Http\Request;
 
 class InternalApiFromMiddleware
 {
 
 
-    public function handle(Request $request, \Closure $next, string $input) : mixed
+    public function handle(Request $request, \Closure $next, string $input): mixed
     {
-
-        $from = ComponentType::from($input);
+        $from = Component::from($input);
 
         $fromHeader = $request->header('X-Internal-Api-From');
 

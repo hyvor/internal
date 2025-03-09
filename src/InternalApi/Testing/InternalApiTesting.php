@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\InternalApi\Testing;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
 
 /**
@@ -23,7 +23,7 @@ class InternalApiTesting
         InternalApiMethod|string $method,
         string $endpoint,
         array $data = [],
-        ?ComponentType $from = null,
+        ?Component $from = null,
     ): never {
         throw new \Exception('This method is deprecated. Use the CallsInternalAPI trait instead');
     }

@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\InternalApi\Testing;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +24,7 @@ trait CallsInternalApi
         InternalApiMethod|string $method,
         string $endpoint,
         array $data = [],
-        ?ComponentType $from = null,
+        ?Component $from = null,
     ): TestResponse {
         assert(App::environment('testing'), 'This method can only be called in the testing environment');
 
@@ -43,8 +43,8 @@ trait CallsInternalApi
             [],
             [],
             [
-                'HTTP_X-Internal-Api-From' => ($from ?? ComponentType::CORE)->value,
-                'HTTP_X-Internal-Api-To' => ComponentType::current()->value,
+                'HTTP_X-Internal-Api-From' => ($from ?? Component::CORE)->value,
+                'HTTP_X-Internal-Api-To' => Component::current()->value,
             ]
         );
     }

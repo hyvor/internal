@@ -4,7 +4,7 @@ namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 
 class InternalFake
 {
@@ -26,7 +26,7 @@ class InternalFake
     /**
      * Returns a default (trial) license of the component
      */
-    public function license(int $userId, ?int $resourceId, ComponentType $component): ?License
+    public function license(int $userId, ?int $resourceId, Component $component): ?License
     {
         $licenseClass = $component->license();
         return new $licenseClass; // trial defaults

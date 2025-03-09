@@ -6,7 +6,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "Hyvor\\Internal\\": "src/"
+            "Hyvor\\Internal\\": "src/",
+            "Hyvor\\Internal\\Bundle\\": "bundle/src"
         }
     },
     "autoload-dev": {
@@ -23,7 +24,7 @@
     ],
     "require-dev": {
         "orchestra/testbench": "^9.0",
-        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan": "^2.1.4",
         "phpunit/phpunit": "^10.5"
     },
     "extra": {
@@ -37,6 +38,10 @@
         "php": ">8.3",
         "ext-intl": "*",
         "guzzlehttp/guzzle": "^7.8",
-        "timacdonald/log-fake": "^v2.3.0"
+        "timacdonald/log-fake": "^v2.3.0",
+        "symfony/security-bundle": "^7.2",
+        "illuminate/encryption": "*",
+        "symfony/http-client": "^7.2",
+        "symfony/expression-language": "^7.2"
     }
 }

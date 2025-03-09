@@ -6,7 +6,7 @@ use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalServiceProvider;
 
 class FakeTest extends \Orchestra\Testbench\TestCase
@@ -42,7 +42,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, ComponentType::BLOGS);
+        $license = $app->get(Billing::class)->license(1, null, Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(2, $license->users);
     }
@@ -90,7 +90,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, ComponentType::BLOGS);
+        $license = $app->get(Billing::class)->license(1, null, Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(3, $license->users);
     }

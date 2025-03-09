@@ -3,12 +3,14 @@
 namespace Hyvor\Internal\Auth;
 
 use Faker\Factory;
+use Hyvor\Internal\InternalApi\InternalApi;
 use Illuminate\Support\Collection;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @phpstan-import-type AuthUserArrayPartial from AuthUser
  */
-final class AuthFake extends Auth
+final class AuthFake implements AuthInterface
 {
 
     /**
@@ -27,6 +29,18 @@ final class AuthFake extends Auth
     /**
      * @param AuthUser|AuthUserArrayPartial|null $user
      */
+    public function __construct(null|AuthUser|array $user = null)
+    {
+        if (is_array($user)) {
+            $user = self::generateUser($user);
+        }
+        $this->user = $user;
+    }
+
+    /**
+     * Laravel-only
+     * @param AuthUser|AuthUserArrayPartial|null $user
+     */
     public static function enable(null|AuthUser|array $user = null): void
     {
         $fake = new self();
@@ -40,7 +54,21 @@ final class AuthFake extends Auth
         );
     }
 
-    public function check(): false|AuthUser
+    /**
+     * Symfony-only
+     * @param AuthUser|AuthUserArrayPartial|null $user
+     */
+    public static function enableForSymfony(Container $container, null|AuthUser|array $user = null): void
+    {
+        $fake = new self();
+        if (is_array($user)) {
+            $user = self::generateUser($user);
+        }
+        $fake->user = $user;
+        $container->set(AuthInterface::class, $fake);
+    }
+
+    public function check(string $cookie): false|AuthUser
     {
         return $this->user ?: false;
     }

@@ -5,7 +5,7 @@ namespace Hyvor\Internal\Tests\Unit\Billing;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\SubscriptionIntent;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\Tests\TestCase;
 use Illuminate\Http\Client\Request;
@@ -20,7 +20,7 @@ class BillingTest extends TestCase
     public function testSubscriptionIntent(): void
     {
         $billing = new Billing();
-        $intent = $billing->subscriptionIntent(1, 'starter', true, ComponentType::BLOGS);
+        $intent = $billing->subscriptionIntent(1, 'starter', true, Component::BLOGS);
 
         $token = $intent['token'];
         $this->assertIsString($token);
@@ -42,7 +42,7 @@ class BillingTest extends TestCase
             ])
         ]);
 
-        $license = $billing->license(1, 10, ComponentType::BLOGS);
+        $license = $billing->license(1, 10, Component::BLOGS);
 
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(2, $license->users);

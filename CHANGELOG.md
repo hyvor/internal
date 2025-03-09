@@ -1,3 +1,8 @@
+## Unreleased
+
+- InstanceUrl removed, use InternalConfig and ComponentUrl instead
+- InternalApi\ComponentType moved to Component\Component, and many static methods have been removed
+
 ## 2.0.4 - 2025-02-04
 
 - Adds Component\Logo class to get logos for components
