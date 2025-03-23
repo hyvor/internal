@@ -44,7 +44,6 @@ namespace Hyvor\Internal\Tests\Unit\Util\Transfer {
             $obj->name = 'John Doe';
 
             $serialized = $obj->serialize();
-            $this->assertIsString($serialized);
 
             $unserialized = PleaseSerializeMe::unserialize($serialized);
             $this->assertInstanceOf(PleaseSerializeMe::class, $unserialized);

@@ -21,7 +21,6 @@ class I18nTest extends TestCase
         $i18n = app(I18n::class);
         $this->assertEquals(['en-US', 'es', 'fr-FR'], $i18n->getAvailableLocales());
         $this->assertEquals('HYVOR', $i18n->getLocaleStrings('en-US')['name']);
-        $this->assertIsArray($i18n->getDefaultLocaleStrings());
     }
 
     public function testWhenFolderIsMissing(): void

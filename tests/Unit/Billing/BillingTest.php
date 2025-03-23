@@ -23,7 +23,6 @@ class BillingTest extends TestCase
         $intent = $billing->subscriptionIntent(1, 'starter', true, ComponentType::BLOGS);
 
         $token = $intent['token'];
-        $this->assertIsString($token);
 
         $this->assertEquals("https://hyvor.com/account/billing/subscription?token=$token", $intent['urlNew']);
         $this->assertEquals(

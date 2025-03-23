@@ -47,7 +47,7 @@ class MetricService
                 $this->component,
                 $method,
                 $endpoint,
-                $status,
+                (string)$status,
             ]
         );
 
@@ -57,7 +57,7 @@ class MetricService
                 $this->component,
                 $method,
                 $endpoint,
-                $status,
+                (string)$status,
             ]
         );
     }

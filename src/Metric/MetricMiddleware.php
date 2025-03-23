@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Metric;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Prometheus\RenderTextFormat;
 
 class MetricMiddleware
@@ -63,7 +64,9 @@ class MetricMiddleware
          * See hyvor/monitoring/API.md
          * This returns placeholder /api/sudo/user/{id} for /api/sudo/user/123
          */
-        $uri = $request->route()?->uri() ?? '';
+        $route = $request->route();
+        assert($route instanceof Route);
+        $uri = $route->uri();
         return '/' . $uri;
     }
 

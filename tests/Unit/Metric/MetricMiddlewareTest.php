@@ -12,6 +12,9 @@ use Prometheus\MetricFamilySamples;
 class MetricMiddlewareTest extends TestCase
 {
 
+    /**
+     * @param array<MetricFamilySamples> $metrics
+     */
     private function findMetric(array $metrics, string $name): MetricFamilySamples
     {
         foreach ($metrics as $metric) {

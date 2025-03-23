@@ -25,13 +25,6 @@ class LicenseTest extends TestCase
         // add more tests when we have features
     }
 
-    public function testTalkLicense(): void
-    {
-        $license = new TalkLicense();
-        $this->assertTrue(true);
-        // add more tests when we have features
-    }
-
     public function testBlogsLicense(): void
     {
         $license = new BlogsLicense();
