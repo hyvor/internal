@@ -1,6 +1,9 @@
 services:
   package:
-    build: .
+    build:
+      context: .
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.4}
     tty: true
     volumes:
       - .:/app
