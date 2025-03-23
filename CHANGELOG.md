@@ -1,3 +1,7 @@
+## 2.0.5 - 2025-03-23
+
+- Add Metrics support
+
 ## 2.0.4 - 2025-02-04
 
 - Adds Component\Logo class to get logos for components
