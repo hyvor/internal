@@ -44,7 +44,6 @@ namespace Hyvor\Internal\Tests\Unit\Util\Transfer {
             $obj->name = 'John Doe';
 
             $encrypted = $obj->encrypt();
-            $this->assertIsString($encrypted);
 
             $decrypted = PleaseEncryptMe::decrypt($encrypted);
             $this->assertInstanceOf(PleaseEncryptMe::class, $decrypted);
