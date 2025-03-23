@@ -25,7 +25,7 @@ class MetricMiddleware
         }
         $duration = microtime(true) - $start;
 
-        $endpoint = $this->getEndpoint($request);
+        $endpoint = $isMetricsEndpoint ? '<metrics>' : $this->getEndpoint($request);
         $this->metricService->newRequest(
             $request->method(),
             $endpoint,
@@ -65,9 +65,7 @@ class MetricMiddleware
          * This returns placeholder /api/sudo/user/{id} for /api/sudo/user/123
          */
         $route = $request->route();
-        assert($route instanceof Route);
-        $uri = $route->uri();
-        return '/' . $uri;
+        return $route instanceof Route ? '/' . $route->uri() : '/<unknown>';
     }
 
     private function getMetricsResponse(): mixed

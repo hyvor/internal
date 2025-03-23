@@ -34,7 +34,7 @@ class MetricMiddlewareTest extends TestCase
 
         $request = new Request(server: ['REQUEST_URI' => '/test']);
         $request->setRouteResolver(function () use ($request) {
-            return new Route('GET', '/test', [])->bind($request);
+            return (new Route('GET', '/test', []))->bind($request);
         });
         $middleware->handle($request, function () {
             return response('OK');
@@ -85,7 +85,7 @@ class MetricMiddlewareTest extends TestCase
 
         $request = new Request(server: ['REQUEST_URI' => '/api/metrics']);
         $request->setRouteResolver(function () use ($request) {
-            return new Route('GET', '/api/metrics', [])->bind($request);
+            return (new Route('GET', '/api/metrics', []))->bind($request);
         });
         $response = $middleware->handle($request, function () {
             return response('OK');
@@ -110,7 +110,7 @@ class MetricMiddlewareTest extends TestCase
 
         $request = new Request(server: ['REQUEST_URI' => '/api/metrics']);
         $request->setRouteResolver(function () use ($request) {
-            return new Route('GET', '/api/metrics', [])->bind($request);
+            return (new Route('GET', '/api/metrics', []))->bind($request);
         });
         $response = $middleware->handle($request, function () {
             return response('OK');
@@ -130,7 +130,7 @@ class MetricMiddlewareTest extends TestCase
 
         $request = new Request(server: ['REQUEST_URI' => '/api/metrics']);
         $request->setRouteResolver(function () use ($request) {
-            return new Route('GET', '/api/metrics', [])->bind($request);
+            return (new Route('GET', '/api/metrics', []))->bind($request);
         });
         $response = $middleware->handle($request, function () {
             return response('OK');
