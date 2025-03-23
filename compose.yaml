@@ -1,0 +1,6 @@
+services:
+  package:
+    build: .
+    tty: true
+    volumes:
+      - .:/app
