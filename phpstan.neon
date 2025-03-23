@@ -3,7 +3,8 @@ parameters:
 	paths:
 		- src
 		- tests
+		- types
 	excludePaths:
-	    - tests/Unit/PHPStan/data
+	    - types/tests/data
 includes:
 	- extension.neon

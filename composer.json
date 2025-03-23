@@ -23,7 +23,7 @@
     ],
     "require-dev": {
         "orchestra/testbench": "^9.0",
-        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan": "^2.1.7",
         "phpunit/phpunit": "^10.5"
     },
     "extra": {
@@ -34,7 +34,7 @@
         }
     },
     "require": {
-        "php": ">8.3",
+        "php": ">=8.3",
         "ext-intl": "*",
         "ext-apcu": "*",
         "guzzlehttp/guzzle": "^7.8",

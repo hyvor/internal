@@ -19,13 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Docker compose
+      - name: Build
         env:
           PHP_VERSION: ${{ matrix.php }}
-        run: docker compose up -d
+        run: docker build -t package .
 
       - name: Run tests
-        run: docker compose exec package vendor/bin/phpunit
+        run: docker run package vendor/bin/phpunit
 
   static_analysis:
     name: Static analysis

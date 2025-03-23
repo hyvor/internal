@@ -53,8 +53,8 @@ class LicenseIntAndBoolOnlyRule implements \PHPStan\Rules\Rule
     private function validate(mixed $type, string $name): string|true
     {
         if (
-            !$type instanceof Node\Identifier ||
-            !in_array($type->name, ['int', 'bool'])
+            !$type instanceof \PHPStan\Type\IntegerType &&
+            !$type instanceof \PHPStan\Type\BooleanType
         ) {
             return "License property \$$name should be int or bool";
         }
