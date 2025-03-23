@@ -122,7 +122,7 @@ class MetricMiddlewareTest extends TestCase
     public function test_metrics_with_env_variable(): void
     {
         config(['app.env' => 'production']);
-        $_ENV['HYVOR_METRICS_SERVER'] = '1';
+        $_SERVER['HYVOR_METRICS_SERVER'] = '1';
 
         /** @var MetricService $service */
         $service = app()->make(MetricService::class);

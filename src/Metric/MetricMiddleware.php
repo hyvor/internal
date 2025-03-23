@@ -55,7 +55,7 @@ class MetricMiddleware
          *      }
          * }
          */
-        return boolval($_ENV['HYVOR_METRICS_SERVER'] ?? false);
+        return boolval($_SERVER['HYVOR_METRICS_SERVER'] ?? false);
     }
 
     private function getEndpoint(Request $request): string
