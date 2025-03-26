@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
 use Prometheus\Storage\APCng;
+use Prometheus\Storage\InMemory;
 
 class InternalServiceProvider extends ServiceProvider
 {
@@ -44,7 +45,11 @@ class InternalServiceProvider extends ServiceProvider
 
     private function metrics(): void
     {
-        $this->app->singleton(MetricService::class, fn() => new MetricService(new CollectorRegistry(new APCng())));
+        $this->app->singleton(MetricService::class, fn() => new MetricService(
+            new CollectorRegistry(
+                apcu_enabled() ? new APCng() : new InMemory()
+            )
+        ));
     }
 
     private function fake(): void

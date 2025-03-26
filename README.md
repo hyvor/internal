@@ -418,6 +418,9 @@ The middleware will automatically do the following:
 - Serve the metrics at `/api/metrics` on local.
 - Serve the metrics at `/*` if `HYVOR_METRICS_SERVER` environment variable is set to `true`.
 
+The `apcu` extension is required to persist metrics between requests. This has been tested with FrankenPHP. It does not
+work with the CLI.
+
 ### Usage
 
 ```php
