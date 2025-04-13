@@ -2,8 +2,12 @@
 
 namespace Hyvor\Internal\Billing;
 
+use Hyvor\Internal\Billing\Dto\LicensesCollection;
+use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InstanceUrl;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
@@ -48,30 +52,40 @@ class Billing
 
     /**
      * Get the license of a user.
+     * @throws InternalApiCallFailedException
+     * @throws LicenseOfCombinationNotFoundException
      */
     public function license(
         int $userId,
         ?int $resourceId,
         ?ComponentType $component = null,
     ): ?License {
+        $licenses = $this->licenses([new LicenseOf($userId, $resourceId)], $component);
+        return $licenses->of($userId, $resourceId);
+    }
+
+    /**
+     * @param array<LicenseOf> $of
+     * @throws InternalApiCallFailedException
+     */
+    public function licenses(array $of, ?ComponentType $component = null): LicensesCollection
+    {
         $component ??= ComponentType::current();
 
+        /**
+         * @var array{user_id: int, resource_id: ?int, license: ?string}[] $response
+         */
         $response = InternalApi::call(
             ComponentType::CORE,
             InternalApiMethod::GET,
-            '/billing/license',
+            '/billing/licenses',
             [
-                'user_id' => $userId,
-                'resource_id' => $resourceId,
+                'of' => array_map(fn($ofOne) => $ofOne->toArray(), $of)
             ],
             $component
         );
 
-        /** @var ?string $license */
-        $license = $response['license'];
-        $licenseClass = $component->license();
-
-        return $license ? $licenseClass::unserialize($license) : null;
+        return new LicensesCollection($response, $component);
     }
 
 }
