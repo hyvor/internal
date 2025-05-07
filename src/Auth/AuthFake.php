@@ -3,7 +3,6 @@
 namespace Hyvor\Internal\Auth;
 
 use Faker\Factory;
-use Hyvor\Internal\InternalApi\InternalApi;
 use Illuminate\Support\Collection;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -25,6 +24,8 @@ final class AuthFake implements AuthInterface
      * Currently logged-in user
      */
     public ?AuthUser $user = null;
+
+    private static ?Container $symfonyContainer = null;
 
     /**
      * @param AuthUser|AuthUserArrayPartial|null $user
@@ -65,6 +66,7 @@ final class AuthFake implements AuthInterface
             $user = self::generateUser($user);
         }
         $fake->user = $user;
+        self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
     }
 
@@ -149,13 +151,26 @@ final class AuthFake implements AuthInterface
             ->keyBy($key);
     }
 
+    private static function getFakeFromContainer(): self
+    {
+        if (self::$symfonyContainer) {
+            // symfony
+            $fake = self::$symfonyContainer->get(AuthInterface::class);
+        } else {
+            // laravel
+            $fake = app(Auth::class);
+        }
+
+        assert($fake instanceof self);
+        return $fake;
+    }
+
     /**
      * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
      */
     public static function databaseSet(iterable $users = []): void
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
+        $fake = self::getFakeFromContainer();
 
         $fake->userDatabase = collect($users)
             ->map(function ($user) {
@@ -171,15 +186,13 @@ final class AuthFake implements AuthInterface
      */
     public static function databaseGet(): ?Collection
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
+        $fake = self::getFakeFromContainer();
         return $fake->userDatabase;
     }
 
     public static function databaseClear(): void
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
+        $fake = self::getFakeFromContainer();
         $fake->userDatabase = null;
     }
 
@@ -188,8 +201,8 @@ final class AuthFake implements AuthInterface
      */
     public static function databaseAdd($user): void
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
+        $fake = self::getFakeFromContainer();
+
         if ($fake->userDatabase === null) {
             $fake->userDatabase = collect([]);
         }
