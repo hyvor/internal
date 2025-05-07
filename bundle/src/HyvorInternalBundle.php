@@ -83,6 +83,7 @@ class HyvorInternalBundle extends AbstractBundle
         /** @var class-string<InternalFake> $class */
         $fakeConfig = new $class;
         $user = $fakeConfig->user();
+        $usersDatabase = $fakeConfig->usersDatabase();
 
         $container
             ->services()
@@ -92,6 +93,7 @@ class HyvorInternalBundle extends AbstractBundle
             ->get(AuthFake::class)
             ->args([
                 $user?->toArray(),
+                $usersDatabase,
             ]);
     }
 

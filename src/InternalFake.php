@@ -5,7 +5,11 @@ namespace Hyvor\Internal;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
+use Illuminate\Support\Collection;
 
+/**
+ * @phpstan-import-type AuthUserArrayPartial from AuthUser
+ */
 class InternalFake
 {
 
@@ -21,6 +25,14 @@ class InternalFake
             'email' => 'alex@hyvor.com',
             'picture_url' => 'https://picsum.photos/100/100',
         ]);
+    }
+
+    /**
+     * @return array<int, AuthUser|AuthUserArrayPartial>|null
+     */
+    public function usersDatabase(): ?array
+    {
+        return null;
     }
 
     /**

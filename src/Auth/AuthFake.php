@@ -13,12 +13,12 @@ final class AuthFake implements AuthInterface
 {
 
     /**
-     * If $userDatabase is set, users will be searched (in fromX() methods) from this collection
+     * If $usersDatabase is set, users will be searched (in fromX() methods) from this collection
      * Results will only be returned if the search is matched
      * If it is not set, all users will always be matched using fake data (for testing)
      * @var Collection<int, AuthUser>|null
      */
-    private ?Collection $userDatabase = null;
+    private ?Collection $usersDatabase = null;
 
     /**
      * Currently logged-in user
@@ -29,13 +29,17 @@ final class AuthFake implements AuthInterface
 
     /**
      * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
      */
-    public function __construct(null|AuthUser|array $user = null)
-    {
+    public function __construct(
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ) {
         if (is_array($user)) {
             $user = self::generateUser($user);
         }
         $this->user = $user;
+        $this->usersDatabase = self::getAuthUsersFromPartial($usersDatabase);
     }
 
     /**
@@ -122,8 +126,8 @@ final class AuthFake implements AuthInterface
      */
     private function singleSearch(string $key, string|int $value): ?AuthUser
     {
-        if ($this->userDatabase !== null) {
-            return $this->userDatabase->firstWhere($key, $value);
+        if ($this->usersDatabase !== null) {
+            return $this->usersDatabase->firstWhere($key, $value);
         }
 
         // @phpstan-ignore-next-line
@@ -137,8 +141,8 @@ final class AuthFake implements AuthInterface
      */
     private function multiSearch(string $key, iterable $values): Collection
     {
-        if ($this->userDatabase !== null) {
-            return $this->userDatabase->whereIn($key, $values)
+        if ($this->usersDatabase !== null) {
+            return $this->usersDatabase->whereIn($key, $values)
                 ->keyBy($key);
         }
 
@@ -167,12 +171,11 @@ final class AuthFake implements AuthInterface
 
     /**
      * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
+     * @return Collection<int, AuthUser>
      */
-    public static function databaseSet(iterable $users = []): void
+    private static function getAuthUsersFromPartial($users): Collection
     {
-        $fake = self::getFakeFromContainer();
-
-        $fake->userDatabase = collect($users)
+        return collect($users)
             ->map(function ($user) {
                 if ($user instanceof AuthUser) {
                     return $user;
@@ -182,18 +185,27 @@ final class AuthFake implements AuthInterface
     }
 
     /**
+     * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
+     */
+    public static function databaseSet(iterable $users = []): void
+    {
+        $fake = self::getFakeFromContainer();
+        $fake->usersDatabase = self::getAuthUsersFromPartial($users);
+    }
+
+    /**
      * @return Collection<int, AuthUser>|null
      */
     public static function databaseGet(): ?Collection
     {
         $fake = self::getFakeFromContainer();
-        return $fake->userDatabase;
+        return $fake->usersDatabase;
     }
 
     public static function databaseClear(): void
     {
         $fake = self::getFakeFromContainer();
-        $fake->userDatabase = null;
+        $fake->usersDatabase = null;
     }
 
     /**
@@ -203,10 +215,10 @@ final class AuthFake implements AuthInterface
     {
         $fake = self::getFakeFromContainer();
 
-        if ($fake->userDatabase === null) {
-            $fake->userDatabase = collect([]);
+        if ($fake->usersDatabase === null) {
+            $fake->usersDatabase = collect([]);
         }
-        $fake->userDatabase->push(
+        $fake->usersDatabase->push(
             $user instanceof AuthUser ? $user : self::generateUser($user)
         );
     }
