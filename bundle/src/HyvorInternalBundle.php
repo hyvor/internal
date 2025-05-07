@@ -7,6 +7,7 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\InternalFake;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -40,6 +41,7 @@ class HyvorInternalBundle extends AbstractBundle
     {
         // SERVICES
         $container->import('../config/services.php');
+        $container->import('../config/bundles.php');
 
         // ENV DEFAULTS
         $container->parameters()->set('env(HYVOR_INSTANCE)', 'https://hyvor.com');
