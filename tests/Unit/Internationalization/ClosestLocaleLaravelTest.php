@@ -3,9 +3,9 @@
 namespace Hyvor\Internal\Tests\Unit\Internationalization;
 
 use Hyvor\Internal\Internationalization\ClosestLocale;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 
-class ClosestLocaleTest extends TestCase
+class ClosestLocaleLaravelTest extends LaravelTestCase
 {
     protected function setUp(): void
     {

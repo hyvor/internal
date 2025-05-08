@@ -6,11 +6,11 @@ use Hyvor\Internal\Billing\License\Plan\BlogsPlan;
 use Hyvor\Internal\Billing\License\Plan\CorePlan;
 use Hyvor\Internal\Billing\License\Plan\TalkPlan;
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Component::class)]
-class ComponentTypeTest extends TestCase
+class ComponentTypeLaravelTest extends LaravelTestCase
 {
 
     public function testName(): void

@@ -5,7 +5,7 @@ namespace Hyvor\Internal\Tests\Unit\Auth;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Auth::class)]
-class AuthTest extends TestCase
+class AuthLaravelTest extends LaravelTestCase
 {
     private Auth $provider;
 

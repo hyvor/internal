@@ -3,9 +3,9 @@
 namespace Hyvor\Internal\Tests\Unit\Http\Exceptions;
 
 use Hyvor\Internal\Http\Exceptions\HttpException;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 
-class HttpExceptionTest extends TestCase
+class HttpExceptionLaravelTest extends LaravelTestCase
 {
 
     public function testCreatesWithData(): void

@@ -5,11 +5,11 @@ namespace Hyvor\Internal\Tests\Unit\Internationalization;
 use Hyvor\Internal\Internationalization\Exceptions\FormatException;
 use Hyvor\Internal\Internationalization\Exceptions\InvalidStringKeyException;
 use Hyvor\Internal\Internationalization\Strings;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Strings::class)]
-class StringsTest extends TestCase
+class StringsLaravelTest extends LaravelTestCase
 {
     protected function setUp(): void
     {

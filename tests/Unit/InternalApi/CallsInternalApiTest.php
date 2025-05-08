@@ -3,11 +3,11 @@
 namespace Hyvor\Internal\Tests\Unit\InternalApi;
 
 use Hyvor\Internal\InternalApi\Testing\CallsInternalApi;
-use Hyvor\Internal\Tests\Case\InternalApiTestingCase;
+use Hyvor\Internal\Tests\Case\InternalApiTestingCaseLaravel;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(CallsInternalApi::class)]
-class CallsInternalApiTest extends InternalApiTestingCase
+class CallsInternalApiTest extends InternalApiTestingCaseLaravel
 {
     public function testCallsSelf(): void
     {

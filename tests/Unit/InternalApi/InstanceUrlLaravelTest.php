@@ -4,11 +4,11 @@ namespace Hyvor\Internal\Tests\Unit\InternalApi;
 
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\ComponentUrlResolver;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ComponentUrlResolver::class)]
-class InstanceUrlTest extends TestCase
+class InstanceUrlLaravelTest extends LaravelTestCase
 {
 
     public function testCreates(): void

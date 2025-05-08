@@ -5,14 +5,14 @@ namespace Hyvor\Internal\Bundle;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
-use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class HyvorInternalBundle extends AbstractBundle
+class InternalBundle extends AbstractBundle
 {
 
     protected string $extensionAlias = 'internal';
@@ -31,6 +31,10 @@ class HyvorInternalBundle extends AbstractBundle
             ->scalarNode('instance')->defaultValue('%env(HYVOR_INSTANCE)%')->end()
             ->scalarNode('private_instance')->defaultValue('%env(HYVOR_PRIVATE_INSTANCE)%')->end()
             ->booleanNode('fake')->defaultValue('%env(HYVOR_FAKE)%')->end()
+            ->arrayNode('i18n')
+            ->children()
+            ->scalarNode('folder')->defaultValue('%kernel.project_dir%/locales')->end()
+            ->scalarNode('default')->defaultValue('en-US')->end()
             ->end();
     }
 
@@ -41,7 +45,6 @@ class HyvorInternalBundle extends AbstractBundle
     {
         // SERVICES
         $container->import('../config/services.php');
-        $container->import('../config/bundles.php');
 
         // ENV DEFAULTS
         $container->parameters()->set('env(HYVOR_INSTANCE)', 'https://hyvor.com');
@@ -57,6 +60,8 @@ class HyvorInternalBundle extends AbstractBundle
                 $config['instance'],
                 $config['private_instance'],
                 $config['fake'],
+                $config['i18n']['folder'],
+                $config['i18n']['default'],
             ]);
 
         // Main Services

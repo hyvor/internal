@@ -4,11 +4,11 @@ namespace Hyvor\Internal\Tests\Feature\Auth;
 
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\InternalServiceProvider;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Route;
 
-class AuthRoutesTest extends TestCase
+class AuthRoutesLaravelTest extends LaravelTestCase
 {
 
     public function testDoesNotAddRoutesIfDisabled(): void

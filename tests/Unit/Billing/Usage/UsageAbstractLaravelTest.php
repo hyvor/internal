@@ -5,11 +5,11 @@ namespace Hyvor\Internal\Tests\Unit\Billing\Usage;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\DerivedFrom;
 use Hyvor\Internal\Billing\Usage\UsageAbstract;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(UsageAbstract::class)]
-class UsageAbstractTest extends TestCase
+class UsageAbstractLaravelTest extends LaravelTestCase
 {
 
     public function testExampleStorageUsage(): void

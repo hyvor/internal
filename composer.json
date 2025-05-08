@@ -43,6 +43,7 @@
         "illuminate/encryption": "*",
         "symfony/http-client": "^7.2",
         "symfony/expression-language": "^7.2",
-        "symfony/twig-bundle": "^7.2"
+        "symfony/twig-bundle": "^7.2",
+        "symfony/ux-twig-component": "^2.24"
     }
 }

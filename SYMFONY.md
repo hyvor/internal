@@ -19,7 +19,7 @@ Then, add the bundle to your project:
 // config/bundles.php
 return [
     // ...
-    \Hyvor\Internal\Bundle\HyvorInternalBundle::class => ['all' => true],
+    \Hyvor\Internal\Bundle\InternalBundle::class => ['all' => true],
 ];
 ```
 
@@ -77,6 +77,35 @@ class ExceptionListener extends AbstractApiExceptionListener
     {
         return '/api/console';
     }
+}
+```
+
+## Mail Templates
+
+Install Twig Bundles
+
+```bash
+composer require symfony/twig-bundle
+composer require symfony/ux-twig-component
+```
+
+In Twig, you can use components:
+
+```twig
+<twig:Internal:mail:paragraph>Hello,</twig:Internal:mail:paragraph>
+```
+
+To render a template,
+
+```twig
+public function __construct(private MailTemplate $mailTemplate)
+{}
+
+public function sendMail()
+{
+    $this->mailTemplate->render('Internal:mail:paragraph', [
+        'text' => 'Hello',
+    ]);
 }
 ```
 

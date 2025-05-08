@@ -3,12 +3,12 @@
 namespace Hyvor\Internal\Tests\Unit\Laravel;
 
 use Hyvor\Internal\Laravel\LogFake\LogFake;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LogFake::class)]
-class LogFakeTest extends TestCase
+class LogFakeLaravelTest extends LaravelTestCase
 {
 
     public function testDoesNotAllowOnNonTestingEnv(): void

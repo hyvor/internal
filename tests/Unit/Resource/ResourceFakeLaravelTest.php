@@ -5,12 +5,12 @@ namespace Hyvor\Internal\Tests\Unit\Resource;
 use Carbon\Carbon;
 use Hyvor\Internal\Resource\Resource;
 use Hyvor\Internal\Resource\ResourceFake;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ResourceFake::class)]
-class ResourceFakeTest extends TestCase
+class ResourceFakeLaravelTest extends LaravelTestCase
 {
 
     public function testRegisters(): void

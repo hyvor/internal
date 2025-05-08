@@ -5,13 +5,13 @@ namespace Hyvor\Internal\Tests\Unit\Resource;
 use Carbon\Carbon;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\Resource\Resource;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Resource::class)]
-class ResourceTest extends TestCase
+class ResourceLaravelTest extends LaravelTestCase
 {
 
     public function testRegister(): void

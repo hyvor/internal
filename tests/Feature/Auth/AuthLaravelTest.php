@@ -4,10 +4,10 @@ namespace Hyvor\Internal\Tests\Feature\Auth;
 
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\RedirectResponse;
 
-class AuthTest extends TestCase
+class AuthLaravelTest extends LaravelTestCase
 {
 
     private function getAuth(): Auth

@@ -3,9 +3,9 @@
 namespace Hyvor\Internal\Tests\Case;
 
 use Hyvor\Internal\InternalApi\Testing\CallsInternalApi;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 
-class InternalApiTestingCase extends TestCase
+class InternalApiTestingCaseLaravel extends LaravelTestCase
 {
     use CallsInternalApi;
 }

@@ -15,7 +15,7 @@ namespace OtherNamespace {
 
 namespace Hyvor\Internal\Tests\Unit\Util\Transfer {
 
-    use Hyvor\Internal\Tests\TestCase;
+    use Hyvor\Internal\Tests\LaravelTestCase;
     use Hyvor\Internal\Util\Transfer\Encryptable;
     use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -34,7 +34,7 @@ namespace Hyvor\Internal\Tests\Unit\Util\Transfer {
     }
 
     #[CoversClass(Encryptable::class)]
-    class EncryptableTest extends TestCase
+    class EncryptableLaravelTest extends LaravelTestCase
     {
 
         public function testEncrypt(): void

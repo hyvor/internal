@@ -4,12 +4,12 @@ namespace Hyvor\Internal\Tests\Unit\InternalApi;
 
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Hyvor\Internal\InternalApi\Middleware\InternalApiMiddleware;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Support\Facades\Crypt;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(InternalApiMiddleware::class)]
-class InternalApiMiddlewareTest extends TestCase
+class InternalApiMiddlewareLaravelTest extends LaravelTestCase
 {
     public function testDecryptsMessageAndSetsRequestAttributes(): void
     {

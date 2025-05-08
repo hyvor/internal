@@ -14,6 +14,6 @@ class MailTemplate
 
     public function render(): string
     {
-        return $this->twig->render('@HyvorInternal/mail/mail.twig');
+        return $this->twig->render('@Internal/mail/mail.twig');
     }
 }

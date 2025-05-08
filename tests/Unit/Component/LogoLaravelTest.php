@@ -4,10 +4,10 @@ namespace Hyvor\Internal\Tests\Unit\Component;
 
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\Logo;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class LogoTest extends TestCase
+class LogoLaravelTest extends LaravelTestCase
 {
 
     public function testSvg(): void

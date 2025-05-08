@@ -1,11 +1,13 @@
 <?php
 
-namespace Hyvor\Internal\Bundle;
+namespace Hyvor\Internal;
 
 use Hyvor\Internal\Component\Component;
 
-class InternalConfig
+readonly class InternalConfig
 {
+
+    private string $i18nDefaultLocale;
 
     public function __construct(
 
@@ -13,16 +15,23 @@ class InternalConfig
          * This is APP_KEY in laravel, which is base64:<key>
          * and APP_SECRET in symfony which is <key> in base64
          */
-        private readonly string $appSecret,
+        private string $appSecret,
 
         /**
          * Component name
          */
-        private readonly string $component,
-        private readonly string $instance,
-        private readonly ?string $privateInstance,
-        private readonly bool $fake,
+        private string $component,
+        private string $instance,
+        private ?string $privateInstance,
+        private bool $fake,
+
+        /**
+         * I18N
+         */
+        private string $i18nFolder,
+        ?string $i18nDefaultLocale,
     ) {
+        $this->i18nDefaultLocale = $i18nDefaultLocale ?? 'en-US';
     }
 
     public function getAppSecretRaw(): string
@@ -58,6 +67,16 @@ class InternalConfig
     public function isFake(): bool
     {
         return $this->fake;
+    }
+
+    public function getI18nFolder(): string
+    {
+        return $this->i18nFolder;
+    }
+
+    public function getI18nDefaultLocale(): string
+    {
+        return $this->i18nDefaultLocale;
     }
 
 }

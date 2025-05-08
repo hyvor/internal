@@ -6,10 +6,10 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Hyvor\Internal\Http\Middleware\AccessAuthUser;
 use Hyvor\Internal\Http\Middleware\AuthMiddleware;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\Request;
 
-class AuthMiddlewareTest extends TestCase
+class AuthMiddlewareLaravelTest extends LaravelTestCase
 {
 
     public function testThrowsErrorWhenUserNotLoggedIn(): void

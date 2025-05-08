@@ -15,10 +15,24 @@ class InternalServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->config();
         $this->routes();
         $this->i18n();
         $this->fake();
         $this->phpRuntime();
+    }
+
+    private function config(): void
+    {
+        $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
+            str_replace('base64:', '', (string)config('app.secret')),
+            config('internal.component'),
+            config('internal.instance'),
+            config('internal.private_instance'),
+            config('internal.fake'),
+            config('internal.i18n.folder'),
+            config('internal.i18n.default_locale'),
+        ));
     }
 
     private function routes(): void
@@ -35,7 +49,7 @@ class InternalServiceProvider extends ServiceProvider
 
     private function i18n(): void
     {
-        $this->app->singleton(I18n::class, fn() => new I18n());
+        $this->app->singleton(I18n::class);
     }
 
     private function fake(): void

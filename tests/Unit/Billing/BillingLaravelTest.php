@@ -7,14 +7,14 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\SubscriptionIntent;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Billing::class)]
 #[CoversClass(SubscriptionIntent::class)]
-class BillingTest extends TestCase
+class BillingLaravelTest extends LaravelTestCase
 {
 
     public function testSubscriptionIntent(): void

@@ -2,11 +2,11 @@
 
 namespace Hyvor\Internal\InternalApi;
 
-use Hyvor\Internal\Bundle\InternalConfig;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\ComponentUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
+use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;

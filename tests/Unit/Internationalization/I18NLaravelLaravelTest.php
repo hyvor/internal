@@ -3,12 +3,12 @@
 namespace Hyvor\Internal\Tests\Unit\Internationalization;
 
 use Hyvor\Internal\Internationalization\I18n;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use RuntimeException;
 
 #[CoversClass(I18n::class)]
-class I18nTest extends TestCase
+class I18NLaravelLaravelTest extends LaravelTestCase
 {
     protected function setUp(): void
     {
@@ -21,7 +21,7 @@ class I18nTest extends TestCase
         $i18n = app(I18n::class);
         $this->assertEquals(['en-US', 'es', 'fr-FR'], $i18n->getAvailableLocales());
         $this->assertEquals('HYVOR', $i18n->getLocaleStrings('en-US')['name']);
-        $this->assertIsArray($i18n->getDefaultLocaleStrings());
+        $this->assertCount(4, $i18n->getDefaultLocaleStrings());
     }
 
     public function testWhenFolderIsMissing(): void
