@@ -19,6 +19,7 @@ class InternalBundle extends AbstractBundle
 
     public function configure(DefinitionConfigurator $definition): void
     {
+        //@formatter:off
         /**
          * component: string
          * instance: string
@@ -26,16 +27,20 @@ class InternalBundle extends AbstractBundle
          * fake: bool
          */
         $definition->rootNode() // @phpstan-ignore-line
-        ->children()
-            ->scalarNode('component')->defaultValue('core')->end()
-            ->scalarNode('instance')->defaultValue('%env(HYVOR_INSTANCE)%')->end()
-            ->scalarNode('private_instance')->defaultValue('%env(HYVOR_PRIVATE_INSTANCE)%')->end()
-            ->booleanNode('fake')->defaultValue('%env(HYVOR_FAKE)%')->end()
-            ->arrayNode('i18n')
             ->children()
-            ->scalarNode('folder')->defaultValue('%kernel.project_dir%/locales')->end()
-            ->scalarNode('default')->defaultValue('en-US')->end()
+                ->scalarNode('component')->defaultValue('core')->end()
+                ->scalarNode('instance')->defaultValue('%env(HYVOR_INSTANCE)%')->end()
+                ->scalarNode('private_instance')->defaultValue('%env(HYVOR_PRIVATE_INSTANCE)%')->end()
+                ->booleanNode('fake')->defaultValue('%env(HYVOR_FAKE)%')->end()
+                ->arrayNode('i18n')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('folder')->defaultValue('%kernel.project_dir%/locales')->end()
+                        ->scalarNode('default')->defaultValue('en-US')->end()
+                    ->end()
+                ->end()
             ->end();
+        // @formatter:on
     }
 
     /**
@@ -47,6 +52,7 @@ class InternalBundle extends AbstractBundle
         $container->import('../config/services.php');
 
         // ENV DEFAULTS
+        $container->parameters()->set('env(APP_SECRET)', '');
         $container->parameters()->set('env(HYVOR_INSTANCE)', 'https://hyvor.com');
         $container->parameters()->set('env(HYVOR_PRIVATE_INSTANCE)', null);
         $container->parameters()->set('env(HYVOR_FAKE)', '0');
