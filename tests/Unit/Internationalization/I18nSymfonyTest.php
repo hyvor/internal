@@ -16,11 +16,7 @@ class I18nSymfonyTest extends SymfonyTestCase
     {
         parent::setUp();
 
-        InternalConfigTestHelper::setContainerWithUpdatedProperty(
-            $this->container,
-            'i18nFolder',
-            __DIR__ . '/locales'
-        );
+        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
         // config(['internal.i18n.folder' => __DIR__ . '/locales']);
     }
 
@@ -38,25 +34,26 @@ class I18nSymfonyTest extends SymfonyTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not read the locales folder');
 
-        config(['internal.i18n.folder' => '/missing-folder']);
-        $i18n = app(I18n::class);
+        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', '/missing-folder');
+        $i18n = $this->container->get(I18n::class);
     }
 
     public function testThrowsOnCantRead(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not read the locale file of es');
 
-        $i18n = app(I18n::class);
+        $i18n = $this->container->get(I18n::class);
+        $this->assertInstanceOf(I18n::class, $i18n);
         $i18n->getLocaleStrings('es');
     }
 
     public function testWhenLocaleNotFound(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Locale pb not found');
 
-        $i18n = app(I18n::class);
+        $i18n = $this->container->get(I18n::class);
         $i18n->getLocaleStrings('pb');
     }
 

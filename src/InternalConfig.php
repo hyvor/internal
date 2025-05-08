@@ -4,7 +4,7 @@ namespace Hyvor\Internal;
 
 use Hyvor\Internal\Component\Component;
 
-readonly class InternalConfig
+class InternalConfig
 {
 
     private string $i18nDefaultLocale;
