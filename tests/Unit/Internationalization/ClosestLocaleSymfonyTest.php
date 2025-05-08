@@ -3,22 +3,20 @@
 namespace Hyvor\Internal\Tests\Unit\Internationalization;
 
 use Hyvor\Internal\Internationalization\ClosestLocale;
-use Hyvor\Internal\Internationalization\I18n;
-use Hyvor\Internal\Tests\LaravelTestCase;
+use Hyvor\Internal\Tests\Helper\Symfony\InternalConfigTestHelper;
+use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(ClosestLocale::class)]
-class ClosestLocaleLaravelTest extends LaravelTestCase
+class ClosestLocaleSymfonyTest extends SymfonyTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        config(['internal.i18n.folder' => __DIR__ . '/locales']);
-    }
 
     public function testGetsTheClosestLocale(): void
     {
-        $closestLocale = app(ClosestLocale::class);
+        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
+
+        $closestLocale = $this->container->get(ClosestLocale::class);
+        assert($closestLocale instanceof ClosestLocale);
 
         $this->assertEquals('en-US', $closestLocale->get('en-US'));
         $this->assertEquals('en-US', $closestLocale->get('en-GB'));
@@ -29,4 +27,6 @@ class ClosestLocaleLaravelTest extends LaravelTestCase
         $this->assertEquals('en-US', $closestLocale->get('pt'));
         $this->assertEquals('en-US', $closestLocale->get('invalid'));
     }
+
+
 }

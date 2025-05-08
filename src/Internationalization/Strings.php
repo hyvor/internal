@@ -5,15 +5,17 @@ namespace Hyvor\Internal\Internationalization;
 use Hyvor\Internal\Internationalization\Exceptions\FormatException;
 use Hyvor\Internal\Internationalization\Exceptions\InvalidStringKeyException;
 use MessageFormatter;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
+#[Exclude]
 class Strings
 {
 
-    public string $locale;
-
-    public function __construct(?string $locale = null)
-    {
-        $this->locale = ClosestLocale::get($locale);
+    public function __construct(
+        private I18n $i18n,
+        // already got the closest locale
+        private string $locale,
+    ) {
     }
 
     /**
@@ -23,14 +25,12 @@ class Strings
      */
     public function get(string $key, array $params = []): string
     {
-        $i18n = app(I18n::class);
-
-        $currentLocaleStrings = $i18n->getLocaleStrings($this->locale);
+        $currentLocaleStrings = $this->i18n->getLocaleStrings($this->locale);
 
         $string = $this->getFromDotNotation($currentLocaleStrings, $key);
 
         if ($string === null) {
-            $defaultLocaleStrings = $i18n->getDefaultLocaleStrings();
+            $defaultLocaleStrings = $this->i18n->getDefaultLocaleStrings();
             $string = $this->getFromDotNotation($defaultLocaleStrings, $key);
 
             if ($string === null) {

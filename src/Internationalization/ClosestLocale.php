@@ -5,20 +5,14 @@ namespace Hyvor\Internal\Internationalization;
 class ClosestLocale
 {
 
-    public function __construct(private readonly I18n $i18n)
+    public function __construct(private I18n $i18n)
     {
     }
 
-    public function defLocale(): string
+    public function get(?string $locale): string
     {
-        return $this->i18n->defaultLocale;
-    }
-
-    public static function get(?string $locale): string
-    {
-        $i18n = app(I18n::class);
-        $locale ??= $i18n->defaultLocale;
-        $locales = $i18n->getAvailableLocales();
+        $locale ??= $this->i18n->defaultLocale;
+        $locales = $this->i18n->getAvailableLocales();
 
         if (in_array($locale, $locales)) {
             return $locale;
@@ -32,7 +26,7 @@ class ClosestLocale
             }
         }
 
-        return $i18n->defaultLocale;
+        return $this->i18n->defaultLocale;
     }
 
 }

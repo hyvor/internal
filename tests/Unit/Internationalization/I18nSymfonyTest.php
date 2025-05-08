@@ -17,7 +17,6 @@ class I18nSymfonyTest extends SymfonyTestCase
         parent::setUp();
 
         InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
-        // config(['internal.i18n.folder' => __DIR__ . '/locales']);
     }
 
     public function testI18nWorks(): void
