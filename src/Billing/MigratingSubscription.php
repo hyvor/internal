@@ -2,11 +2,14 @@
 
 namespace Hyvor\Internal\Billing;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Temporary class for generating migrations from a product to core.
  * If the user has multiple subscriptions for resources, send only the largest one.
  * @codeCoverageIgnore
  */
+#[Exclude]
 class MigratingSubscription
 {
 

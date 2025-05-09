@@ -30,7 +30,7 @@ class PlanTest extends TestCase
         $this->assertEquals("starter", $starter->name);
         $this->assertEquals(12, $starter->monthlyPrice);
         $this->assertEquals('Starter', $starter->nameReadable);
-        $this->assertEquals(2, $starter->license->users);
+        $this->assertEquals(5, $starter->license->users);
 
         $triedPlan = $plan->tryGetPlan('tried');
         $this->assertNull($triedPlan);

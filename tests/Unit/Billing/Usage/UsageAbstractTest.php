@@ -9,7 +9,7 @@ use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(UsageAbstract::class)]
-class UsageAbstractLaravelTest extends LaravelTestCase
+class UsageAbstractTest extends LaravelTestCase
 {
 
     public function testExampleStorageUsage(): void
@@ -23,7 +23,7 @@ class UsageAbstractLaravelTest extends LaravelTestCase
         $this->assertFalse($usage->hasReached($licenseWithoutDerived, 1, 1));
 
         // resource
-        $resourceLicense = (new BlogsLicense(storage: 100))->setDerivedFrom(DerivedFrom::CUSTOM_RESOURCE);
+        $resourceLicense = new BlogsLicense(storage: 100)->setDerivedFrom(DerivedFrom::CUSTOM_RESOURCE);
         $this->assertTrue($usage->hasReached($resourceLicense, 1, 1));
         $this->assertFalse($usage->hasExceeded($resourceLicense, 1, 1));
     }

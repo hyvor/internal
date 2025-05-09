@@ -5,8 +5,7 @@ namespace Hyvor\Internal\Util\Transfer;
 use Illuminate\Support\Facades\Crypt;
 
 /**
- * LARAVEL ONLY!
- *
+ * @deprecated
  * This class is used for encrypting objects within the Hyvor\Internal namespace.
  * It is safe since the objects are shared between components
  * Safe to use on public facing objects

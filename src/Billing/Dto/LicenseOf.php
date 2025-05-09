@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal\Billing\Dto;
 
+
 readonly class LicenseOf
 {
 

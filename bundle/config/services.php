@@ -16,7 +16,9 @@ return function (ContainerConfigurator $container): void {
         ->exclude([
             '../../src/config.php',
             '../../src/Auth/AuthUser.php',
-            '../../src/Billing',
+            '../../src/Billing/Dto',
+            '../../src/Billing/License',
+            '../../src/Billing/Usage',
             '../../src/Metric',
             '../../src/Http',
             '../../src/routes',

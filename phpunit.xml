@@ -19,6 +19,7 @@
     </source>
     <php>
         <env name="APP_KEY" value="base64:1irAcKPAtLigPMX/ZDlz7D8CidOIPdgqpaCYUU2EIoU="/>
+        <env name="APP_SECRET" value="1irAcKPAtLigPMX/ZDlz7D8CidOIPdgqpaCYUU2EIoU="/>
         <env name="APP_DEBUG" value="true"/>
         <env name="APP_ENV" value="testing"/>
         <env name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.internal"/>

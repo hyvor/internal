@@ -12,6 +12,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpClient\Exception\JsonException;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -31,13 +32,11 @@ class InternalApi
 
     /**
      * @param array<mixed> $data
-     * @param InternalApiMethod|'GET'|'POST' $method
      * @return array<mixed>
      * @throws InternalApiCallFailedException
      */
     public function call(
         Component $to,
-        InternalApiMethod|string $method,
         /**
          * This is the part after the `/api/internal/` in the URL
          * ex: set `/delete-user` to call `/api/internal/delete-user`
@@ -46,10 +45,6 @@ class InternalApi
         array $data = [],
         ?Component $from = null
     ): array {
-        if (is_string($method)) {
-            $method = InternalApiMethod::from($method);
-        }
-
         $endpoint = ltrim($endpoint, '/');
         $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
 
@@ -66,11 +61,11 @@ class InternalApi
 
         try {
             $response = $this->client->request(
-                $method->value,
+                'POST',
                 $url,
                 [
                     'headers' => $headers,
-                    'body' => [
+                    'json' => [
                         'message' => $message,
                     ],
                 ]
@@ -110,13 +105,14 @@ class InternalApi
 
     /**
      * @return array<string, mixed>
+     * @throws InvalidMessageException
      */
-    public static function dataFromMessage(
+    public function dataFromMessage(
         string $message,
         bool $validateTimestamp = true
     ): array {
         try {
-            $decodedMessage = Crypt::decryptString($message);
+            $decodedMessage = $this->encryption->decryptString($message);
         } catch (DecryptException) {
             throw new InvalidMessageException('Failed to decrypt message');
         }
@@ -147,6 +143,15 @@ class InternalApi
         }
 
         return $requestData;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function dataFromMockResponse(MockResponse $mockResponse): array
+    {
+        $body = $mockResponse->getRequestOptions()['body'];
+        return $this->dataFromMessage(json_decode($body, true, flags: JSON_THROW_ON_ERROR)['message']);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Hyvor\Internal\Billing\Dto;
 
 use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 
 /**
  * @phpstan-type LicenseArray array{user_id: int, resource_id: ?int, license: ?string}
@@ -18,7 +18,7 @@ readonly class LicensesCollection
          */
         private array $licenses,
 
-        private ComponentType $component,
+        private Component $component,
     ) {
     }
 
