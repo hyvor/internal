@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Feature\Auth;
 
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Support\Collection;
@@ -11,7 +12,7 @@ use Illuminate\Support\Collection;
 class AuthUserLaravelTest extends LaravelTestCase
 {
 
-    private function getAuth(): Auth
+    private function getAuth(): AuthInterface
     {
         return app(Auth::class);
     }

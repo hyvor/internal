@@ -17,7 +17,7 @@ return function (ContainerConfigurator $container): void {
             '../../src/config.php',
             '../../src/Auth/AuthUser.php',
             '../../src/Billing',
-            '../../src/Component',
+            '../../src/Metric',
             '../../src/Http',
             '../../src/routes',
             '../../src/InternalServiceProvider.php'

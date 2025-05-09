@@ -18,7 +18,7 @@ class StringsSymfonyTest extends SymfonyTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
+        InternalConfigTestHelper::updateSymfony($this->container, 'i18nFolder', __DIR__ . '/locales');
     }
 
     private function getStrings(string $locale): Strings

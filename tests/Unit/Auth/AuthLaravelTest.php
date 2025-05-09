@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Tests\Unit\Auth;
 
 use Hyvor\Internal\Auth\Auth;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\Tests\LaravelTestCase;
@@ -20,13 +21,12 @@ class AuthLaravelTest extends LaravelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->provider = new Auth();
+        $this->provider = app(Auth::class);
     }
 
     public function testCheckWhenNoCookieSet(): void
     {
-        $_COOKIE = [];
-        $this->assertFalse($this->provider->check());
+        $this->assertFalse($this->provider->check(''));
     }
 
     public function testCheckWhenCookieIsSet(): void

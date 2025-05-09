@@ -4,12 +4,12 @@ namespace Hyvor\Internal\Tests\Unit\Metric;
 
 use Hyvor\Internal\Metric\MetricMiddleware;
 use Hyvor\Internal\Metric\MetricService;
-use Hyvor\Internal\Tests\TestCase;
+use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Prometheus\MetricFamilySamples;
 
-class MetricMiddlewareTest extends TestCase
+class MetricMiddlewareTest extends LaravelTestCase
 {
 
     /**

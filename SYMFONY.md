@@ -6,9 +6,6 @@ First, you need the internal library via Composer:
 
 ```bash
 composer require hyvor/internal
-
-# additional bundles
-composer require symfony/security-bundle # needed for authentication
 ```
 
 ### Step 2: Add the Bundle to Your Project
@@ -24,6 +21,12 @@ return [
 ```
 
 ## Authentication
+
+Install Twig Bundles
+
+```bash
+composer require symfony/security-bundle
+```
 
 ### Step 1: Setup Firewall and Access Control
 

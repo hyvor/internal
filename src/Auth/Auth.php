@@ -3,14 +3,13 @@
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Component\ComponentUrlResolver;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * @phpstan-import-type AuthUserArray from AuthUser
@@ -18,12 +17,13 @@ use Illuminate\Support\Collection;
 class Auth implements AuthInterface
 {
 
+    public const string HYVOR_SESSION_COOKIE_NAME = 'authsess';
+
     public function __construct(
-        private InternalApi $internalApi
+        private InternalApi $internalApi,
+        private InstanceUrlResolver $instanceUrlResolver
     ) {
     }
-
-    public const HYVOR_SESSION_COOKIE_NAME = 'authsess';
 
     /**
      * @throws InternalApiCallFailedException
@@ -66,25 +66,22 @@ class Auth implements AuthInterface
         $redirect = $placeholder . 'redirect=' .
             urlencode($redirectUrl);
 
-        return redirect(
-            ComponentUrlResolver::getInstanceUrl() .
-            '/' .
-            $page .
-            $redirect
-        );
+        $fullUrl = $this->instanceUrlResolver->ofCore() . '/' . $page . $redirect;
+
+        return new RedirectResponse($fullUrl);
     }
 
-    public function login(?string $redirect = null): RedirectResponse|Redirector
+    public function login(?string $redirect = null): RedirectResponse
     {
         return $this->redirectTo('login', $redirect);
     }
 
-    public function signup(?string $redirect = null): RedirectResponse|Redirector
+    public function signup(?string $redirect = null): RedirectResponse
     {
         return $this->redirectTo('signup', $redirect);
     }
 
-    public function logout(?string $redirect = null): RedirectResponse|Redirector
+    public function logout(?string $redirect = null): RedirectResponse
     {
         return $this->redirectTo('logout', $redirect);
     }

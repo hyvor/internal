@@ -16,7 +16,7 @@ class I18nSymfonyTest extends SymfonyTestCase
     {
         parent::setUp();
 
-        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
+        InternalConfigTestHelper::updateSymfony($this->container, 'i18nFolder', __DIR__ . '/locales');
     }
 
     public function testI18nWorks(): void
@@ -33,7 +33,7 @@ class I18nSymfonyTest extends SymfonyTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not read the locales folder');
 
-        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', '/missing-folder');
+        InternalConfigTestHelper::updateSymfony($this->container, 'i18nFolder', '/missing-folder');
         $i18n = $this->container->get(I18n::class);
     }
 

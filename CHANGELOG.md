@@ -2,6 +2,8 @@
 
 - InstanceUrl removed, use InternalConfig and ComponentUrl instead
 - InternalApi\ComponentType moved to Component\Component, and many static methods have been removed
+- Auth methods are no longer static
+- Auth login, signup, and logout methods now return a Symfony RedirectRepsonse object
 
 ## 2.1.0 - 2025-03-23
 

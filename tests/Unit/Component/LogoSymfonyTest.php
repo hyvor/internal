@@ -2,19 +2,19 @@
 
 namespace Hyvor\Internal\Tests\Unit\Component;
 
-use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\Logo;
-use Hyvor\Internal\Tests\LaravelTestCase;
+use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 #[CoversClass(Logo::class)]
-class LogoLaravelTest extends LaravelTestCase
+class LogoSymfonyTest extends SymfonyTestCase
 {
     use LogoTestTrait;
 
     protected function getLogo(): Logo
     {
-        return app(Logo::class);
+        $logo = $this->container->get(Logo::class);
+        assert($logo instanceof Logo);
+        return $logo;
     }
 }

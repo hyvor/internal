@@ -6,7 +6,7 @@ use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Component\ComponentUrlResolver;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalApi\InternalApiMethod;
@@ -40,7 +40,7 @@ class Billing
 
         $token = $object->encrypt();
 
-        $baseUrl = ComponentUrlResolver::getInstanceUrl() . '/account/billing/subscription?token=' . $token;
+        $baseUrl = InstanceUrlResolver::getInstanceUrl() . '/account/billing/subscription?token=' . $token;
 
         return [
             'token' => $token,

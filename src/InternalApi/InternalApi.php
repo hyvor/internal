@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\InternalApi;
 
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Component\ComponentUrlResolver;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalConfig;
@@ -24,6 +24,7 @@ class InternalApi
         private InternalConfig $config,
         private Encryption $encryption,
         private HttpClientInterface $client,
+        private InstanceUrlResolver $componentUrlResolver
     ) {
     }
 
@@ -49,7 +50,7 @@ class InternalApi
         }
 
         $endpoint = ltrim($endpoint, '/');
-        $componentUrl = new ComponentUrlResolver($this->config->getPrivateInstanceWithFallback())->of($to);
+        $componentUrl = new InstanceUrlResolver($this->config->getPrivateInstanceWithFallback())->of($to);
 
         $url = $componentUrl . '/api/internal/' . $endpoint;
 

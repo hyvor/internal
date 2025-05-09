@@ -5,14 +5,18 @@ namespace Hyvor\Internal\Component;
 class Logo
 {
 
-    public static function dir(): string
+    public function __construct(private InstanceUrlResolver $instanceUrlResolver)
+    {
+    }
+
+    private function dir(): string
     {
         return __DIR__ . '/../../assets/logo';
     }
 
-    public static function svg(Component $component, ?int $size = null): string
+    public function svg(Component $component, ?int $size = null): string
     {
-        $path = self::dir() . "/{$component->value}.svg";
+        $path = $this->dir() . "/{$component->value}.svg";
         $svg = (string)file_get_contents($path);
 
         if ($size) {
@@ -27,9 +31,9 @@ class Logo
         return $svg;
     }
 
-    public static function url(Component $component): string
+    public function url(Component $component): string
     {
-        $coreUrl = ComponentUrlResolver::getInstanceUrl();
+        $coreUrl = $this->instanceUrlResolver->publicUrlOfCore();
         return $coreUrl . "/api/public/logo/{$component->value}.svg";
     }
 

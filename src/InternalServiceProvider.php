@@ -30,7 +30,7 @@ class InternalServiceProvider extends ServiceProvider
     private function config(): void
     {
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
-            str_replace('base64:', '', (string)config('app.secret')),
+            str_replace('base64:', '', (string)config('app.key')),
             config('internal.component'),
             config('internal.instance'),
             config('internal.private_instance'),
