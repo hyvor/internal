@@ -40,7 +40,7 @@ class PlanTest extends TestCase
     {
         $plan = new TalkPlan();
         $this->assertEquals(1, $plan->getCurrentVersion());
-        // add more tests when needed
+        // dd($plan->getCurrentPlans());
     }
 
     public function testCorePlan(): void

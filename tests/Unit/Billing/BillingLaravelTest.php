@@ -3,6 +3,8 @@
 namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\Dto\LicenseOf;
+use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\SubscriptionIntent;
 use Hyvor\Internal\Component\Component;
@@ -14,6 +16,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(Billing::class)]
 #[CoversClass(SubscriptionIntent::class)]
+#[CoversClass(LicensesCollection::class)]
+#[CoversClass(LicenseOf::class)]
 class BillingLaravelTest extends LaravelTestCase
 {
 
@@ -37,8 +41,12 @@ class BillingLaravelTest extends LaravelTestCase
         $billing = new Billing();
 
         Http::fake([
-            'https://hyvor.com/api/internal/billing/license*' => Http::response([
-                'license' => (new BlogsLicense())->serialize()
+            'https://hyvor.com/api/internal/billing/licenses*' => Http::response([
+                [
+                    'user_id' => 1,
+                    'resource_id' => 10,
+                    'license' => (new BlogsLicense())->serialize()
+                ]
             ])
         ]);
 
@@ -50,8 +58,62 @@ class BillingLaravelTest extends LaravelTestCase
         Http::assertSent(function (Request $request) {
             $data = InternalApi::dataFromMessage($request->data()['message']);
 
-            $this->assertEquals(1, $data['user_id']);
-            $this->assertEquals(10, $data['resource_id']);
+            $this->assertCount(1, $data['of']);
+            $this->assertEquals(1, $data['of'][0]['user_id']);
+            $this->assertEquals(10, $data['of'][0]['resource_id']);
+
+            $headers = $request->headers();
+            $this->assertEquals('core', $headers['X-Internal-Api-To'][0]);
+            $this->assertEquals('blogs', $headers['X-Internal-Api-From'][0]);
+
+            return true;
+        });
+    }
+
+    public function test_get_licenses(): void
+    {
+        $billing = new Billing();
+
+        Http::fake([
+            'https://hyvor.com/api/internal/billing/licenses*' => Http::response([
+                [
+                    'user_id' => 1,
+                    'resource_id' => null,
+                    'license' => (new BlogsLicense())->serialize()
+                ],
+                [
+                    'user_id' => 2,
+                    'resource_id' => null,
+                    'license' => null
+                ]
+            ])
+        ]);
+
+        $licenses = $billing->licenses([
+            new LicenseOf(1, null),
+            new LicenseOf(2, null),
+        ], Component::BLOGS);
+
+        $this->assertInstanceOf(LicensesCollection::class, $licenses);
+        $this->assertCount(2, $licenses->all());
+
+        $user1License = $licenses->of(1, null);
+        $this->assertInstanceOf(BlogsLicense::class, $user1License);
+
+        $user2License = $licenses->of(2, null);
+        $this->assertNull($user2License);
+
+
+        Http::assertSent(function (Request $request) {
+            $data = InternalApi::dataFromMessage($request->data()['message']);
+
+            $this->assertIsArray($data['of']);
+            $this->assertCount(2, $data['of']);
+
+            $this->assertEquals(1, $data['of'][0]['user_id']);
+            $this->assertEquals(null, $data['of'][0]['resource_id']);
+            $this->assertEquals(2, $data['of'][1]['user_id']);
+            $this->assertEquals(null, $data['of'][1]['resource_id']);
 
             $headers = $request->headers();
             $this->assertEquals('core', $headers['X-Internal-Api-To'][0]);

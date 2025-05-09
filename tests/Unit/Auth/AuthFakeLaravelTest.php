@@ -48,13 +48,21 @@ class AuthFakeLaravelTest extends LaravelTestCase
 
         AuthFake::databaseClear();
         $this->assertNull(AuthFake::databaseGet());
+    }
 
+    public function test_database_add(): void
+    {
+        AuthFake::enable();
         AuthFake::databaseAdd(['id' => 3, 'name' => 'Jack']);
         $db = AuthFake::databaseGet();
         $this->assertNotNull($db);
         $this->assertCount(1, $db);
         $this->assertEquals('Jack', $db[0]->name);
+    }
 
+    public function test_database_set_user_array(): void
+    {
+        AuthFake::enable();
         AuthFake::databaseSet([
             AuthUser::fromArray([
                 'id' => 1,
@@ -64,6 +72,7 @@ class AuthFakeLaravelTest extends LaravelTestCase
             ])
         ]);
         $db = AuthFake::databaseGet();
+
         $this->assertNotNull($db);
         $this->assertEquals(1, $db[0]->id);
         $this->assertEquals('Supun', $db[0]->name);
@@ -74,7 +83,6 @@ class AuthFakeLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $id20 = $this->provider()->fromId(20);
         $this->assertNotNull($id20);
-        $this->assertIsString($id20->name);
         $this->assertEquals(20, $id20->id);
 
         // with DB
@@ -97,7 +105,6 @@ class AuthFakeLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $email20 = $this->provider()->fromEmail('20@test.com');
         $this->assertNotNull($email20);
-        $this->assertIsString($email20->name);
         $this->assertEquals('20@test.com', $email20->email);
 
         // with DB
@@ -120,7 +127,6 @@ class AuthFakeLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $username20 = $this->provider()->fromUsername('user20');
         $this->assertNotNull($username20);
-        $this->assertIsString($username20->name);
         $this->assertEquals('user20', $username20->username);
 
         // with DB

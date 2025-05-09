@@ -6,9 +6,13 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
+use Hyvor\Internal\Metric\MetricService;
 use Hyvor\Internal\Resource\ResourceFake;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
+use Prometheus\CollectorRegistry;
+use Prometheus\Storage\APCng;
+use Prometheus\Storage\InMemory;
 
 class InternalServiceProvider extends ServiceProvider
 {
@@ -18,6 +22,7 @@ class InternalServiceProvider extends ServiceProvider
         $this->config();
         $this->routes();
         $this->i18n();
+        $this->metrics();
         $this->fake();
         $this->phpRuntime();
     }
@@ -50,6 +55,15 @@ class InternalServiceProvider extends ServiceProvider
     private function i18n(): void
     {
         $this->app->singleton(I18n::class);
+    }
+
+    private function metrics(): void
+    {
+        $this->app->singleton(MetricService::class, fn() => new MetricService(
+            new CollectorRegistry(
+                apcu_enabled() ? new APCng() : new InMemory()
+            )
+        ));
     }
 
     private function fake(): void

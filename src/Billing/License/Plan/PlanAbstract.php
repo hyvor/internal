@@ -47,6 +47,7 @@ abstract class PlanAbstract
         float $monthlyPrice,
         License $license,
         ?string $nameReadable = null,
+        ?string $group = null,
     ): void {
         assert($this->currentVersionForConfig !== null);
         $plan = new Plan(
@@ -54,7 +55,8 @@ abstract class PlanAbstract
             $name,
             $monthlyPrice,
             $license,
-            $nameReadable
+            $nameReadable,
+            $group,
         );
 
         $currentVersionPlans = $this->versions[$this->currentVersionForConfig];

@@ -3,5 +3,8 @@ parameters:
 	paths:
 		- src
 		- tests
+		- types
+	excludePaths:
+	    - types/tests/data
 includes:
 	- extension.neon

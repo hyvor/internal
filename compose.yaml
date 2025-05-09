@@ -1,0 +1,16 @@
+services:
+  package:
+    build:
+      context: .
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.4}
+    tty: true
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./types:/app/types
+      - ./composer.json:/app/composer.json
+      - ./composer.lock:/app/composer.lock
+      - ./phpunit.xml:/app/phpunit.xml
+      - ./phpstan.neon:/app/phpstan.neon
+      - ./extension.neon:/app/extension.neon
