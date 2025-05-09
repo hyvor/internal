@@ -6,7 +6,9 @@ use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Tests\LaravelTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(Auth::class)]
 class AuthLaravelTest extends LaravelTestCase
 {
 

@@ -66,7 +66,7 @@ class Auth implements AuthInterface
         $redirect = $placeholder . 'redirect=' .
             urlencode($redirectUrl);
 
-        $fullUrl = $this->instanceUrlResolver->ofCore() . '/' . $page . $redirect;
+        $fullUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/' . $page . $redirect;
 
         return new RedirectResponse($fullUrl);
     }

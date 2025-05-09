@@ -11,6 +11,7 @@ use Hyvor\Internal\Util\Crypt\Encryption;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\HttpClient\Exception\JsonException;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -24,7 +25,7 @@ class InternalApi
         private InternalConfig $config,
         private Encryption $encryption,
         private HttpClientInterface $client,
-        private InstanceUrlResolver $componentUrlResolver
+        private InstanceUrlResolver $instanceUrlResolver
     ) {
     }
 
@@ -50,7 +51,7 @@ class InternalApi
         }
 
         $endpoint = ltrim($endpoint, '/');
-        $componentUrl = new InstanceUrlResolver($this->config->getPrivateInstanceWithFallback())->of($to);
+        $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
 
         $url = $componentUrl . '/api/internal/' . $endpoint;
 
@@ -85,7 +86,7 @@ class InternalApi
             }
 
             return $response->toArray();
-        } catch (TransportExceptionInterface $e) {
+        } catch (TransportExceptionInterface|JsonException $e) {
             throw new InternalApiCallFailedException(
                 'Internal API call to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
             );

@@ -3,22 +3,32 @@
 namespace Hyvor\Internal\Auth;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * LARAVEL ONLY!
+ */
 class AuthController
 {
 
-    private function getAuth(): Auth
+    private function getAuthInterface(): AuthInterface
     {
         return app(Auth::class);
     }
 
+    private function getAuth(): Auth
+    {
+        $auth = $this->getAuthInterface();
+        assert($auth instanceof Auth);
+        return $auth;
+    }
+
     public function check(): JsonResponse
     {
-        $user = $this->getAuth()->check();
+        $cookie = (string)request()->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME);
+        $user = $this->getAuthInterface()->check($cookie);
 
         return Response::json([
             'is_logged_in' => $user !== false,
@@ -26,17 +36,17 @@ class AuthController
         ]);
     }
 
-    public function login(Request $request): RedirectResponse|Redirector
+    public function login(Request $request): RedirectResponse
     {
         return $this->getAuth()->login($this->getRedirect($request));
     }
 
-    public function signup(Request $request): RedirectResponse|Redirector
+    public function signup(Request $request): RedirectResponse
     {
         return $this->getAuth()->signup($this->getRedirect($request));
     }
 
-    public function logout(Request $request): RedirectResponse|Redirector
+    public function logout(Request $request): RedirectResponse
     {
         return $this->getAuth()->logout($this->getRedirect($request));
     }
