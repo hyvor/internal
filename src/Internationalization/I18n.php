@@ -36,7 +36,7 @@ class I18n
         $files = @scandir($this->folder);
 
         if ($files === false) {
-            throw new RuntimeException('Could not read the locales folder');
+            throw new RuntimeException('Could not read the locales folder: ' . $this->folder);
         }
 
         foreach ($files as $file) {

@@ -16,6 +16,7 @@ enum Component: string
     case CORE = 'core';
     case TALK = 'talk';
     case BLOGS = 'blogs';
+    case POST = 'post';
 
     public function name(): string
     {
@@ -23,6 +24,7 @@ enum Component: string
             self::CORE => 'HYVOR',
             self::TALK => 'Hyvor Talk',
             self::BLOGS => 'Hyvor Blogs',
+            self::POST => 'Hyvor Post',
         };
     }
 

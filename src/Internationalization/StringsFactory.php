@@ -11,7 +11,7 @@ readonly class StringsFactory
     ) {
     }
 
-    public function create(string $locale): Strings
+    public function create(?string $locale = null): Strings
     {
         return new Strings($this->i18n, $this->closestLocale->get($locale));
     }

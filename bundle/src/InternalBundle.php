@@ -35,7 +35,7 @@ class InternalBundle extends AbstractBundle
                 ->arrayNode('i18n')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('folder')->defaultValue('%kernel.project_dir%/locales')->end()
+                        ->scalarNode('folder')->defaultValue('%kernel.project_dir%/../shared/locale')->end()
                         ->scalarNode('default')->defaultValue('en-US')->end()
                     ->end()
                 ->end()

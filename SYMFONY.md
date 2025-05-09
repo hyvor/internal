@@ -89,25 +89,53 @@ composer require symfony/twig-bundle
 composer require symfony/ux-twig-component
 ```
 
-In Twig, you can use components:
+Then, extend `'@Internal/mail/mail.html.twig'` in your templates.
 
 ```twig
-<twig:Internal:mail:paragraph>Hello,</twig:Internal:mail:paragraph>
+{%  extends '@Internal/mail/mail.html.twig' %}
+
+{% block title %}{{ strings.title }}{% endblock %}
+{% block heading %}{{ strings.heading }}{% endblock %}
+{% block content %}
+    <p>{{ strings.text }}</p>
+
+    <twig:mail:button href="https://post.hyvor.com">
+        {{ strings.buttonText }}
+    </twig:mail:button>
+{% endblock %}
 ```
 
-To render a template,
+Then render the template,
 
-```twig
-public function __construct(private MailTemplate $mailTemplate)
-{}
+```php
+use Twig\Environment;
+use Hyvor\Internal\Internationalization\StringsFactory;
 
-public function sendMail()
+class UserInviteService
 {
-    $this->mailTemplate->render('Internal:mail:paragraph', [
-        'text' => 'Hello',
-    ]);
+
+    public function __construct(
+        private Environment $twig,
+        private StringsFactory $stringsFactory,
+    )
+    {}
+    
+    public function sendMail()
+    {
+        $strings = $this->stringsFactory->create('en');
+    
+        $this->mailTemplate->render('user_invite.html.twig', [
+            'component' => 'post'
+            'strings' => [
+                // ...
+            ],
+        ]);
+    }
+
 }
 ```
+
+> Note: `component` variable is used to determine the brand icon and name.
 
 ## Testing
 

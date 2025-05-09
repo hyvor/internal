@@ -7,8 +7,6 @@ use Hyvor\Internal\Component\Component;
 class InternalConfig
 {
 
-    private string $i18nDefaultLocale;
-
     public function __construct(
 
         /**
@@ -29,9 +27,8 @@ class InternalConfig
          * I18N
          */
         private string $i18nFolder,
-        ?string $i18nDefaultLocale,
+        private ?string $i18nDefaultLocale,
     ) {
-        $this->i18nDefaultLocale = $i18nDefaultLocale ?? 'en-US';
     }
 
     public function getAppSecretRaw(): string
@@ -71,12 +68,18 @@ class InternalConfig
 
     public function getI18nFolder(): string
     {
-        return $this->i18nFolder;
+        $realpath = realpath($this->i18nFolder);
+
+        if ($realpath === false) {
+            return $this->i18nFolder;
+        }
+
+        return $realpath;
     }
 
     public function getI18nDefaultLocale(): string
     {
-        return $this->i18nDefaultLocale;
+        return $this->i18nDefaultLocale ?? 'en-US';
     }
 
 }
