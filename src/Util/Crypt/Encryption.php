@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Util\Crypt;
 
-use Hyvor\Internal\Bundle\InternalConfig;
+use Hyvor\Internal\InternalConfig;
 use Illuminate\Encryption\Encrypter;
 
 /**

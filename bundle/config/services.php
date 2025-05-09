@@ -10,7 +10,24 @@ return function (ContainerConfigurator $container): void {
 
     // load all files as services
     $services->load('Hyvor\\Internal\\Bundle\\', '../src');
-    $services->load('Hyvor\\Internal\\Auth\\', '../../src/Auth');
-    $services->load('Hyvor\\Internal\\InternalApi\\', '../../src/InternalApi');
-    $services->load('Hyvor\\Internal\\Util\\', '../../src/Util');
+
+    $internalServices = $services
+        ->load('Hyvor\\Internal\\', '../../src')
+        ->exclude([
+            '../../src/config.php',
+            '../../src/Auth/AuthUser.php',
+            '../../src/Billing',
+            '../../src/Component',
+            '../../src/Http',
+            '../../src/routes',
+            '../../src/InternalServiceProvider.php'
+        ]);
+
+    if ($container->env() === 'test') {
+        $internalServices->public();
+    }
+
+//    $services->load('Hyvor\\Internal\\Auth\\', '../../src/Auth');
+//    $services->load('Hyvor\\Internal\\InternalApi\\', '../../src/InternalApi');
+//    $services->load('Hyvor\\Internal\\Util\\', '../../src/Util');
 };

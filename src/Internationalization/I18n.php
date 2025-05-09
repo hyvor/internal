@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal\Internationalization;
 
+use Hyvor\Internal\InternalConfig;
 use RuntimeException;
 
 
@@ -15,18 +16,14 @@ class I18n
 
     public string $defaultLocale;
 
-
     /** @var array<string, array<mixed>> */
     public array $stringsCache = [];
 
-    public function __construct()
+    public function __construct(InternalConfig $config)
     {
-        $config = config('internal.i18n');
-
-        $this->folder = $config['folder'] ?? './locales';
+        $this->folder = $config->getI18nFolder();
         $this->availableLocales = $this->setAvailableLocales();
-
-        $this->defaultLocale = (string)($config['default'] ?? 'en-US');
+        $this->defaultLocale = $config->getI18nDefaultLocale();
         $this->stringsCache[$this->defaultLocale] = $this->getLocaleStrings($this->defaultLocale);
     }
 
@@ -39,7 +36,7 @@ class I18n
         $files = @scandir($this->folder);
 
         if ($files === false) {
-            throw new RuntimeException('Could not read the locales folder');
+            throw new RuntimeException('Could not read the locales folder: ' . $this->folder);
         }
 
         foreach ($files as $file) {
@@ -84,7 +81,7 @@ class I18n
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     public function getDefaultLocaleStrings(): array
     {

@@ -19,7 +19,7 @@ Then, add the bundle to your project:
 // config/bundles.php
 return [
     // ...
-    \Hyvor\Internal\Bundle\HyvorInternalBundle::class => ['all' => true],
+    \Hyvor\Internal\Bundle\InternalBundle::class => ['all' => true],
 ];
 ```
 
@@ -79,6 +79,63 @@ class ExceptionListener extends AbstractApiExceptionListener
     }
 }
 ```
+
+## Mail Templates
+
+Install Twig Bundles
+
+```bash
+composer require symfony/twig-bundle
+composer require symfony/ux-twig-component
+```
+
+Then, extend `'@Internal/mail/mail.html.twig'` in your templates.
+
+```twig
+{%  extends '@Internal/mail/mail.html.twig' %}
+
+{% block title %}{{ strings.title }}{% endblock %}
+{% block heading %}{{ strings.heading }}{% endblock %}
+{% block content %}
+    <p>{{ strings.text }}</p>
+
+    <twig:mail:button href="https://post.hyvor.com">
+        {{ strings.buttonText }}
+    </twig:mail:button>
+{% endblock %}
+```
+
+Then render the template,
+
+```php
+use Twig\Environment;
+use Hyvor\Internal\Internationalization\StringsFactory;
+
+class UserInviteService
+{
+
+    public function __construct(
+        private Environment $twig,
+        private StringsFactory $stringsFactory,
+    )
+    {}
+    
+    public function sendMail()
+    {
+        $strings = $this->stringsFactory->create('en');
+    
+        $this->mailTemplate->render('user_invite.html.twig', [
+            'component' => 'post'
+            'strings' => [
+                // ...
+            ],
+        ]);
+    }
+
+}
+```
+
+> Note: `component` variable is used to determine the brand icon and name.
 
 ## Testing
 
