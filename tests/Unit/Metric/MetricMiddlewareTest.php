@@ -47,15 +47,13 @@ class MetricMiddlewareTest extends LaravelTestCase
 
         $total = $this->findMetric($metrics, 'app_api_http_requests_total');
         $this->assertSame('counter', $total->getType());
-        $this->assertSame('component', $total->getLabelNames()[0]);
-        $this->assertSame('method', $total->getLabelNames()[1]);
-        $this->assertSame('endpoint', $total->getLabelNames()[2]);
-        $this->assertSame('status', $total->getLabelNames()[3]);
+        $this->assertSame('method', $total->getLabelNames()[0]);
+        $this->assertSame('endpoint', $total->getLabelNames()[1]);
+        $this->assertSame('status', $total->getLabelNames()[2]);
 
         $totalSample = $total->getSamples()[0];
         $this->assertSame("1", $totalSample->getValue());
         $this->assertSame([
-            'core',
             'GET',
             '/test',
             '200',
@@ -64,10 +62,9 @@ class MetricMiddlewareTest extends LaravelTestCase
         $duration = $this->findMetric($metrics, 'app_api_http_request_duration_seconds');
         $this->assertSame('histogram', $duration->getType());
 
-        $this->assertSame('component', $duration->getLabelNames()[0]);
-        $this->assertSame('method', $duration->getLabelNames()[1]);
-        $this->assertSame('endpoint', $duration->getLabelNames()[2]);
-        $this->assertSame('status', $duration->getLabelNames()[3]);
+        $this->assertSame('method', $duration->getLabelNames()[0]);
+        $this->assertSame('endpoint', $duration->getLabelNames()[1]);
+        $this->assertSame('status', $duration->getLabelNames()[2]);
 
         $durationSamples = $duration->getSamples();
         $this->assertCount(9, $durationSamples);
@@ -95,7 +92,7 @@ class MetricMiddlewareTest extends LaravelTestCase
 
         $body = $response->getContent();
         $this->assertStringContainsString(
-            'app_api_http_requests_total{component="core",method="GET",endpoint="/api/metrics",status="200"} 1',
+            'app_api_http_requests_total{method="GET",endpoint="/api/metrics",status="200"} 1',
             $body
         );
     }
