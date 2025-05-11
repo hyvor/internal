@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\HttpClient\Exception\JsonException;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -71,19 +73,19 @@ class InternalApi
                 ]
             );
 
-            $status = $response->getStatusCode();
-
-            if ($status !== 200) {
-                throw new InternalApiCallFailedException(
-                    'Internal API call to ' . $url . ' failed. Status code: ' . $status .
-                    ' - ' . substr($response->getContent(), 0, 250)
-                );
-            }
-
             return $response->toArray();
-        } catch (TransportExceptionInterface|JsonException $e) {
+        } catch (TransportExceptionInterface $e) {
             throw new InternalApiCallFailedException(
                 'Internal API call to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
+            );
+        } catch (DecodingExceptionInterface $e) {
+            throw new InternalApiCallFailedException(
+                'Internal API call to ' . $url . ' failed. Decoding error: ' . $e->getMessage(),
+            );
+        } catch (HttpExceptionInterface $e) {
+            throw new InternalApiCallFailedException(
+                'Internal API call to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
+                ' - ' . substr($response->getContent(false), 0, 250)
             );
         }
     }

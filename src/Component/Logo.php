@@ -9,14 +9,14 @@ class Logo
     {
     }
 
-    private function dir(): string
+    private static function dir(): string
     {
         return __DIR__ . '/../../assets/logo';
     }
 
-    public function svg(Component $component, ?int $size = null): string
+    public static function svg(Component $component, ?int $size = null): string
     {
-        $path = $this->dir() . "/{$component->value}.svg";
+        $path = self::dir() . "/{$component->value}.svg";
         $svg = (string)file_get_contents($path);
 
         if ($size) {

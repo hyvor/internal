@@ -8,7 +8,9 @@ use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Billing\License\Plan\BlogsPlan;
 use Hyvor\Internal\Billing\License\Plan\CorePlan;
 use Hyvor\Internal\Billing\License\Plan\PlanAbstract;
+use Hyvor\Internal\Billing\License\Plan\PostPlan;
 use Hyvor\Internal\Billing\License\Plan\TalkPlan;
+use Hyvor\Internal\Billing\License\PostLicense;
 use Hyvor\Internal\Billing\License\TalkLicense;
 
 enum Component: string
@@ -37,6 +39,7 @@ enum Component: string
             self::CORE => CoreLicense::class,
             self::TALK => TalkLicense::class,
             self::BLOGS => BlogsLicense::class,
+            self::POST => PostLicense::class,
         };
     }
 
@@ -46,6 +49,7 @@ enum Component: string
             self::CORE => CorePlan::class,
             self::TALK => TalkPlan::class,
             self::BLOGS => BlogsPlan::class,
+            self::POST => PostPlan::class,
         };
 
         return new $class();

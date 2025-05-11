@@ -13,8 +13,7 @@ trait LogoTestTrait
 
     public function testSvg(): void
     {
-        $logo = $this->getLogo();
-        $svg = $logo->svg(Component::BLOGS);
+        $svg = Logo::svg(Component::BLOGS);
         $this->assertStringContainsString('<svg', $svg);
     }
 
