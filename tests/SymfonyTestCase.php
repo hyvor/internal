@@ -25,4 +25,9 @@ class SymfonyTestCase extends TestCase
         $this->container->set(HttpClientInterface::class, new MockHttpClient());
     }
 
+    protected function getContainer(): Container
+    {
+        return $this->container;
+    }
+
 }

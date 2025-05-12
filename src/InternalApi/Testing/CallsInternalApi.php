@@ -34,9 +34,9 @@ trait CallsInternalApi
 
         assert(App::environment('testing'), 'This method can only be called in the testing environment');
 
-        if (!App::has(HttpClientInterface::class)) {
+        /*if (!App::has(HttpClientInterface::class)) {
             app()->bind(HttpClientInterface::class, fn() => new MockHttpClient());
-        }
+        }*/
 
         $internalApi = app(InternalApi::class);
         $internalConfig = app(InternalConfig::class);

@@ -5,6 +5,8 @@ namespace Hyvor\Internal\Bundle;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -71,7 +73,14 @@ class InternalBundle extends AbstractBundle
             ]);
 
         // Main Services
-        $container->services()->alias(AuthInterface::class, Auth::class);
+        $authInterface = $container->services()->alias(AuthInterface::class, Auth::class);
+        $billingInterface = $container->services()->alias(BillingInterface::class, Billing::class);
+
+        // sometimes we need to replace services dynamically in services
+        // it is only possible for public services
+        if ($container->env() === 'test') {
+            $authInterface->public();
+        }
 
         $this->setupFake($container, $builder);
     }

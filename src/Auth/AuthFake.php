@@ -51,14 +51,7 @@ final class AuthFake implements AuthInterface
         null|AuthUser|array $user = null,
         ?iterable $usersDatabase = null
     ): void {
-        $fake = new self();
-        if (is_array($user)) {
-            $user = self::generateUser($user);
-        }
-        $fake->user = $user;
-        if ($usersDatabase) {
-            $fake->usersDatabase = self::getAuthUsersFromPartial($usersDatabase);
-        }
+        $fake = new self($user, $usersDatabase);
         app()->singleton(
             AuthInterface::class,
             fn() => $fake
@@ -80,9 +73,7 @@ final class AuthFake implements AuthInterface
             $user = self::generateUser($user);
         }
         $fake->user = $user;
-        if ($usersDatabase) {
-            $fake->usersDatabase = self::getAuthUsersFromPartial($usersDatabase);
-        }
+        $fake->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
         self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
     }

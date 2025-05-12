@@ -13,20 +13,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 trait AuthTestTrait
 {
 
-    abstract protected function getContainer(
-    ): \Illuminate\Container\Container|\Symfony\Component\DependencyInjection\Container;
-
     private function getAuth(): Auth
     {
+        /** @var Auth $auth */
         $auth = $this->getContainer()->get(Auth::class);
-        assert($auth instanceof Auth);
         return $auth;
     }
 
     private function getInternalApi(): InternalApi
     {
+        /** @var InternalApi $internalApi */
         $internalApi = $this->getContainer()->get(InternalApi::class);
-        assert($internalApi instanceof InternalApi);
         return $internalApi;
     }
 

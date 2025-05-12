@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal\Tests;
 
+use Illuminate\Container\Container;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -18,6 +19,11 @@ class LaravelTestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         app()->singleton(HttpClientInterface::class, fn() => new MockHttpClient());
+    }
+
+    protected function getContainer(): Container
+    {
+        return app();
     }
 
 }

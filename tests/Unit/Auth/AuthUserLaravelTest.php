@@ -6,6 +6,7 @@ use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Bundle\Security\UserRole;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Support\Collection;
 
@@ -19,13 +20,14 @@ class AuthUserLaravelTest extends LaravelTestCase
 
     public function testIsCreatedFromArray(): void
     {
-        $user = AuthUser::fromArray([
+        $attrs = [
             'id' => 1,
             'name' => 'John Doe',
             'username' => 'johndoe',
             'email' => 'john@hyvor.com',
             'picture_url' => 'https://hyvor.com/john.jpg',
-        ]);
+        ];
+        $user = AuthUser::fromArray($attrs);
 
         $this->assertEquals(1, $user->id);
         $this->assertEquals('John Doe', $user->name);
@@ -36,6 +38,22 @@ class AuthUserLaravelTest extends LaravelTestCase
         $this->assertNull($user->bio);
         $this->assertNull($user->website_url);
         $this->assertNull($user->email_relay);
+
+        $this->assertSame([
+            'id' => 1,
+            'username' => 'johndoe',
+            'name' => 'John Doe',
+            'email' => 'john@hyvor.com',
+            'email_relay' => null,
+            'picture_url' => 'https://hyvor.com/john.jpg',
+            'location' => null,
+            'bio' => null,
+            'website_url' => null,
+        ], $user->toArray());
+
+        $this->assertSame([UserRole::USER], $user->getRoles());
+        $user->eraseCredentials(); // for coverage
+        $this->assertSame('johndoe', $user->getUserIdentifier());
     }
 
     public function testFromIds(): void

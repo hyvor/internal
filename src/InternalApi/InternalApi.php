@@ -9,10 +9,8 @@ use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
-use Symfony\Component\HttpClient\Exception\JsonException;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -161,7 +159,7 @@ class InternalApi
      */
     public static function getRequestingComponent(Request $request): Component
     {
-        $from = $request->header('X-Internal-Api-From');
+        $from = $request->headers->get('X-Internal-Api-From');
         assert(is_string($from));
         return Component::from($from);
     }

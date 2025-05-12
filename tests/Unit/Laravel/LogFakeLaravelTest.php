@@ -41,4 +41,10 @@ class LogFakeLaravelTest extends LaravelTestCase
         });
     }
 
+    public function testLogNothingLogged(): void
+    {
+        LogFake::enable();
+        LogFake::assertNothingLogged();
+    }
+
 }

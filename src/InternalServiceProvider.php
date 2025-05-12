@@ -5,7 +5,9 @@ namespace Hyvor\Internal;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
@@ -22,6 +24,7 @@ class InternalServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->auth();
+        $this->billing();
         $this->config();
         $this->routes();
         $this->i18n();
@@ -35,15 +38,20 @@ class InternalServiceProvider extends ServiceProvider
         $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
     }
 
+    private function billing(): void
+    {
+        $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
+    }
+
     private function config(): void
     {
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
-            config('internal.component'),
-            config('internal.instance'),
-            config('internal.private_instance'),
-            config('internal.fake'),
-            config('internal.i18n.folder'),
+            (string)config('internal.component'),
+            (string)config('internal.instance'),
+            (string)config('internal.private_instance'),
+            (bool)config('internal.fake'),
+            (string)config('internal.i18n.folder'),
             config('internal.i18n.default_locale'),
         ));
     }
@@ -97,7 +105,8 @@ class InternalServiceProvider extends ServiceProvider
 
         // fake auth
         $user = $fakeConfig->user();
-        AuthFake::enable($user);
+        $usersDatabase = $fakeConfig->usersDatabase();
+        AuthFake::enable($user, $usersDatabase);
 
         // fake billing
         BillingFake::enable(license: function (int $userId, ?int $resourceId, Component $component) use ($fakeConfig

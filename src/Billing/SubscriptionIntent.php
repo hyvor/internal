@@ -3,7 +3,6 @@
 namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Util\Transfer\Encryptable;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
@@ -13,8 +12,6 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
 #[Exclude]
 class SubscriptionIntent
 {
-
-    use Encryptable;
 
     public function __construct(
         /**

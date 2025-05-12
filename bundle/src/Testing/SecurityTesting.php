@@ -11,7 +11,7 @@ class SecurityTesting
     public static function assertUnauthorizedResponse(Response $response): void
     {
         Assert::assertSame(401, $response->getStatusCode());
-        $json = json_decode($response->getContent(), true);
+        $json = json_decode((string)$response->getContent(), true);
         Assert::assertIsArray($json);
         Assert::assertSame('Full authentication is required to access this resource.', $json['message']);
     }

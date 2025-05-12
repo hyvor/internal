@@ -3,9 +3,9 @@
 namespace Hyvor\Internal\Tests\Unit\Auth;
 
 use Hyvor\Internal\Auth\AuthFake;
-use Hyvor\Internal\Tests\LaravelTestCase;
+use Hyvor\Internal\Tests\SymfonyTestCase;
 
-class AuthFakeLaravelTest extends LaravelTestCase
+class AuthFakeSymfonyTest extends SymfonyTestCase
 {
     use AuthFakeTestTrait;
 
@@ -14,6 +14,7 @@ class AuthFakeLaravelTest extends LaravelTestCase
      */
     protected function enable(?array $user = null): void
     {
-        AuthFake::enable($user);
+        AuthFake::enableForSymfony($this->container, $user);
     }
+
 }

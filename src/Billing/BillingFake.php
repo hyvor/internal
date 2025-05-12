@@ -6,7 +6,7 @@ use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 
-class BillingFake extends Billing
+class BillingFake implements BillingInterface
 {
 
     /**

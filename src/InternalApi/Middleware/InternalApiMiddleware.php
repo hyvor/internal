@@ -3,13 +3,15 @@
 namespace Hyvor\Internal\InternalApi\Middleware;
 
 use Closure;
-use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalConfig;
 use Illuminate\Http\Request;
 
+/**
+ * LARAVEL ONLY!!!
+ */
 class InternalApiMiddleware
 {
 

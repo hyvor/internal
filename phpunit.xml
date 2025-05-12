@@ -15,6 +15,7 @@
     <source>
         <include>
             <directory suffix=".php">./src</directory>
+            <directory suffix=".php">./bundle/src</directory>
         </include>
     </source>
     <php>

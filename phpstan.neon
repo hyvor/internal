@@ -4,6 +4,7 @@ parameters:
 		- src
 		- tests
 		- types
+		- bundle
 	excludePaths:
 	    - types/tests/data
 includes:

@@ -11,6 +11,8 @@
 - PHP 8.4 required
 - AuthFake::enable not binds AuthInterface, not Auth, which means apps needs to type hint AuthInterface in dependency
   injection
+- BillingInterface should be used for dependency injection
+- Encryptable trait is removed, Encryption class introduced
 
 ## 2.1.0 - 2025-03-23
 

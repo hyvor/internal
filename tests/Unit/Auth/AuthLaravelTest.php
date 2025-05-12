@@ -9,11 +9,5 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(Auth::class)]
 class AuthLaravelTest extends LaravelTestCase
 {
-
     use AuthTestTrait;
-
-    protected function getContainer(): \Illuminate\Container\Container|\Symfony\Component\DependencyInjection\Container
-    {
-        return app();
-    }
 }

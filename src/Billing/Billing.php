@@ -13,7 +13,7 @@ use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Util\Crypt\Encryption;
 
-class Billing
+class Billing implements BillingInterface
 {
 
     public function __construct(

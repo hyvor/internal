@@ -6,6 +6,7 @@ use Hyvor\Internal\Billing\License\Plan\BlogsPlan;
 use Hyvor\Internal\Billing\License\Plan\CorePlan;
 use Hyvor\Internal\Billing\License\Plan\Plan;
 use Hyvor\Internal\Billing\License\Plan\PlanAbstract;
+use Hyvor\Internal\Billing\License\Plan\PostPlan;
 use Hyvor\Internal\Billing\License\Plan\TalkPlan;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(BlogsPlan::class)]
 #[CoversClass(CorePlan::class)]
 #[CoversClass(TalkPlan::class)]
+#[CoversClass(PostPlan::class)]
 class PlanTest extends TestCase
 {
 
@@ -48,6 +50,13 @@ class PlanTest extends TestCase
         $plan = new CorePlan();
         $this->assertEquals(1, $plan->getCurrentVersion());
         // add more tests when needed
+    }
+
+    public function test_post_plan(): void
+    {
+        $plan = new PostPlan();
+        $this->assertEquals(1, $plan->getCurrentVersion());
+        $this->assertCount(4, $plan->getCurrentPlans());
     }
 
 }
