@@ -1,7 +1,9 @@
 <?php
 
-namespace Hyvor\Internal\Auth;
+namespace Hyvor\Internal\Laravel;
 
+use Hyvor\Internal\Auth\Auth;
+use Hyvor\Internal\Auth\AuthInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -15,7 +17,7 @@ class AuthController
 
     private function getAuthInterface(): AuthInterface
     {
-        return app(Auth::class);
+        return app(AuthInterface::class);
     }
 
     private function getAuth(): Auth
@@ -38,17 +40,17 @@ class AuthController
 
     public function login(Request $request): RedirectResponse
     {
-        return $this->getAuth()->login($this->getRedirect($request));
+        return $this->getAuth()->login($this->getRedirect($request) ?? request()->getUri());
     }
 
     public function signup(Request $request): RedirectResponse
     {
-        return $this->getAuth()->signup($this->getRedirect($request));
+        return $this->getAuth()->signup($this->getRedirect($request) ?? request()->getUri());
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        return $this->getAuth()->logout($this->getRedirect($request));
+        return $this->getAuth()->logout($this->getRedirect($request) ?? request()->getUri());
     }
 
     private function getRedirect(Request $request): ?string

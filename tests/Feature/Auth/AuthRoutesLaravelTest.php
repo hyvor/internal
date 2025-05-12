@@ -2,9 +2,9 @@
 
 namespace Hyvor\Internal\Tests\Feature\Auth;
 
-use Hyvor\Internal\Auth\AuthController;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\InternalServiceProvider;
+use Hyvor\Internal\Laravel\AuthController;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Route;
