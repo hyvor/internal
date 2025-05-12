@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Tests\Unit\Internationalization;
 
 use Hyvor\Internal\Internationalization\ClosestLocale;
-use Hyvor\Internal\Tests\Helper\Symfony\InternalConfigTestHelper;
+use Hyvor\Internal\Tests\Helper\UpdatesInternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -11,9 +11,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class ClosestLocaleSymfonyTest extends SymfonyTestCase
 {
 
+    use UpdatesInternalConfig;
+
     public function testGetsTheClosestLocale(): void
     {
-        InternalConfigTestHelper::updateSymfony($this->container, 'i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
 
         $closestLocale = $this->container->get(ClosestLocale::class);
         assert($closestLocale instanceof ClosestLocale);

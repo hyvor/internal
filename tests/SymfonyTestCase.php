@@ -11,7 +11,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class SymfonyTestCase extends TestCase
 {
 
-    protected Container $container;
+    public Container $container;
 
     protected function setUp(): void
     {

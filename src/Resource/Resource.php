@@ -10,14 +10,17 @@ use Hyvor\Internal\InternalApi\InternalApiMethod;
 class Resource
 {
 
+    public function __construct(private InternalApi $internalApi)
+    {
+    }
+
     public function register(
         int $userId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
-        InternalApi::call(
+        $this->internalApi->call(
             Component::CORE,
-            InternalApiMethod::POST,
             '/resource/register',
             [
                 'user_id' => $userId,
@@ -29,9 +32,8 @@ class Resource
 
     public function delete(int $resourceId): void
     {
-        InternalApi::call(
+        $this->internalApi->call(
             Component::CORE,
-            InternalApiMethod::POST,
             '/resource/delete',
             [
                 'resource_id' => $resourceId,

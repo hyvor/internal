@@ -27,7 +27,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         ]);
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, function ($request) {
             $this->assertEquals(123, $request->user_id);
             $this->assertEquals([1, 2, 3], $request->ids);
@@ -43,7 +43,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         $request = new \Illuminate\Http\Request();
         $request->headers->set('X-Internal-Api-To', 'talk');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 
@@ -55,7 +55,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         $request = new \Illuminate\Http\Request();
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 
@@ -77,7 +77,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         ]);
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 
@@ -100,7 +100,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         ]);
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 
@@ -115,7 +115,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         ]);
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 
@@ -130,7 +130,7 @@ class InternalApiMiddlewareLaravelTest extends LaravelTestCase
         ]);
         $request->headers->set('X-Internal-Api-To', 'core');
 
-        $middleware = new InternalApiMiddleware();
+        $middleware = app(InternalApiMiddleware::class);
         $middleware->handle($request, fn() => null);
     }
 }

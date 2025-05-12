@@ -23,7 +23,6 @@ trait CallsInternalApi
 
     /**
      * @param array<mixed> $data
-     * @param InternalApiMethod|'GET'|'POST' $method
      * @return TestResponse<JsonResponse>
      */
     public function internalApi(

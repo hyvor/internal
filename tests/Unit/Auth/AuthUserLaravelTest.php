@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Tests\Feature\Auth;
+namespace Hyvor\Internal\Tests\Unit\Auth;
 
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
@@ -14,7 +14,7 @@ class AuthUserLaravelTest extends LaravelTestCase
 
     private function getAuth(): AuthInterface
     {
-        return app(Auth::class);
+        return app(AuthInterface::class);
     }
 
     public function testIsCreatedFromArray(): void

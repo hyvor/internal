@@ -6,7 +6,7 @@ use Hyvor\Internal\Internationalization\Exceptions\FormatException;
 use Hyvor\Internal\Internationalization\Exceptions\InvalidStringKeyException;
 use Hyvor\Internal\Internationalization\Strings;
 use Hyvor\Internal\Internationalization\StringsFactory;
-use Hyvor\Internal\Tests\Helper\Symfony\InternalConfigTestHelper;
+use Hyvor\Internal\Tests\Helper\UpdatesInternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -15,10 +15,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class StringsSymfonyTest extends SymfonyTestCase
 {
 
+    use UpdatesInternalConfig;
+
     protected function setUp(): void
     {
         parent::setUp();
-        InternalConfigTestHelper::updateSymfony($this->container, 'i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
     }
 
     private function getStrings(string $locale): Strings

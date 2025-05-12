@@ -2,7 +2,9 @@
 
 namespace Hyvor\Internal;
 
+use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
@@ -19,12 +21,18 @@ class InternalServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->auth();
         $this->config();
         $this->routes();
         $this->i18n();
         $this->metrics();
         $this->fake();
         $this->phpRuntime();
+    }
+
+    private function auth(): void
+    {
+        $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
     }
 
     private function config(): void

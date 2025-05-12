@@ -9,13 +9,20 @@ use Hyvor\Internal\Tests\SymfonyTestCase;
 trait UpdatesInternalConfig
 {
 
+    private function getThis(): object
+    {
+        return $this;
+    }
+
     public function updateInternalConfig(string $key, mixed $value): void
     {
-        if ($this instanceof LaravelTestCase) {
+        $instance = $this->getThis();
+
+        if ($instance instanceof LaravelTestCase) {
             $config = app(InternalConfig::class);
             $this->updateObjectProperty($config, $key, $value);
-        } elseif ($this instanceof SymfonyTestCase) {
-            $config = $this->container->get(InternalConfig::class);
+        } elseif ($instance instanceof SymfonyTestCase) {
+            $config = $instance->container->get(InternalConfig::class);
             assert($config instanceof InternalConfig);
             $this->updateObjectProperty($config, $key, $value);
         } else {

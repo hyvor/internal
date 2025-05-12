@@ -8,6 +8,9 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ * @deprecated covered in Unit\Auth\AuthLaravelTest
+ */
 #[CoversClass(Auth::class)]
 class AuthLaravelTest extends LaravelTestCase
 {

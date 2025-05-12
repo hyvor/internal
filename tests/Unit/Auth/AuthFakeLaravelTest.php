@@ -2,8 +2,8 @@
 
 namespace Hyvor\Internal\Tests\Unit\Auth;
 
-use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Tests\LaravelTestCase;
 
@@ -11,7 +11,7 @@ class AuthFakeLaravelTest extends LaravelTestCase
 {
     private function provider(): AuthFake
     {
-        $provider = app(Auth::class);
+        $provider = app(AuthInterface::class);
         assert($provider instanceof AuthFake);
         return $provider;
     }
