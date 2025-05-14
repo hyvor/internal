@@ -3,11 +3,11 @@
 namespace Hyvor\Internal\Tests\Bundle\Security;
 
 use Hyvor\Internal\Auth\AuthFake;
-use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Bundle\Security\HasHyvorUser;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[CoversClass(HasHyvorUser::class)]
 class HasHyvorUserTest extends SymfonyTestCase
@@ -26,7 +26,7 @@ class HasHyvorUserTestController extends AbstractController
 {
     use HasHyvorUser;
 
-    public function getUser(): AuthUser
+    public function getUser(): UserInterface
     {
         return AuthFake::generateUser(['id' => 1]);
     }
