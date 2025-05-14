@@ -11,7 +11,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class SymfonyTestCase extends TestCase
 {
 
-    protected Container $container;
+    public SymfonyKernel $kernel;
+    public Container $container;
 
     protected function setUp(): void
     {
@@ -21,8 +22,15 @@ class SymfonyTestCase extends TestCase
         $kernel->boot();
         $container = $kernel->getContainer();
         assert($container instanceof Container);
+
+        $this->kernel = $kernel;
         $this->container = $container;
         $this->container->set(HttpClientInterface::class, new MockHttpClient());
+    }
+
+    protected function getContainer(): Container
+    {
+        return $this->container;
     }
 
 }

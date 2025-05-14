@@ -58,4 +58,10 @@ class LogFake
         });
     }
 
+    public static function assertNothingLogged(): void
+    {
+        // @phpstan-ignore-next-line
+        Log::assertNothingLogged();
+    }
+
 }

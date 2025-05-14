@@ -2,11 +2,12 @@
 
 namespace Hyvor\Internal\Auth;
 
+use Illuminate\Support\Collection;
+
 interface AuthInterface
 {
 
     public function check(string $cookie): false|AuthUser;
-
 
     /**
      * @param iterable<int> $ids

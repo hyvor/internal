@@ -39,22 +39,21 @@ final class AuthFake implements AuthInterface
             $user = self::generateUser($user);
         }
         $this->user = $user;
-        $this->usersDatabase = self::getAuthUsersFromPartial($usersDatabase);
+        $this->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
     }
 
     /**
      * Laravel-only
      * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
      */
-    public static function enable(null|AuthUser|array $user = null): void
-    {
-        $fake = new self();
-        if (is_array($user)) {
-            $user = self::generateUser($user);
-        }
-        $fake->user = $user;
+    public static function enable(
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ): void {
+        $fake = new self($user, $usersDatabase);
         app()->singleton(
-            Auth::class,
+            AuthInterface::class,
             fn() => $fake
         );
     }
@@ -62,14 +61,19 @@ final class AuthFake implements AuthInterface
     /**
      * Symfony-only
      * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
      */
-    public static function enableForSymfony(Container $container, null|AuthUser|array $user = null): void
-    {
+    public static function enableForSymfony(
+        Container $container,
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ): void {
         $fake = new self();
         if (is_array($user)) {
             $user = self::generateUser($user);
         }
         $fake->user = $user;
+        $fake->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
         self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
     }
@@ -162,7 +166,7 @@ final class AuthFake implements AuthInterface
             $fake = self::$symfonyContainer->get(AuthInterface::class);
         } else {
             // laravel
-            $fake = app(Auth::class);
+            $fake = app(AuthInterface::class);
         }
 
         assert($fake instanceof self);

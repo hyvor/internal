@@ -2,6 +2,21 @@
 
 - InstanceUrl removed, use InternalConfig and ComponentUrl instead
 - InternalApi\ComponentType moved to Component\Component, and many static methods have been removed
+- Component::current() is removed, use InternalConfig instead
+- Auth methods are no longer static
+- Auth login, signup, and logout methods now return a Symfony RedirectRepsonse object
+- Auth login, signup, and logout methods now require a string URL to set redirect URL to the current one
+- component label is removed from metrics, add that in Prometheus instead
+- InternalApiMethod is removed, call internal API requests should be POST now
+- PHP 8.4 required
+- AuthFake::enable not binds AuthInterface, not Auth, which means apps needs to type hint AuthInterface in dependency
+  injection
+- BillingInterface should be used for dependency injection
+- Encryptable trait is removed, Encryption class introduced
+
+## 2.1.0 - 2025-03-23
+
+- Add Metrics support
 
 ## 2.0.4 - 2025-02-04
 

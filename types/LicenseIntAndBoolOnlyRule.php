@@ -4,8 +4,8 @@ namespace Hyvor\Internal\Types;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\ClassPropertyNode;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\Type;
 
 /**
  * @implements \PHPStan\Rules\Rule<\PHPStan\Node\ClassPropertyNode>
@@ -21,10 +21,6 @@ class LicenseIntAndBoolOnlyRule implements \PHPStan\Rules\Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (!$node instanceof ClassPropertyNode) {
-            return [];
-        }
-
         $class = $node->getClassReflection();
         $parent = $class->getParentClass();
 
@@ -37,6 +33,10 @@ class LicenseIntAndBoolOnlyRule implements \PHPStan\Rules\Rule
         }
 
         $type = $node->getNativeType();
+        if ($type === null) {
+            return [];
+        }
+
         $validation = $this->validate($type, $node->getName());
 
         if ($validation === true) {
@@ -50,12 +50,9 @@ class LicenseIntAndBoolOnlyRule implements \PHPStan\Rules\Rule
         ];
     }
 
-    private function validate(mixed $type, string $name): string|true
+    private function validate(Type $type, string $name): string|true
     {
-        if (
-            !$type instanceof Node\Identifier ||
-            !in_array($type->name, ['int', 'bool'])
-        ) {
+        if ($type->isInteger()->no() && $type->isBoolean()->no()) {
             return "License property \$$name should be int or bool";
         }
 

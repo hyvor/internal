@@ -91,7 +91,7 @@ class AuthUser implements UserInterface
 
     public function getRoles(): array
     {
-        return [UserRole::USER];
+        return [UserRole::HYVOR_USER];
     }
 
     public function eraseCredentials(): void

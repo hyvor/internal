@@ -2,14 +2,27 @@
 
 namespace Hyvor\Internal\Billing;
 
+use Hyvor\Internal\Billing\Dto\LicenseOf;
+use Hyvor\Internal\Billing\Dto\LicensesCollection;
+use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Component\ComponentUrlResolver;
+use Hyvor\Internal\Component\InstanceUrlResolver;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\InternalApi\InternalApiMethod;
+use Hyvor\Internal\InternalConfig;
+use Hyvor\Internal\Util\Crypt\Encryption;
 
-class Billing
+class Billing implements BillingInterface
 {
+
+    public function __construct(
+        private InternalConfig $internalConfig,
+        private InstanceUrlResolver $instanceUrlResolver,
+        private InternalApi $internalApi,
+        private Encryption $encryption
+    ) {
+    }
 
     /**
      * @return array{token: string, urlNew: string, urlChange: string}
@@ -21,7 +34,7 @@ class Billing
         bool $isAnnual,
         ?Component $component = null,
     ): array {
-        $component ??= Component::current();
+        $component ??= $this->internalConfig->getComponent();
 
         // this validates the plan name as well
         $plan = $component->plans()->getPlan($planName);
@@ -35,9 +48,9 @@ class Billing
             $isAnnual,
         );
 
-        $token = $object->encrypt();
+        $token = $this->encryption->encrypt($object);
 
-        $baseUrl = ComponentUrlResolver::getInstanceUrl() . '/account/billing/subscription?token=' . $token;
+        $baseUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/account/billing/subscription?token=' . $token;
 
         return [
             'token' => $token,
@@ -48,30 +61,39 @@ class Billing
 
     /**
      * Get the license of a user.
+     * @throws InternalApiCallFailedException
+     * @throws LicenseOfCombinationNotFoundException
      */
     public function license(
         int $userId,
         ?int $resourceId,
         ?Component $component = null,
     ): ?License {
-        $component ??= Component::current();
+        $licenses = $this->licenses([new LicenseOf($userId, $resourceId)], $component);
+        return $licenses->of($userId, $resourceId);
+    }
 
-        $response = InternalApi::call(
+    /**
+     * @param array<LicenseOf> $of
+     * @throws InternalApiCallFailedException
+     */
+    public function licenses(array $of, ?Component $component = null): LicensesCollection
+    {
+        $component ??= $this->internalConfig->getComponent();
+
+        /**
+         * @var array{user_id: int, resource_id: ?int, license: ?string}[] $response
+         */
+        $response = $this->internalApi->call(
             Component::CORE,
-            InternalApiMethod::GET,
-            '/billing/license',
+            '/billing/licenses',
             [
-                'user_id' => $userId,
-                'resource_id' => $resourceId,
+                'of' => array_map(fn($ofOne) => $ofOne->toArray(), $of)
             ],
             $component
         );
 
-        /** @var ?string $license */
-        $license = $response['license'];
-        $licenseClass = $component->license();
-
-        return $license ? $licenseClass::unserialize($license) : null;
+        return new LicensesCollection($response, $component);
     }
 
 }

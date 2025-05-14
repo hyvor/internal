@@ -5,6 +5,9 @@ namespace Hyvor\Internal\InternalApi\Middleware;
 use Hyvor\Internal\Component\Component;
 use Illuminate\Http\Request;
 
+/**
+ * LARAVEL ONLY!!!
+ */
 class InternalApiFromMiddleware
 {
 

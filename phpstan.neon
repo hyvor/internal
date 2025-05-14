@@ -3,5 +3,9 @@ parameters:
 	paths:
 		- src
 		- tests
+		- types
+		- bundle
+	excludePaths:
+	    - types/tests/data
 includes:
 	- extension.neon

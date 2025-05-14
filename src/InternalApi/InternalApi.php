@@ -3,14 +3,16 @@
 namespace Hyvor\Internal\InternalApi;
 
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Component\ComponentUrlResolver;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -24,18 +26,17 @@ class InternalApi
         private InternalConfig $config,
         private Encryption $encryption,
         private HttpClientInterface $client,
+        private InstanceUrlResolver $instanceUrlResolver
     ) {
     }
 
     /**
      * @param array<mixed> $data
-     * @param InternalApiMethod|'GET'|'POST' $method
      * @return array<mixed>
      * @throws InternalApiCallFailedException
      */
     public function call(
         Component $to,
-        InternalApiMethod|string $method,
         /**
          * This is the part after the `/api/internal/` in the URL
          * ex: set `/delete-user` to call `/api/internal/delete-user`
@@ -44,12 +45,8 @@ class InternalApi
         array $data = [],
         ?Component $from = null
     ): array {
-        if (is_string($method)) {
-            $method = InternalApiMethod::from($method);
-        }
-
         $endpoint = ltrim($endpoint, '/');
-        $componentUrl = new ComponentUrlResolver($this->config->getPrivateInstanceWithFallback())->of($to);
+        $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
 
         $url = $componentUrl . '/api/internal/' . $endpoint;
 
@@ -64,29 +61,29 @@ class InternalApi
 
         try {
             $response = $this->client->request(
-                $method->value,
+                'POST',
                 $url,
                 [
                     'headers' => $headers,
-                    'body' => [
+                    'json' => [
                         'message' => $message,
                     ],
                 ]
             );
 
-            $status = $response->getStatusCode();
-
-            if ($status !== 200) {
-                throw new InternalApiCallFailedException(
-                    'Internal API call to ' . $url . ' failed. Status code: ' . $status .
-                    ' - ' . substr($response->getContent(), 0, 250)
-                );
-            }
-
             return $response->toArray();
         } catch (TransportExceptionInterface $e) {
             throw new InternalApiCallFailedException(
                 'Internal API call to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
+            );
+        } catch (DecodingExceptionInterface $e) {
+            throw new InternalApiCallFailedException(
+                'Internal API call to ' . $url . ' failed. Decoding error: ' . $e->getMessage(),
+            );
+        } catch (HttpExceptionInterface $e) {
+            throw new InternalApiCallFailedException(
+                'Internal API call to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
+                ' - ' . substr($response->getContent(false), 0, 250)
             );
         }
     }
@@ -108,13 +105,14 @@ class InternalApi
 
     /**
      * @return array<string, mixed>
+     * @throws InvalidMessageException
      */
-    public static function dataFromMessage(
+    public function dataFromMessage(
         string $message,
         bool $validateTimestamp = true
     ): array {
         try {
-            $decodedMessage = Crypt::decryptString($message);
+            $decodedMessage = $this->encryption->decryptString($message);
         } catch (DecryptException) {
             throw new InvalidMessageException('Failed to decrypt message');
         }
@@ -148,11 +146,20 @@ class InternalApi
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function dataFromMockResponse(MockResponse $mockResponse): array
+    {
+        $body = $mockResponse->getRequestOptions()['body'];
+        return $this->dataFromMessage(json_decode($body, true, flags: JSON_THROW_ON_ERROR)['message']);
+    }
+
+    /**
      * Helper to get the requesting component from a request
      */
     public static function getRequestingComponent(Request $request): Component
     {
-        $from = $request->header('X-Internal-Api-From');
+        $from = $request->headers->get('X-Internal-Api-From');
         assert(is_string($from));
         return Component::from($from);
     }

@@ -4,10 +4,13 @@ namespace Hyvor\Internal\Tests\Feature\Auth;
 
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\InternalServiceProvider;
+use Hyvor\Internal\Laravel\AuthController;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(AuthController::class)]
 class AuthRoutesLaravelTest extends LaravelTestCase
 {
 
@@ -24,8 +27,11 @@ class AuthRoutesLaravelTest extends LaravelTestCase
 
     public function testCheckWhenNotLoggedIn(): void
     {
+        AuthFake::enable(null);
+
         $this
             ->post('/api/auth/check')
+            ->assertOk()
             ->assertJsonPath('is_logged_in', false)
             ->assertJsonPath('user', null);
     }
@@ -57,6 +63,8 @@ class AuthRoutesLaravelTest extends LaravelTestCase
 
     public function testRespectsDomain(): void
     {
+        AuthFake::enable(null);
+
         $app = $this->app;
         assert($app !== null);
 

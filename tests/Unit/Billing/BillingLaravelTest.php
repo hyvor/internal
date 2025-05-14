@@ -3,62 +3,37 @@
 namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\Dto\LicenseOf;
+use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\SubscriptionIntent;
-use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\Tests\LaravelTestCase;
-use Illuminate\Http\Client\Request;
-use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(Billing::class)]
 #[CoversClass(SubscriptionIntent::class)]
+#[CoversClass(LicensesCollection::class)]
+#[CoversClass(LicenseOf::class)]
 class BillingLaravelTest extends LaravelTestCase
 {
 
-    public function testSubscriptionIntent(): void
+    use BillingTestTrait;
+
+    protected function getBilling(): Billing
     {
-        $billing = new Billing();
-        $intent = $billing->subscriptionIntent(1, 'starter', true, Component::BLOGS);
-
-        $token = $intent['token'];
-        $this->assertIsString($token);
-
-        $this->assertEquals("https://hyvor.com/account/billing/subscription?token=$token", $intent['urlNew']);
-        $this->assertEquals(
-            "https://hyvor.com/account/billing/subscription?token=$token&change=1",
-            $intent['urlChange']
-        );
+        return app(Billing::class);
     }
 
-    public function testGetLicense(): void
+    protected function setHttpResponse(MockResponse $response): void
     {
-        $billing = new Billing();
-
-        Http::fake([
-            'https://hyvor.com/api/internal/billing/license*' => Http::response([
-                'license' => (new BlogsLicense())->serialize()
-            ])
-        ]);
-
-        $license = $billing->license(1, 10, Component::BLOGS);
-
-        $this->assertInstanceOf(BlogsLicense::class, $license);
-        $this->assertEquals(2, $license->users);
-
-        Http::assertSent(function (Request $request) {
-            $data = InternalApi::dataFromMessage($request->data()['message']);
-
-            $this->assertEquals(1, $data['user_id']);
-            $this->assertEquals(10, $data['resource_id']);
-
-            $headers = $request->headers();
-            $this->assertEquals('core', $headers['X-Internal-Api-To'][0]);
-            $this->assertEquals('blogs', $headers['X-Internal-Api-From'][0]);
-
-            return true;
-        });
+        app()->singleton(HttpClientInterface::class, fn() => new MockHttpClient($response));
     }
 
+    protected function getInternalApi(): InternalApi
+    {
+        return app(InternalApi::class);
+    }
 }

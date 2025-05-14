@@ -5,7 +5,6 @@ namespace Hyvor\Internal;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
-use Illuminate\Support\Collection;
 
 /**
  * @phpstan-import-type AuthUserArrayPartial from AuthUser

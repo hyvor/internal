@@ -5,6 +5,6 @@ namespace Hyvor\Internal\Bundle\Security;
 class UserRole
 {
 
-    public const string USER = 'ROLE_USER';
+    public const string HYVOR_USER = 'ROLE_HYVOR_USER';
 
 }

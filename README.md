@@ -401,6 +401,26 @@ files in the directory.
 }
 ```
 
+## Metrics
+
+To enable metrics, add the middleware to global middleware in `app/Http/Kernel.php`:
+
+```php
+protected $middleware = [
+    // ...
+    \Hyvor\Internal\Metric\MetricMiddleware::class,
+];
+```
+
+The middleware will automatically do the following:
+
+- Record prometheus metrics for each request.
+- Serve the metrics at `/api/metrics` on local.
+- Serve the metrics at `/*` if `HYVOR_METRICS_SERVER` environment variable is set to `true`.
+
+The `apcu` extension is required to persist metrics between requests. This has been tested with FrankenPHP. It does not
+work with the CLI.
+
 ### Usage
 
 ```php
@@ -445,3 +465,10 @@ $i18n->getAvailableLocales(); // ['en-US', 'fr-FR', 'es', ...]
 $i18n->getLocaleStrings('en-US'); // returns the strings from the JSON file as an array
 $i18n->getDefaultLocaleStrings(); // strings of the default locale
 ```
+
+### Development
+
+#### PHPStorm
+
+To make pcov show the coverage for the bundle directory, set `pcov.directory` to `.` in PHP Cli Interpreter ->
+Configuration Options. It should show `-dpcov.directory=.`.

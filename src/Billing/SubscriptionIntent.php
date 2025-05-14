@@ -3,16 +3,15 @@
 namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Component\Component;
-use Hyvor\Internal\Util\Transfer\Encryptable;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
  * This is the object for requesting a new subscription
  * or a plan change.
  */
+#[Exclude]
 class SubscriptionIntent
 {
-
-    use Encryptable;
 
     public function __construct(
         /**

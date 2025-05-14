@@ -6,9 +6,6 @@ First, you need the internal library via Composer:
 
 ```bash
 composer require hyvor/internal
-
-# additional bundles
-composer require symfony/security-bundle # needed for authentication
 ```
 
 ### Step 2: Add the Bundle to Your Project
@@ -24,6 +21,12 @@ return [
 ```
 
 ## Authentication
+
+Install Twig Bundles
+
+```bash
+composer require symfony/security-bundle
+```
 
 ### Step 1: Setup Firewall and Access Control
 
@@ -47,7 +50,7 @@ return static function (ContainerBuilder $container, SecurityConfig $security): 
     $security
         ->accessControl()
         ->path('^/api/console')
-        ->roles(UserRole::USER);
+        ->roles(UserRole::HYVOR_USER);
         
     # other access control
 
@@ -60,8 +63,8 @@ return static function (ContainerBuilder $container, SecurityConfig $security): 
 // src/Controller/ConsoleController.php
 use Hyvor\Internal\Bundle\Security\UserRole;
 
-$user = $this->getUser(UserRole::USER);
-$this->denyAccessUnlessGranted(UserRole::USER);
+$user = $this->getUser(UserRole::HYVOR_USER);
+$this->denyAccessUnlessGranted(UserRole::HYVOR_USER);
 ```
 
 ## Exception Listener

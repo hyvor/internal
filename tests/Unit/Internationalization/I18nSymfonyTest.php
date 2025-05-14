@@ -2,9 +2,8 @@
 
 namespace Hyvor\Internal\Tests\Unit\Internationalization;
 
-use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Internationalization\I18n;
-use Hyvor\Internal\Tests\Helper\Symfony\InternalConfigTestHelper;
+use Hyvor\Internal\Tests\Helper\UpdatesInternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -12,11 +11,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 class I18nSymfonyTest extends SymfonyTestCase
 {
 
+    use UpdatesInternalConfig;
+
     protected function setUp(): void
     {
         parent::setUp();
-
-        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
     }
 
     public function testI18nWorks(): void
@@ -33,7 +33,7 @@ class I18nSymfonyTest extends SymfonyTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Could not read the locales folder');
 
-        InternalConfigTestHelper::setContainerWithUpdatedProperty($this->container, 'i18nFolder', '/missing-folder');
+        $this->updateInternalConfig('i18nFolder', __DIR__ . '/missing-folder');
         $i18n = $this->container->get(I18n::class);
     }
 
@@ -53,6 +53,7 @@ class I18nSymfonyTest extends SymfonyTestCase
         $this->expectExceptionMessage('Locale pb not found');
 
         $i18n = $this->container->get(I18n::class);
+        assert($i18n instanceof I18n);
         $i18n->getLocaleStrings('pb');
     }
 

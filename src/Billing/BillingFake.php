@@ -4,8 +4,9 @@ namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\InternalConfig;
 
-class BillingFake extends Billing
+class BillingFake implements BillingInterface
 {
 
     /**
@@ -16,21 +17,23 @@ class BillingFake extends Billing
         null|License|callable $license = null,
     ): void {
         app()->singleton(Billing::class, function () use ($license) {
-            return new BillingFake($license);
+            return new BillingFake(app(InternalConfig::class), $license);
         });
     }
 
     public function __construct(
+        private InternalConfig $internalConfig,
+
         /**
          * @param License|(callable(int $userId, ?int $resouceId, Component $component) : ?License)|null $license
          */
-        private readonly mixed $license = null
+        private readonly mixed $license = null,
     ) {
     }
 
     public function license(int $userId, ?int $resourceId, ?Component $component = null): ?License
     {
-        $component ??= Component::current();
+        $component ??= $this->internalConfig->getComponent();
 
         if ($this->license === null) {
             return null;

@@ -17,11 +17,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 class HyvorAuthenticator extends AbstractAuthenticator
 {
 
-    public function __construct(
-        private AuthInterface $auth
-    ) {
+    public function __construct(private AuthInterface $auth)
+    {
     }
-
 
     public function supports(Request $request): ?bool
     {
@@ -33,7 +31,7 @@ class HyvorAuthenticator extends AbstractAuthenticator
         $cookie = $request->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME);
 
         if (!is_string($cookie)) {
-            throw new AuthenticationException('Hyvor session cookie not found');
+            throw new AuthenticationException('HYVOR session cookie not found');
         }
 
         $user = $this->auth->check($cookie);

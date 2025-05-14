@@ -5,6 +5,8 @@ namespace Hyvor\Internal\Bundle;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -71,27 +73,25 @@ class InternalBundle extends AbstractBundle
             ]);
 
         // Main Services
-        $container->services()->alias(AuthInterface::class, Auth::class);
+        $authInterface = $container->services()->alias(AuthInterface::class, Auth::class);
+        $billingInterface = $container->services()->alias(BillingInterface::class, Billing::class);
 
-        $this->setupFake($container, $builder);
+        // sometimes we need to replace services dynamically in services
+        // it is only possible for public services
+        // @codeCoverageIgnoreStart
+        if ($container->env() === 'test') {
+            $authInterface->public();
+        }
+        // @codeCoverageIgnoreEnd
+
+        if ($config['fake'] && $container->env() === 'dev') {
+            $this->setupFake($container);
+        }
     }
 
-    private function setupFake(ContainerConfigurator $container, ContainerBuilder $builder): void
+    private function setupFake(ContainerConfigurator $container): void
     {
-        if ($container->env() !== 'dev') {
-            return;
-        }
-
-        $isFake = (bool)$builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true);
-
-        if (!$isFake) {
-            return;
-        }
-
-        $class = InternalFake::class;
-        if (class_exists('App\InternalFake')) {
-            $class = 'App\InternalFake';
-        }
+        $class = class_exists('App\InternalFake') ? 'App\InternalFake' : InternalFake::class;
 
         /** @var class-string<InternalFake> $class */
         $fakeConfig = new $class;

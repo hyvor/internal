@@ -24,8 +24,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 1 * self::GB,
                     aiTokens: 0,
                     autoTranslationsChars: 0,
-                    talkCredits: 0,
-                    postEmails: 0,
                     analyses: false,
                 )
             );
@@ -38,8 +36,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 40 * self::GB,
                     aiTokens: 100_000,
                     autoTranslationsChars: 100_000,
-                    talkCredits: 100_000,
-                    postEmails: 0,
                     analyses: true,
                 )
             );
@@ -52,8 +48,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 250 * self::GB,
                     aiTokens: 1_000_000,
                     autoTranslationsChars: 300_000,
-                    talkCredits: 250_000,
-                    postEmails: 0,
                     analyses: true,
                 )
             );
@@ -69,8 +63,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 5 * self::GB,
                     aiTokens: 0,
                     autoTranslationsChars: 0,
-                    talkCredits: 0,
-                    postEmails: 0,
                     analyses: false,
                 )
             );
@@ -83,8 +75,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 150 * self::GB,
                     aiTokens: 100_000,
                     autoTranslationsChars: 100_000,
-                    talkCredits: 100_000,
-                    postEmails: 25_000,
                     analyses: true,
                 )
             );
@@ -97,8 +87,6 @@ class BlogsPlan extends PlanAbstract
                     storage: 500 * self::GB,
                     aiTokens: 1_000_000,
                     autoTranslationsChars: 500_000,
-                    talkCredits: 250_000,
-                    postEmails: 100_000,
                     analyses: true,
                 )
             );
