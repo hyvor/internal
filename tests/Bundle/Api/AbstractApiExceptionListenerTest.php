@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Bundle\Api;
 
 use Hyvor\Internal\Bundle\Api\AbstractApiExceptionListener;
 use Hyvor\Internal\Tests\SymfonyTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
+#[CoversClass(AbstractApiExceptionListener::class)]
 class AbstractApiExceptionListenerTest extends SymfonyTestCase
 {
 

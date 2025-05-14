@@ -78,29 +78,20 @@ class InternalBundle extends AbstractBundle
 
         // sometimes we need to replace services dynamically in services
         // it is only possible for public services
+        // @codeCoverageIgnoreStart
         if ($container->env() === 'test') {
             $authInterface->public();
         }
+        // @codeCoverageIgnoreEnd
 
-        $this->setupFake($container, $builder);
+        if ($config['fake'] && $container->env() === 'dev') {
+            $this->setupFake($container);
+        }
     }
 
-    private function setupFake(ContainerConfigurator $container, ContainerBuilder $builder): void
+    private function setupFake(ContainerConfigurator $container): void
     {
-        if ($container->env() !== 'dev') {
-            return;
-        }
-
-        $isFake = (bool)$builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true);
-
-        if (!$isFake) {
-            return;
-        }
-
-        $class = InternalFake::class;
-        if (class_exists('App\InternalFake')) {
-            $class = 'App\InternalFake';
-        }
+        $class = class_exists('App\InternalFake') ? 'App\InternalFake' : InternalFake::class;
 
         /** @var class-string<InternalFake> $class */
         $fakeConfig = new $class;

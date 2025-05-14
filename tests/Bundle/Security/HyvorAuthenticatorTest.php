@@ -7,11 +7,14 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Bundle\Security\HyvorAuthenticator;
 use Hyvor\Internal\Tests\SymfonyTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
+#[CoversClass(HyvorAuthenticator::class)]
 class HyvorAuthenticatorTest extends SymfonyTestCase
 {
 
@@ -59,11 +62,27 @@ class HyvorAuthenticatorTest extends SymfonyTestCase
         $userBadge = $badges[UserBadge::class];
         $this->assertInstanceOf(UserBadge::class, $userBadge);
         $this->assertEquals('test_user', $userBadge->getUserIdentifier());
+
+        $loader = $userBadge->getUserLoader();
+        $this->assertNotNull($loader);
+        $this->assertInstanceOf(AuthUser::class, $loader('test_user'));
     }
 
     public function test_cover_other_methods(): void
     {
-        // TODO
+        $authenticator = $this->getAuthenticator();
+        $request = new Request();
+
+        // supports should always return true
+        $this->assertTrue($authenticator->supports($request));
+
+        // onAuthenticationSuccess should return null
+        $token = $this->createMock(TokenInterface::class);
+        $this->assertNull($authenticator->onAuthenticationSuccess($request, $token, 'main'));
+
+        // onAuthenticationFailure should return null
+        $exception = $this->createMock(AuthenticationException::class);
+        $this->assertNull($authenticator->onAuthenticationFailure($request, $exception));
     }
 
 }
