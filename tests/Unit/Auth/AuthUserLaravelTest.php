@@ -51,7 +51,7 @@ class AuthUserLaravelTest extends LaravelTestCase
             'website_url' => null,
         ], $user->toArray());
 
-        $this->assertSame([UserRole::USER], $user->getRoles());
+        $this->assertSame([UserRole::HYVOR_USER], $user->getRoles());
         $user->eraseCredentials(); // for coverage
         $this->assertSame('johndoe', $user->getUserIdentifier());
     }

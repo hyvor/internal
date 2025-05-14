@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Bundle\Exception;
+namespace Hyvor\Internal\Bundle\Api;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;

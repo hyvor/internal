@@ -465,3 +465,10 @@ $i18n->getAvailableLocales(); // ['en-US', 'fr-FR', 'es', ...]
 $i18n->getLocaleStrings('en-US'); // returns the strings from the JSON file as an array
 $i18n->getDefaultLocaleStrings(); // strings of the default locale
 ```
+
+### Development
+
+#### PHPStorm
+
+To make pcov show the coverage for the bundle directory, set `pcov.directory` to `.` in PHP Cli Interpreter ->
+Configuration Options. It should show `-dpcov.directory=.`.
