@@ -17,14 +17,15 @@ use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
 use Prometheus\Storage\APCng;
 use Prometheus\Storage\InMemory;
+use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class InternalServiceProvider extends ServiceProvider
 {
 
     public function boot(): void
     {
-        $this->auth();
-        $this->billing();
+        $this->setInterfaceBindings();
         $this->config();
         $this->routes();
         $this->i18n();
@@ -33,13 +34,10 @@ class InternalServiceProvider extends ServiceProvider
         $this->phpRuntime();
     }
 
-    private function auth(): void
+    private function setInterfaceBindings(): void
     {
+        $this->app->bind(HttpClientInterface::class, fn() => new CurlHttpClient());
         $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
-    }
-
-    private function billing(): void
-    {
         $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
     }
 

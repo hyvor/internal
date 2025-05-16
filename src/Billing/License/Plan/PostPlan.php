@@ -26,7 +26,7 @@ class PostPlan extends PlanAbstract
 
             $this->plan(
                 '100k',
-                40,
+                35,
                 new PostLicense(
                     emails: 100_000,
                     noBranding: true
@@ -36,7 +36,7 @@ class PostPlan extends PlanAbstract
 
             $this->plan(
                 '300k',
-                100,
+                90,
                 new PostLicense(
                     emails: 300_000,
                     noBranding: true
@@ -46,7 +46,7 @@ class PostPlan extends PlanAbstract
 
             $this->plan(
                 '1M',
-                250,
+                225,
                 new PostLicense(
                     emails: 1_000_000,
                     noBranding: true
