@@ -1,4 +1,4 @@
-## Unreleased
+## 3.0.0 - 2025-05-19
 
 - InstanceUrl removed, use InternalConfig and ComponentUrl instead
 - InternalApi\ComponentType moved to Component\Component, and many static methods have been removed
