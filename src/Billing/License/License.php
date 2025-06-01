@@ -16,7 +16,7 @@ abstract class License
 
     use Serializable;
 
-    public DerivedFrom $derivedFrom;
+    public ?DerivedFrom $derivedFrom = null;
 
     public function setDerivedFrom(DerivedFrom $derivedFrom): static
     {

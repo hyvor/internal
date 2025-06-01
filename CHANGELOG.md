@@ -1,8 +1,9 @@
-## 3.0.2 - 2025-06-01
+## 3.0.3 - 2025-06-01
 
 - login, signup, and logout methods removed from Auth
 - AuthInterface now has authUrl() method to get those URLs with redirect support
 - BillingFake now supports licenses()
+- DerivedFrom is set by default to null in License
 
 ## 3.0.0 - 2025-05-19
 
