@@ -2,6 +2,7 @@
 
 - login, signup, and logout methods removed from Auth
 - AuthInterface now has authUrl() method to get those URLs with redirect support
+- BillingFake now supports licenses()
 
 ## 3.0.0 - 2025-05-19
 
