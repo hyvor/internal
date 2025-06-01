@@ -53,6 +53,9 @@ class AuthController
         return $this->redirectTo('logout', $request);
     }
 
+    /**
+     * @param 'login'|'signup'|'logout' $page
+     */
     private function redirectTo(string $page, Request $request): RedirectResponse
     {
         $url = $this->getAuth()->authUrl($page, $request->get('redirect') ?? $request->getUri());
