@@ -2,13 +2,19 @@
 
 namespace Hyvor\Internal\InternalApi;
 
+use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
+use Hyvor\Internal\InternalConfig;
+use Hyvor\Internal\Util\Crypt\Encryption;
 use Illuminate\Contracts\Encryption\DecryptException;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Call the internal API between components
@@ -16,71 +22,77 @@ use Illuminate\Support\Facades\Http;
 class InternalApi
 {
 
+    public function __construct(
+        private InternalConfig $config,
+        private Encryption $encryption,
+        private HttpClientInterface $client,
+        private InstanceUrlResolver $instanceUrlResolver
+    ) {
+    }
+
     /**
      * @param array<mixed> $data
-     * @param InternalApiMethod|'GET'|'POST' $method
      * @return array<mixed>
+     * @throws InternalApiCallFailedException
      */
-    public static function call(
-        ComponentType $to,
-        InternalApiMethod|string $method,
+    public function call(
+        Component $to,
         /**
          * This is the part after the `/api/internal/` in the URL
          * ex: set `/delete-user` to call `/api/internal/delete-user`
          */
         string $endpoint,
         array $data = [],
-        ?ComponentType $from = null
+        ?Component $from = null
     ): array {
-        if (is_string($method)) {
-            $method = InternalApiMethod::from($method);
-        }
-        $methodFunction = strtolower($method->value);
-
         $endpoint = ltrim($endpoint, '/');
-        $componentUrl = InstanceUrl::createPrivate()->componentUrl($to);
+        $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
+
         $url = $componentUrl . '/api/internal/' . $endpoint;
 
-        $message = self::messageFromData($data);
-
-        $from ??= ComponentType::current();
+        $message = $this->messageFromData($data);
+        $from ??= $this->config->getComponent();
 
         $headers = [
+            'Content-Type' => 'application/json',
             'X-Internal-Api-From' => $from->value,
             'X-Internal-Api-To' => $to->value,
         ];
 
         try {
-            $response = Http::
-            withHeaders($headers)
-                ->$methodFunction(
-                    $url,
-                    [
+            $response = $this->client->request(
+                'POST',
+                $url,
+                [
+                    'headers' => $headers,
+                    'json' => [
                         'message' => $message,
-                    ]
-                );
-        } catch (ConnectionException $e) {
+                    ],
+                ]
+            );
+
+            return $response->toArray();
+        } catch (TransportExceptionInterface $e) {
             throw new InternalApiCallFailedException(
                 'Internal API call to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
             );
-        }
-
-        if (!$response->ok()) {
+        } catch (DecodingExceptionInterface $e) {
             throw new InternalApiCallFailedException(
-                'Internal API call to ' . $url . ' failed. Status code: ' .
-                $response->status() . ' - ' .
-                substr($response->body(), 0, 250)
+                'Internal API call to ' . $url . ' failed. Decoding error: ' . $e->getMessage(),
+            );
+        } catch (HttpExceptionInterface $e) {
+            throw new InternalApiCallFailedException(
+                'Internal API call to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
+                ' - ' . substr($response->getContent(false), 0, 250)
             );
         }
-
-        return (array)$response->json();
     }
 
     /**
      * @param array<mixed> $data
      * @throws \Exception
      */
-    public static function messageFromData(array $data): string
+    public function messageFromData(array $data): string
     {
         $json = json_encode([
             'data' => $data,
@@ -88,18 +100,19 @@ class InternalApi
         ]);
         assert(is_string($json));
 
-        return Crypt::encryptString($json);
+        return $this->encryption->encryptString($json);
     }
 
     /**
      * @return array<string, mixed>
+     * @throws InvalidMessageException
      */
-    public static function dataFromMessage(
+    public function dataFromMessage(
         string $message,
         bool $validateTimestamp = true
     ): array {
         try {
-            $decodedMessage = Crypt::decryptString($message);
+            $decodedMessage = $this->encryption->decryptString($message);
         } catch (DecryptException) {
             throw new InvalidMessageException('Failed to decrypt message');
         }
@@ -133,13 +146,22 @@ class InternalApi
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function dataFromMockResponse(MockResponse $mockResponse): array
+    {
+        $body = $mockResponse->getRequestOptions()['body'];
+        return $this->dataFromMessage(json_decode($body, true, flags: JSON_THROW_ON_ERROR)['message']);
+    }
+
+    /**
      * Helper to get the requesting component from a request
      */
-    public static function getRequestingComponent(Request $request): ComponentType
+    public static function getRequestingComponent(Request $request): Component
     {
-        $from = $request->header('X-Internal-Api-From');
+        $from = $request->headers->get('X-Internal-Api-From');
         assert(is_string($from));
-        return ComponentType::from($from);
+        return Component::from($from);
     }
 
 }

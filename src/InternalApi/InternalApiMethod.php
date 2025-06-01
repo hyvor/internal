@@ -2,6 +2,9 @@
 
 namespace Hyvor\Internal\InternalApi;
 
+/**
+ * @deprecated
+ */
 enum InternalApiMethod: string
 {
     case GET = 'GET';

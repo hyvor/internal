@@ -4,45 +4,91 @@ namespace Hyvor\Internal\Auth;
 
 use Faker\Factory;
 use Illuminate\Support\Collection;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @phpstan-import-type AuthUserArrayPartial from AuthUser
  */
-final class AuthFake extends Auth
+final class AuthFake implements AuthInterface
 {
 
     /**
-     * If $userDatabase is set, users will be searched (in fromX() methods) from this collection
+     * If $usersDatabase is set, users will be searched (in fromX() methods) from this collection
      * Results will only be returned if the search is matched
      * If it is not set, all users will always be matched using fake data (for testing)
      * @var Collection<int, AuthUser>|null
      */
-    private ?Collection $userDatabase = null;
+    private ?Collection $usersDatabase = null;
 
     /**
      * Currently logged-in user
      */
     public ?AuthUser $user = null;
 
+    private static ?Container $symfonyContainer = null;
+
     /**
      * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
      */
-    public static function enable(null|AuthUser|array $user = null): void
-    {
+    public function __construct(
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ) {
+        if (is_array($user)) {
+            $user = self::generateUser($user);
+        }
+        $this->user = $user;
+        $this->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
+    }
+
+    /**
+     * Laravel-only
+     * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
+     */
+    public static function enable(
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ): void {
+        $fake = new self($user, $usersDatabase);
+        app()->singleton(
+            AuthInterface::class,
+            fn() => $fake
+        );
+    }
+
+    /**
+     * Symfony-only
+     * @param AuthUser|AuthUserArrayPartial|null $user
+     * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
+     */
+    public static function enableForSymfony(
+        Container $container,
+        null|AuthUser|array $user = null,
+        ?iterable $usersDatabase = null
+    ): void {
         $fake = new self();
         if (is_array($user)) {
             $user = self::generateUser($user);
         }
         $fake->user = $user;
-        app()->singleton(
-            Auth::class,
-            fn() => $fake
-        );
+        $fake->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
+        self::$symfonyContainer = $container;
+        $container->set(AuthInterface::class, $fake);
     }
 
-    public function check(): false|AuthUser
+    public function check(string $cookie): false|AuthUser
     {
         return $this->user ?: false;
+    }
+
+    public function authUrl(string $page, null|string|Request $redirect = null): string
+    {
+        $redirect = Auth::resolveRedirect($redirect);
+        $redirectQuery = $redirect ? '?redirect=' . urlencode($redirect) : '';
+        return 'https://hyvor.com/' . $page . $redirectQuery;
     }
 
     /**
@@ -92,8 +138,8 @@ final class AuthFake extends Auth
      */
     private function singleSearch(string $key, string|int $value): ?AuthUser
     {
-        if ($this->userDatabase !== null) {
-            return $this->userDatabase->firstWhere($key, $value);
+        if ($this->usersDatabase !== null) {
+            return $this->usersDatabase->firstWhere($key, $value);
         }
 
         // @phpstan-ignore-next-line
@@ -107,8 +153,8 @@ final class AuthFake extends Auth
      */
     private function multiSearch(string $key, iterable $values): Collection
     {
-        if ($this->userDatabase !== null) {
-            return $this->userDatabase->whereIn($key, $values)
+        if ($this->usersDatabase !== null) {
+            return $this->usersDatabase->whereIn($key, $values)
                 ->keyBy($key);
         }
 
@@ -121,15 +167,27 @@ final class AuthFake extends Auth
             ->keyBy($key);
     }
 
+    private static function getFakeFromContainer(): self
+    {
+        if (self::$symfonyContainer) {
+            // symfony
+            $fake = self::$symfonyContainer->get(AuthInterface::class);
+        } else {
+            // laravel
+            $fake = app(AuthInterface::class);
+        }
+
+        assert($fake instanceof self);
+        return $fake;
+    }
+
     /**
      * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
+     * @return Collection<int, AuthUser>
      */
-    public static function databaseSet(iterable $users = []): void
+    private static function getAuthUsersFromPartial($users): Collection
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
-
-        $fake->userDatabase = collect($users)
+        return collect($users)
             ->map(function ($user) {
                 if ($user instanceof AuthUser) {
                     return $user;
@@ -139,20 +197,27 @@ final class AuthFake extends Auth
     }
 
     /**
+     * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
+     */
+    public static function databaseSet(iterable $users = []): void
+    {
+        $fake = self::getFakeFromContainer();
+        $fake->usersDatabase = self::getAuthUsersFromPartial($users);
+    }
+
+    /**
      * @return Collection<int, AuthUser>|null
      */
     public static function databaseGet(): ?Collection
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
-        return $fake->userDatabase;
+        $fake = self::getFakeFromContainer();
+        return $fake->usersDatabase;
     }
 
     public static function databaseClear(): void
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
-        $fake->userDatabase = null;
+        $fake = self::getFakeFromContainer();
+        $fake->usersDatabase = null;
     }
 
     /**
@@ -160,12 +225,12 @@ final class AuthFake extends Auth
      */
     public static function databaseAdd($user): void
     {
-        $fake = app(Auth::class);
-        assert($fake instanceof self);
-        if ($fake->userDatabase === null) {
-            $fake->userDatabase = collect([]);
+        $fake = self::getFakeFromContainer();
+
+        if ($fake->usersDatabase === null) {
+            $fake->usersDatabase = collect([]);
         }
-        $fake->userDatabase->push(
+        $fake->usersDatabase->push(
             $user instanceof AuthUser ? $user : self::generateUser($user)
         );
     }

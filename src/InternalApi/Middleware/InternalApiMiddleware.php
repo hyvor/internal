@@ -4,15 +4,22 @@ namespace Hyvor\Internal\InternalApi\Middleware;
 
 use Closure;
 use Hyvor\Internal\Http\Exceptions\HttpException;
-use Hyvor\Internal\InternalApi\ComponentType;
 use Hyvor\Internal\InternalApi\Exceptions\InvalidMessageException;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Illuminate\Contracts\Encryption\DecryptException;
+use Hyvor\Internal\InternalConfig;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 
+/**
+ * LARAVEL ONLY!!!
+ */
 class InternalApiMiddleware
 {
+
+    public function __construct(
+        private InternalConfig $internalConfig,
+        private InternalApi $internalApi,
+    ) {
+    }
 
     public function handle(Request $request, Closure $next): mixed
     {
@@ -20,7 +27,7 @@ class InternalApiMiddleware
 
         if (
             !is_string($toHeader) ||
-            $toHeader !== ComponentType::current()->value
+            $toHeader !== $this->internalConfig->getComponent()->value
         ) {
             throw new HttpException('Invalid to component', 403);
         }
@@ -32,7 +39,7 @@ class InternalApiMiddleware
         }
 
         try {
-            $requestData = InternalApi::dataFromMessage($message);
+            $requestData = $this->internalApi->dataFromMessage($message);
         } catch (InvalidMessageException $exception) {
             throw new HttpException($exception->getMessage());
         }

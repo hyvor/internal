@@ -25,9 +25,21 @@ abstract class UsageAbstract
      * @return class-string<T>
      */
     abstract public function getLicenseType(): string;
+
     abstract public function getKey(): string;
+
     abstract public function usageOfUser(int $userId): int;
+
     abstract public function usageOfResource(int $resourceId): int;
+
+    /**
+     * Gets the currently allowed limit
+     */
+    public function getLimit(License $license): int
+    {
+        $key = $this->getKey();
+        return $license->{$key};
+    }
 
     /**
      * @param T $license
@@ -40,9 +52,7 @@ abstract class UsageAbstract
         int $userId,
         ?int $resourceId = null,
         bool $checkForExceed = false,
-    ): bool
-    {
-
+    ): bool {
         $isResource = isset($license->derivedFrom) &&
             $license->derivedFrom === DerivedFrom::CUSTOM_RESOURCE &&
             $resourceId !== null;
@@ -51,12 +61,11 @@ abstract class UsageAbstract
             $this->usageOfResource($resourceId) :
             $this->usageOfUser($userId);
 
-        $allowed = $license->{$this->getKey()};
+        $allowed = $this->getLimit($license);
 
         return $checkForExceed ?
             $usage > $allowed :
             $usage >= $allowed;
-
     }
 
     /**
@@ -66,8 +75,7 @@ abstract class UsageAbstract
         License $license,
         int $userId,
         ?int $resourceId = null,
-    ): bool
-    {
+    ): bool {
         return $this->hasReached($license, $userId, $resourceId, true);
     }
 

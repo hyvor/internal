@@ -2,9 +2,13 @@
 
 namespace Hyvor\Internal;
 
+use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
 use Hyvor\Internal\Resource\ResourceFake;
@@ -13,17 +17,41 @@ use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
 use Prometheus\Storage\APCng;
 use Prometheus\Storage\InMemory;
+use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class InternalServiceProvider extends ServiceProvider
 {
 
     public function boot(): void
     {
+        $this->setInterfaceBindings();
+        $this->config();
         $this->routes();
         $this->i18n();
         $this->metrics();
         $this->fake();
         $this->phpRuntime();
+    }
+
+    private function setInterfaceBindings(): void
+    {
+        $this->app->bind(HttpClientInterface::class, fn() => new CurlHttpClient());
+        $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
+        $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
+    }
+
+    private function config(): void
+    {
+        $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
+            str_replace('base64:', '', (string)config('app.key')),
+            (string)config('internal.component'),
+            (string)config('internal.instance'),
+            (string)config('internal.private_instance'),
+            (bool)config('internal.fake'),
+            (string)config('internal.i18n.folder'),
+            config('internal.i18n.default_locale'),
+        ));
     }
 
     private function routes(): void
@@ -40,7 +68,7 @@ class InternalServiceProvider extends ServiceProvider
 
     private function i18n(): void
     {
-        $this->app->singleton(I18n::class, fn() => new I18n());
+        $this->app->singleton(I18n::class);
     }
 
     private function metrics(): void
@@ -75,10 +103,11 @@ class InternalServiceProvider extends ServiceProvider
 
         // fake auth
         $user = $fakeConfig->user();
-        AuthFake::enable($user);
+        $usersDatabase = $fakeConfig->usersDatabase();
+        AuthFake::enable($user, $usersDatabase);
 
         // fake billing
-        BillingFake::enable(license: function (int $userId, ?int $resourceId, ComponentType $component) use ($fakeConfig
+        BillingFake::enable(license: function (int $userId, ?int $resourceId, Component $component) use ($fakeConfig
         ) {
             return $fakeConfig->license($userId, $resourceId, $component);
         });

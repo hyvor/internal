@@ -7,6 +7,7 @@ use Exception;
 /**
  * This exception should be thrown in case of an error in an HTTP request.
  * In most cases, this will then be converted to JSON and sent to the client.
+ * @deprecated use Symfony exceptions instead.
  */
 class HttpException extends Exception
 {

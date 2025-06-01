@@ -2,38 +2,38 @@
 
 namespace Hyvor\Internal\Auth;
 
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
-use Hyvor\Internal\InternalApi\InstanceUrl;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\InternalApi\InternalApiMethod;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @phpstan-import-type AuthUserArray from AuthUser
  */
-class Auth
+class Auth implements AuthInterface
 {
 
-    public const HYVOR_SESSION_COOKIE_NAME = 'authsess';
+    public const string HYVOR_SESSION_COOKIE_NAME = 'authsess';
+
+    public function __construct(
+        private InternalApi $internalApi,
+        private InstanceUrlResolver $instanceUrlResolver,
+    ) {
+    }
 
     /**
      * @throws InternalApiCallFailedException
      */
-    public function check(): false|AuthUser
+    public function check(string $cookie): false|AuthUser
     {
-        $cookie = $_COOKIE[self::HYVOR_SESSION_COOKIE_NAME] ?? null;
-
-        if (!$cookie) {
+        if (empty($cookie)) {
             return false;
         }
 
-        $response = InternalApi::call(
-            ComponentType::CORE,
-            InternalApiMethod::POST,
+        $response = $this->internalApi->call(
+            Component::CORE,
             '/auth/check',
             [
                 'cookie' => $cookie
@@ -46,48 +46,21 @@ class Auth
         return is_array($user) ? AuthUser::fromArray($user) : false;
     }
 
-    private function redirectTo(
-        string $page,
-        ?string $redirectPage = null
-    ): RedirectResponse {
-        $pos = strpos($page, '?');
-        $placeholder = $pos === false ? '?' : '&';
+    public function authUrl(string $page, null|string|Request $redirect = null): string
+    {
+        $redirect = self::resolveRedirect($redirect);
+        $redirectQuery = $redirect ? '?redirect=' . urlencode($redirect) : '';
+        return $this->instanceUrlResolver->publicUrlOfCore() . '/' . $page . $redirectQuery;
+    }
 
-        /** @var Request $request */
-        $request = request();
-
-        if ($redirectPage === null) {
-            $redirectPage = $request->getPathInfo();
+    public static function resolveRedirect(null|string|Request $redirect): ?string
+    {
+        if (is_string($redirect)) {
+            return $redirect;
+        } elseif ($redirect instanceof Request) {
+            return $redirect->getUri();
         }
-
-        $redirectUrl = $redirectPage && str_starts_with($redirectPage, 'https://')
-            ? $redirectPage
-            : $request->getSchemeAndHttpHost() . $redirectPage;
-
-        $redirect = $placeholder . 'redirect=' .
-            urlencode($redirectUrl);
-
-        return redirect(
-            InstanceUrl::getInstanceUrl() .
-            '/' .
-            $page .
-            $redirect
-        );
-    }
-
-    public function login(?string $redirect = null): RedirectResponse|Redirector
-    {
-        return $this->redirectTo('login', $redirect);
-    }
-
-    public function signup(?string $redirect = null): RedirectResponse|Redirector
-    {
-        return $this->redirectTo('signup', $redirect);
-    }
-
-    public function logout(?string $redirect = null): RedirectResponse|Redirector
-    {
-        return $this->redirectTo('logout', $redirect);
+        return null;
     }
 
     /**
@@ -98,9 +71,8 @@ class Auth
      */
     protected function getUsersByField(string $field, iterable $values): Collection
     {
-        $response = InternalApi::call(
-            ComponentType::CORE,
-            InternalApiMethod::POST,
+        $response = $this->internalApi->call(
+            Component::CORE,
             '/auth/users/from/' . $field,
             [
                 $field => (array)$values

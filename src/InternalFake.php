@@ -4,8 +4,11 @@ namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 
+/**
+ * @phpstan-import-type AuthUserArrayPartial from AuthUser
+ */
 class InternalFake
 {
 
@@ -24,9 +27,17 @@ class InternalFake
     }
 
     /**
+     * @return array<int, AuthUser|AuthUserArrayPartial>|null
+     */
+    public function usersDatabase(): ?array
+    {
+        return null;
+    }
+
+    /**
      * Returns a default (trial) license of the component
      */
-    public function license(int $userId, ?int $resourceId, ComponentType $component): ?License
+    public function license(int $userId, ?int $resourceId, Component $component): ?License
     {
         $licenseClass = $component->license();
         return new $licenseClass; // trial defaults

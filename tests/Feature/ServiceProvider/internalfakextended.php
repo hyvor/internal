@@ -5,7 +5,7 @@ namespace Hyvor\Internal;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 
 class InternalFakeExtended extends InternalFake
 {
@@ -15,7 +15,7 @@ class InternalFakeExtended extends InternalFake
         return null;
     }
 
-    public function license(int $userId, ?int $resourceId, ComponentType $component): ?License
+    public function license(int $userId, ?int $resourceId, Component $component): ?License
     {
         return new BlogsLicense(users: 3);
     }

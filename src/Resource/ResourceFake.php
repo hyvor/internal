@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Resource;
 
 use Carbon\Carbon;
+use Hyvor\Internal\InternalApi\InternalApi;
 
 final class ResourceFake extends Resource
 {
@@ -12,6 +13,10 @@ final class ResourceFake extends Resource
 
     /** @var array<int> */
     private array $deleted = [];
+
+    public function __construct()
+    {
+    }
 
     public static function enable(): void
     {

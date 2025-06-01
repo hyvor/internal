@@ -4,10 +4,14 @@ namespace Hyvor\Internal\Tests\Feature\ServiceProvider;
 
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\InternalApi\ComponentType;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalServiceProvider;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class FakeTest extends \Orchestra\Testbench\TestCase
 {
@@ -18,6 +22,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
         assert($app !== null);
         $sp = new InternalServiceProvider($app);
         $sp->boot();
+        $app->bind(HttpClientInterface::class, MockHttpClient::class);
     }
 
     private function getApp(): \Illuminate\Foundation\Application
@@ -36,13 +41,13 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // auth
         $app = $this->getApp();
-        $authInstance = $app->get(Auth::class);
+        $authInstance = $app->get(AuthInterface::class);
         $this->assertInstanceOf(AuthFake::class, $authInstance);
         $this->assertEquals(1, $authInstance->user?->id);
 
         // billing
-        $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, ComponentType::BLOGS);
+        $this->assertTrue($app->bound(BillingInterface::class));
+        $license = $app->get(BillingInterface::class)->license(1, null, Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(2, $license->users);
     }
@@ -66,8 +71,8 @@ class FakeTest extends \Orchestra\Testbench\TestCase
     {
         $app = $this->app;
         assert($app !== null);
-        $this->assertInstanceOf(Auth::class, $app->get(Auth::class));
-        $this->assertFalse($app->bound(Billing::class));
+        $this->assertInstanceOf(Auth::class, $app->get(AuthInterface::class));
+        $this->assertInstanceOf(Billing::class, $app->get(BillingInterface::class));
     }
 
     public function testUsesExtendedClassIfThatIsAvailable(): void
@@ -84,13 +89,13 @@ class FakeTest extends \Orchestra\Testbench\TestCase
         $sp->boot();
 
         // user
-        $authInstance = $app->get(Auth::class);
+        $authInstance = $app->get(AuthInterface::class);
         $this->assertInstanceOf(AuthFake::class, $authInstance);
         $this->assertNull($authInstance->user);
 
         // billing
         $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, ComponentType::BLOGS);
+        $license = $app->get(Billing::class)->license(1, null, Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(3, $license->users);
     }

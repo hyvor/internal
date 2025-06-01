@@ -28,16 +28,6 @@ class BlogsLicense extends License
         public int $autoTranslationsChars = 1000,
 
         /**
-         * Hyvor Talk credits per month in thousands.
-         */
-        public int $talkCredits = 0,
-
-        /**
-         * Hyvor Post Emails per month in thousands.
-         */
-        public int $postEmails = 0,
-
-        /**
          * Link and SEO analyses.
          */
         public bool $analyses = true, // SEO and link analysis

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        @import url(https://fonts.bunny.net/css?family=readex-pro:400,600&display=swap);
+
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body style="font-family: 'Readex Pro', sans-serif; background-color:#fafafa;margin:0;font-size:16px;line-height:22px;">
+<div style="text-align:left;padding:20px 0;width:500px;max-width:100%;margin:auto;">
+    <twig:mail:brand component="{{ component ?? 'core' }}"/>
+</div>
+
+<div style="width:550px;max-width:100%;background-color:white;margin:auto;border-radius:20px;-webkit-border-radius:20px;box-shadow:0 0 30px #0000000d;overflow:hidden;">
+
+    <div style="text-align:center;border-bottom: 1px solid #e1e1e1;padding:25px 35px;">
+        <div style="text-align:center;font-size:22px;font-weight:600;line-height:28px">{% block heading %}{% endblock %}</div>
+    </div>
+
+    <div style="padding:15px 35px;">
+        {% block content %}{% endblock %}
+    </div>
+
+</div>
+
+<div style="width:650px;max-width:100%;padding:20px;text-align:center;margin:auto;font-size:12px;color:#555">
+    <div>
+        Sent by HYVOR on {{ "now"|date() }}
+    </div>
+    <div>
+        10 RUE DE PENTHIÈVRE, 75008 PARIS, FRANCE
+    </div>
+</div>
+
+</body>
+</html>
+
