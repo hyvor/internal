@@ -8,6 +8,7 @@ use Hyvor\Internal\InternalApi\InternalApi;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 trait AuthTestTrait
@@ -77,22 +78,26 @@ trait AuthTestTrait
         $this->assertFalse($this->getAuth()->check('test'));
     }
 
-    public function testRedirects(): void
+    public function test_auth_url(): void
     {
-        $login = $this->getAuth()->login();
-        $this->assertSame('https://hyvor.com/login', $login->getTargetUrl());
+        $auth = $this->getAuth();
 
-        $login = $this->getAuth()->login('https://example.com');
         $this->assertSame(
-            'https://hyvor.com/login?redirect=' . urlencode('https://example.com'),
-            $login->getTargetUrl()
+            'https://hyvor.com/login',
+            $auth->authUrl('login')
         );
 
-        $signup = $this->getAuth()->signup();
-        $this->assertSame('https://hyvor.com/signup', $signup->getTargetUrl());
+        $this->assertSame(
+            'https://hyvor.com/login?redirect=https%3A%2F%2Fexample.com',
+            $auth->authUrl('login', 'https://example.com')
+        );
 
-        $logout = $this->getAuth()->logout();
-        $this->assertSame('https://hyvor.com/logout', $logout->getTargetUrl());
+        $request = Request::create('https://example.com/path/to/page');
+
+        $this->assertSame(
+            'https://hyvor.com/signup?redirect=https%3A%2F%2Fexample.com%2Fpath%2Fto%2Fpage',
+            $auth->authUrl('signup', $request)
+        );
     }
 
 

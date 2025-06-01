@@ -40,22 +40,26 @@ class AuthController
 
     public function login(Request $request): RedirectResponse
     {
-        return $this->getAuth()->login($this->getRedirect($request) ?? request()->getUri());
+        return $this->redirectTo('login', $request);
     }
 
     public function signup(Request $request): RedirectResponse
     {
-        return $this->getAuth()->signup($this->getRedirect($request) ?? request()->getUri());
+        return $this->redirectTo('signup', $request);
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        return $this->getAuth()->logout($this->getRedirect($request) ?? request()->getUri());
+        return $this->redirectTo('logout', $request);
     }
 
-    private function getRedirect(Request $request): ?string
+    /**
+     * @param 'login'|'signup'|'logout' $page
+     */
+    private function redirectTo(string $page, Request $request): RedirectResponse
     {
-        return $request->get('redirect') ?? null;
+        $url = $this->getAuth()->authUrl($page, $request->get('redirect') ?? $request->getUri());
+        return Response::redirectTo($url, 302, [], false);
     }
 
 }

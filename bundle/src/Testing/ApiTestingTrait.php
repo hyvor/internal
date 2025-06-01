@@ -23,7 +23,8 @@ trait ApiTestingTrait
 
     public function assertViolationCount(int $count): void
     {
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = self::getClient()->getResponse();
+        $this->assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
 
         $response = $this->getJson();
 
@@ -39,7 +40,8 @@ trait ApiTestingTrait
 
     public function assertHasViolation(string $property, string $message = ''): void
     {
-        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response = self::getClient()->getResponse();
+        $this->assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
 
         $response = $this->getJson();
 

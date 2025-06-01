@@ -30,6 +30,20 @@ trait AuthFakeTestTrait
         $this->assertNull($this->getAuthFake()->user);
     }
 
+    public function test_auth_url(): void
+    {
+        $this->enable();
+
+        $url = $this->getAuthFake()->authUrl('login', 'https://example.com/redirect');
+        $this->assertSame(
+            'https://hyvor.com/login?redirect=https%3A%2F%2Fexample.com%2Fredirect',
+            $url
+        );
+
+        $url = $this->getAuthFake()->authUrl('signup');
+        $this->assertSame('https://hyvor.com/signup', $url);
+    }
+
     public function testDatabaseHelperFunctions(): void
     {
         $this->enable();
