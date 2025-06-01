@@ -7,7 +7,6 @@ use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -47,40 +46,21 @@ class Auth implements AuthInterface
         return is_array($user) ? AuthUser::fromArray($user) : false;
     }
 
-    /**
-     * @param string $page page in core to redirect to
-     * @param string|null $redirect absolute URL to redirect back to
-     */
-    private function redirectTo(
-        string $page,
-        null|string $redirect
-    ): RedirectResponse {
-        $pos = strpos($page, '?');
-        $placeholder = $pos === false ? '?' : '&';
+    public function authUrl(string $page, null|string|Request $redirect = null): string
+    {
+        $redirect = self::resolveRedirect($redirect);
+        $redirectQuery = $redirect ? '?redirect=' . urlencode($redirect) : '';
+        return $this->instanceUrlResolver->publicUrlOfCore() . '/' . $page . $redirectQuery;
+    }
 
-        $redirectQuery = '';
+    public static function resolveRedirect(null|string|Request $redirect): ?string
+    {
         if (is_string($redirect)) {
-            $redirectQuery = $placeholder . 'redirect=' . urlencode($redirect);
+            return $redirect;
+        } elseif ($redirect instanceof Request) {
+            return $redirect->getUri();
         }
-
-        $fullUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/' . $page . $redirectQuery;
-
-        return new RedirectResponse($fullUrl);
-    }
-
-    public function login(null|string|Request $redirect = null): RedirectResponse
-    {
-        return $this->redirectTo('login', $redirect);
-    }
-
-    public function signup(null|string|Request $redirect = null): RedirectResponse
-    {
-        return $this->redirectTo('signup', $redirect);
-    }
-
-    public function logout(null|string|Request $redirect = null): RedirectResponse
-    {
-        return $this->redirectTo('logout', $redirect);
+        return null;
     }
 
     /**

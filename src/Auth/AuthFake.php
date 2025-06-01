@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Auth;
 use Faker\Factory;
 use Illuminate\Support\Collection;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @phpstan-import-type AuthUserArrayPartial from AuthUser
@@ -81,6 +82,13 @@ final class AuthFake implements AuthInterface
     public function check(string $cookie): false|AuthUser
     {
         return $this->user ?: false;
+    }
+
+    public function authUrl(string $page, null|string|Request $redirect = null): string
+    {
+        $redirect = Auth::resolveRedirect($redirect);
+        $redirectQuery = $redirect ? '?redirect=' . urlencode($redirect) : '';
+        return 'https://hyvor.com/' . $page . $redirectQuery;
     }
 
     /**

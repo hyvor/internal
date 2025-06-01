@@ -1,3 +1,8 @@
+## 3.0.2 - 2025-06-01
+
+- login, signup, and logout methods removed from Auth
+- AuthInterface now has authUrl() method to get those URLs with redirect support
+
 ## 3.0.0 - 2025-05-19
 
 - InstanceUrl removed, use InternalConfig and ComponentUrl instead
