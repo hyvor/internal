@@ -43,11 +43,14 @@ class InternalServiceProvider extends ServiceProvider
 
     private function config(): void
     {
+        /** @var ?string $privateInstance */
+        $privateInstance = config('internal.private_instance');
+
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
             (string)config('internal.component'),
             (string)config('internal.instance'),
-            (string)config('internal.private_instance'),
+            $privateInstance,
             (bool)config('internal.fake'),
             (string)config('internal.i18n.folder'),
             config('internal.i18n.default_locale'),
