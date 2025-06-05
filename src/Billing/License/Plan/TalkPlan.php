@@ -13,6 +13,28 @@ class TalkPlan extends PlanAbstract
     protected function config(): void
     {
         $this->version(1, function () {
+            $this->premiumPlan(1_000, 4);
+            $this->premiumPlan(100_000, 6);
+            $this->premiumPlan(500_000, 18);
+            $this->premiumPlan(1_000_000, 48);
+            $this->premiumPlan(2_000_000, 96);
+            $this->premiumPlan(5_000_000, 240);
+            $this->premiumPlan(10_000_000, 480);
+            $this->premiumPlan(20_000_000, 960);
+            $this->premiumPlan(50_000_000, 2400);
+            $this->premiumPlan(100_000_000, 4800);
+
+            $this->businessPlan(500_000, 42);
+            $this->businessPlan(1_000_000, 84);
+            $this->businessPlan(2_000_000, 168);
+            $this->businessPlan(5_000_000, 420);
+            $this->businessPlan(10_000_000, 840);
+            $this->businessPlan(20_000_000, 1680);
+            $this->businessPlan(50_000_000, 4200);
+            $this->businessPlan(100_000_000, 8400);
+        });
+
+        $this->version(2, function () {
             $this->premiumPlan(100_000, 12);
             $this->premiumPlan(500_000, 35);
             $this->premiumPlan(1_000_000, 65);
