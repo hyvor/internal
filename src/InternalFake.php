@@ -3,6 +3,8 @@
 namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Billing\Dto\LicenseOf;
+use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
 
@@ -41,6 +43,25 @@ class InternalFake
     {
         $licenseClass = $component->license();
         return new $licenseClass; // trial defaults
+    }
+
+    /**
+     * Returns a collection of licenses for the given LicenseOf objects.
+     *
+     * @param LicenseOf[] $of
+     */
+    public function licenses(array $of, Component $component): LicensesCollection
+    {
+        $licenses = [];
+        $licenseClass = $component->license();
+        foreach ($of as $licenseOf) {
+            $licenses[] = [
+                'user_id' => $licenseOf->userId,
+                'resource_id' => $licenseOf->resourceId,
+                'license' => (new $licenseClass)->serialize(),
+            ];
+        }
+        return new LicensesCollection($licenses, $component);
     }
 
 }

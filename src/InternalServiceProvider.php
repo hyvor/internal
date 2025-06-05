@@ -8,6 +8,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
@@ -110,10 +111,14 @@ class InternalServiceProvider extends ServiceProvider
         AuthFake::enable($user, $usersDatabase);
 
         // fake billing
-        BillingFake::enable(license: function (int $userId, ?int $resourceId, Component $component) use ($fakeConfig
-        ) {
-            return $fakeConfig->license($userId, $resourceId, $component);
-        });
+        BillingFake::enable(
+            license: fn(int $userId, ?int $resourceId, Component $component) => $fakeConfig->license(
+                $userId,
+                $resourceId,
+                $component
+            ),
+            licenses: fn($of, Component $component) => $fakeConfig->licenses($of, $component)
+        );
 
         // fake resource
         ResourceFake::enable();
