@@ -71,6 +71,10 @@ abstract class AbstractApiExceptionListener
                 $data['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
                 $data['violations'] = $violations;
             }
+
+            if ($exception instanceof DataCarryingHttpException) {
+                $data['data'] = $exception->getData();
+            }
         }
 
         if ($shouldThrowOnInternalError && $data['status'] === Response::HTTP_INTERNAL_SERVER_ERROR) {
