@@ -79,7 +79,7 @@ final class AuthFake implements AuthInterface
         $container->set(AuthInterface::class, $fake);
     }
 
-    public function check(string $cookie): false|AuthUser
+    public function check(string|Request $request): false|AuthUser
     {
         return $this->user ?: false;
     }

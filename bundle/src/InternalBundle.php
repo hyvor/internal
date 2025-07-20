@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Bundle;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\InternalConfig;
@@ -31,6 +32,7 @@ class InternalBundle extends AbstractBundle
         $definition->rootNode() // @phpstan-ignore-line
             ->children()
                 ->scalarNode('component')->defaultValue('core')->end()
+                ->scalarNode('auth_method')->defaultValue('%env(AUTH_METHOD)%')->end()
                 ->scalarNode('instance')->defaultValue('%env(HYVOR_INSTANCE)%')->end()
                 ->scalarNode('private_instance')->defaultValue('%env(HYVOR_PRIVATE_INSTANCE)%')->end()
                 ->booleanNode('fake')->defaultValue('%env(HYVOR_FAKE)%')->end()
@@ -58,6 +60,7 @@ class InternalBundle extends AbstractBundle
         $container->parameters()->set('env(HYVOR_INSTANCE)', 'https://hyvor.com');
         $container->parameters()->set('env(HYVOR_PRIVATE_INSTANCE)', null);
         $container->parameters()->set('env(HYVOR_FAKE)', '0');
+        $container->parameters()->set('env(AUTH_METHOD)', 'hyvor'); // hyvor or openid
 
         // InternalConfig class
         $container->services()
@@ -65,6 +68,7 @@ class InternalBundle extends AbstractBundle
             ->args([
                 '%env(APP_SECRET)%',
                 $config['component'],
+                $config['auth_method'],
                 $config['instance'],
                 $config['private_instance'],
                 $config['fake'],
@@ -73,7 +77,11 @@ class InternalBundle extends AbstractBundle
             ]);
 
         // Main Services
-        $authInterface = $container->services()->alias(AuthInterface::class, Auth::class);
+        $authMethod = $builder->resolveEnvPlaceholders('%env(AUTH_METHOD)%', true);
+        $authInterface = $container->services()->alias(
+            AuthInterface::class,
+            $authMethod === 'oidc' ? OidcAuth::class : Auth::class
+        );
         $billingInterface = $container->services()->alias(BillingInterface::class, Billing::class);
 
         // sometimes we need to replace services dynamically in services
@@ -84,7 +92,8 @@ class InternalBundle extends AbstractBundle
         }
         // @codeCoverageIgnoreEnd
 
-        if ($config['fake'] && $container->env() === 'dev') {
+        $isFake = $builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true) === '1';
+        if ($isFake && $container->env() === 'dev') {
             $this->setupFake($container);
         }
     }

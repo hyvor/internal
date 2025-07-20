@@ -8,7 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 interface AuthInterface
 {
 
-    public function check(string $cookie): false|AuthUser;
+    /**
+     * For backward compatibility, this method accepts a cookie, but for new applications, always send a Request object.
+     */
+    public function check(string|Request $request): false|AuthUser;
 
     /**
      * Redirect to a login, signup, or logout page of the core
