@@ -13,11 +13,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class OidcAuth implements AuthInterface
 {
 
-    public function __construct(
-        private OidcWellKnownService $discoveryService,
-        private OidcConfig $config,
-        private RequestStack $requestStack,
-    ) {
+    public function __construct()
+    {
     }
 
     public function check(string|Request $request): false|AuthUser

@@ -3,6 +3,8 @@
 namespace Hyvor\Internal\Auth\Oidc;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 readonly class OidcConfig
 {
@@ -16,6 +18,8 @@ readonly class OidcConfig
 
         #[Autowire('%env(OIDC_CLIENT_SECRET)%')]
         private string $clientSecret,
+
+        private ?RequestStack $requestStack = null,
     ) {
     }
 
@@ -32,6 +36,20 @@ readonly class OidcConfig
     public function getClientSecret(): string
     {
         return $this->clientSecret;
+    }
+
+    public function getCallbackUrl(?Request $request = null): string
+    {
+        $request ??= $this->requestStack?->getCurrentRequest();
+        assert($request instanceof Request, 'This must be called in the context of a request.');
+        $currentUrlOrigin = $request->getSchemeAndHttpHost();
+        return $currentUrlOrigin . '/api/oidc/callback';
+    }
+
+
+    public function callEndpoint(string $endpoint): array
+    {
+        //
     }
 
 }

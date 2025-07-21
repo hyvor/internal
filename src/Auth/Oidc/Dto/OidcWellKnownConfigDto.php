@@ -1,8 +1,11 @@
 <?php
 
-namespace Hyvor\Internal\Auth\Oidc;
+namespace Hyvor\Internal\Auth\Oidc\Dto;
 
-class OidcWellKnownConfig
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
+#[Exclude]
+class OidcWellKnownConfigDto
 {
 
     public function __construct(

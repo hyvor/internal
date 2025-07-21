@@ -2,13 +2,14 @@
 
 namespace Hyvor\Internal\Auth\Oidc;
 
+use Hyvor\Internal\Auth\Oidc\Dto\OidcWellKnownConfigDto;
 use Hyvor\Internal\Auth\Oidc\Exception\UnableToFetchWellKnownException;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 class OidcWellKnownService
 {
@@ -23,7 +24,7 @@ class OidcWellKnownService
     /**
      * @throws UnableToFetchWellKnownException
      */
-    public function getWellKnownConfig(): OidcWellKnownConfig
+    public function getWellKnownConfig(): OidcWellKnownConfigDto
     {
         $cacheKey = 'oidc_discovery_document' . md5($this->config->getIssuerUrl());
         return $this->cache->get($cacheKey, function (ItemInterface $item) {
@@ -35,7 +36,7 @@ class OidcWellKnownService
     /**
      * @throws UnableToFetchWellKnownException
      */
-    private function fetchWellKnownConfig(): OidcWellKnownConfig
+    private function fetchWellKnownConfig(): OidcWellKnownConfigDto
     {
         $url = $this->config->getIssuerUrl() . '/.well-known/openid-configuration';
 
@@ -43,12 +44,7 @@ class OidcWellKnownService
             $response = $this->httpClient->request('GET', $url);
             $data = $response->toArray();
         } catch (HttpExceptionInterface|TransportExceptionInterface|DecodingExceptionInterface $e) {
-            $message = match (true) {
-                $e instanceof HttpExceptionInterface => "HTTP error while fetching well-known config: {$e->getMessage()}",
-                $e instanceof TransportExceptionInterface => "Transport error while fetching well-known config: {$e->getMessage()}",
-                default => "Decoding error while fetching well-known config: {$e->getMessage()}",
-            };
-            throw new UnableToFetchWellKnownException($url, $message, previous: $e);
+            throw new UnableToFetchWellKnownException($e->getMessage(), previous: $e);
         }
 
         $checkedKeys = [
@@ -59,14 +55,14 @@ class OidcWellKnownService
         ];
         foreach ($checkedKeys as $key) {
             if (!isset($data[$key])) {
-                throw new UnableToFetchWellKnownException($url, "Missing key '$key' in discovery document.");
+                throw new UnableToFetchWellKnownException("Missing key '$key' in discovery document.");
             }
             if (!is_string($data[$key])) {
-                throw new UnableToFetchWellKnownException($url, "Key '$key' in discovery document must be a string.");
+                throw new UnableToFetchWellKnownException("Key '$key' in discovery document must be a string.");
             }
         }
 
-        return new OidcWellKnownConfig(
+        return new OidcWellKnownConfigDto(
             issuer: $data['issuer'],
             authorizationEndpoint: $data['authorization_endpoint'],
             tokenEndpoint: $data['token_endpoint'],

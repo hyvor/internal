@@ -2,14 +2,15 @@
 
 namespace Hyvor\Internal\Bundle\Controller;
 
+use Hyvor\Internal\Auth\Oidc\Exception\UnableToCallOidcEndpointException;
 use Hyvor\Internal\Auth\Oidc\Exception\UnableToFetchWellKnownException;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
+use Hyvor\Internal\Auth\Oidc\OidcTokenService;
 use Hyvor\Internal\Auth\Oidc\OidcWellKnownService;
-use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -20,8 +21,9 @@ class OidcController extends AbstractController
     private const SESSION_NONCE_KEY = 'oidc_nonce';
 
     public function __construct(
-        private OidcWellKnownService $oidcDiscoveryService,
         private OidcConfig $oidcConfig,
+        private OidcWellKnownService $oidcWellKnownService,
+        private OidcTokenService $oidcTokenService,
     ) {
     }
 
@@ -29,19 +31,10 @@ class OidcController extends AbstractController
     public function oidcLogin(Request $request): RedirectResponse
     {
         try {
-            $loginUrl = $this->oidcDiscoveryService->getWellKnownConfig()->authorizationEndpoint;
+            $loginUrl = $this->oidcWellKnownService->getWellKnownConfig()->authorizationEndpoint;
         } catch (UnableToFetchWellKnownException $e) {
-            throw new DataCarryingHttpException(
-                500,
-                [
-                    'discovery_url' => $e->discoveryUrl,
-                    'error' => $e->getMessage(),
-                ],
-                'Unable to fetch OIDC well-known configuration'
-            );
+            throw new HttpException(500, $e->getMessage());
         }
-
-        $currentUrlOrigin = $request->getSchemeAndHttpHost();
 
         $session = $request->getSession();
         $state = bin2hex(random_bytes(16));
@@ -53,7 +46,7 @@ class OidcController extends AbstractController
         $params = [
             'response_type' => 'code',
             'client_id' => $this->oidcConfig->getClientId(),
-            'redirect_uri' => $currentUrlOrigin . '/api/oidc/callback',
+            'redirect_uri' => $this->oidcConfig->getCallbackUrl($request),
             'scope' => 'openid profile email',
             'state' => $state,
             'nonce' => $nonce,
@@ -67,21 +60,27 @@ class OidcController extends AbstractController
     #[Route('/api/oidc/callback', methods: 'GET')]
     public function oidcCallback(Request $request): RedirectResponse
     {
-        $requestState = $request->query->get('state');
+        $requestState = $request->query->getString('state');
         $session = $request->getSession();
         $sessionState = $session->get(self::SESSION_STATE_KEY);
         if ($requestState !== $sessionState) {
-            throw new HttpException(400, 'Invalid state parameter');
+            throw new BadRequestHttpException('Invalid state parameter.');
         }
 
         $code = $request->query->getString('code');
         if (!$code) {
-            throw new HttpException(400, 'Authorization code not provided');
+            throw new BadRequestHttpException('Authorization code not provided.');
+        }
+
+        try {
+            $idToken = $this->oidcTokenService->getIdToken($code);
+        } catch (UnableToCallOidcEndpointException $e) {
+            throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
         }
 
         //
 
-        dd($session->all());
+        dd($idToken);
 
         return new RedirectResponse('/');
     }
