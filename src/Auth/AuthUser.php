@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Hyvor\Internal\Auth;
 
-use Hyvor\Internal\Bundle\Security\UserRole;
-use Symfony\Component\Security\Core\User\UserInterface;
-
 /**
  * @phpstan-type AuthUserArray array{
  *  id: int,
@@ -34,7 +31,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * sub?: string,
  * }
  */
-class AuthUser implements UserInterface
+class AuthUser
 {
 
     final public function __construct(
@@ -87,28 +84,5 @@ class AuthUser implements UserInterface
         ];
 
         return $user;
-    }
-
-    public function getRoles(): array
-    {
-        return [UserRole::HYVOR_USER];
-    }
-
-    public function eraseCredentials(): void
-    {
-        return;
-    }
-
-    /**
-     * Symfony requires a unique identifier for each user.
-     * For user, both username and email are unique.
-     * We use the username here.
-     * However, since we do not use traditional symfony authentication, it does not matter much.
-     */
-    public function getUserIdentifier(): string
-    {
-        /** @var non-empty-string $username */
-        $username = $this->username;
-        return $username;
     }
 }
