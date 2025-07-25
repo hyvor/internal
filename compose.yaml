@@ -6,6 +6,7 @@ services:
         PHP_VERSION: ${PHP_VERSION:-8.4}
     tty: true
     volumes:
+      - ./bundle:/app/bundle
       - ./src:/app/src
       - ./tests:/app/tests
       - ./types:/app/types

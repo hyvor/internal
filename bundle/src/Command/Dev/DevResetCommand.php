@@ -11,13 +11,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+// @codeCoverageIgnoreStart
+
 #[AsCommand(
     name: 'app:dev:reset',
     description: 'Resets the database, runs the migrations again, and seeds with --seed.'
 )]
-/**
- * @codeCoverageIgnore
- */
 class DevResetCommand extends Command
 {
 
@@ -88,3 +87,5 @@ class DevResetCommand extends Command
     }
 
 }
+
+// @codeCoverageIgnoreEnd

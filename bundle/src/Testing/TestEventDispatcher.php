@@ -10,12 +10,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class TestEventDispatcher extends EventDispatcher
 {
 
-
     /** @var object[] */
     private array $dispatchedEvents = [];
 
     /**
      * @param false|string[] $mockEvents false to not mock any events or an array of event names to mock.
+     *                                   Listeners of those events will not be called when the event is dispatched.
+     *                                   Useful to prevent side effects.
      */
     public function __construct(
         private false|array $mockEvents = false,
@@ -28,7 +29,7 @@ class TestEventDispatcher extends EventDispatcher
         $eventName ??= $event::class;
         $this->dispatchedEvents[] = $event;
 
-        if ($this->mockEvents !== false && in_array($eventName, $this->dispatchedEvents, true)) {
+        if ($this->mockEvents !== false && in_array($eventName, $this->mockEvents, true)) {
             // If the event is mocked, we do not call the parent dispatch method.
             // This allows us to mock events without triggering actual listeners.
             // Helpful when the listeners cause side effects.
@@ -91,6 +92,8 @@ class TestEventDispatcher extends EventDispatcher
 
     /**
      * @param false|string[] $mockEvents false to not mock any events or an array of event names to mock.
+     *                                   Listeners of those events will not be called when the event is dispatched.
+     *                                   Useful to prevent side effects.
      */
     public static function enable(Container $container, false|array $mockEvents = false): self
     {
