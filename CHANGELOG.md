@@ -1,3 +1,8 @@
+## 3.0.7 - 2025-07-25
+
+- `app:dev:reset` command added
+- `TestEventDispatcher` added for testing event dispatching in Symfony
+
 ## 3.0.6 - 2025-07-24
 
 - Dependency on Symfony security bundle is removed (going forward use custom listeners in products)
