@@ -26,9 +26,9 @@ class Auth implements AuthInterface
     /**
      * @throws InternalApiCallFailedException
      */
-    public function check(string $cookie): false|AuthUser
+    public function check(string|Request $request): false|AuthUser
     {
-        if (empty($cookie)) {
+        if (empty($request)) {
             return false;
         }
 
@@ -36,7 +36,7 @@ class Auth implements AuthInterface
             Component::CORE,
             '/auth/check',
             [
-                'cookie' => $cookie
+                'cookie' => $request
             ]
         );
 

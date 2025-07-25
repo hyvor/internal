@@ -170,3 +170,16 @@ When calling the APIs in tests, setting the `authsess` cookie to a string value 
 $this->client->getCookieJar()->set(new Cookie('authsess', 'default'));
 $this->client->request('GET', '/api/console/...');
 ```
+
+## Controllers
+
+The internal bundle provides the following controllers:
+
+- `@InternalBundle/src/Controller/OidcController.php`
+    - `/api/oidc/callback` - Handles OIDC callback.
+
+To add, update `config/routes.php`:
+
+```php
+$routes->import('@InternalBundle/src/Controller/OidcController.php', 'attribute');
+```
