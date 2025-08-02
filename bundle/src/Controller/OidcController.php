@@ -20,6 +20,7 @@ class OidcController extends AbstractController
 
     private const SESSION_STATE_KEY = 'oidc_state';
     private const SESSION_NONCE_KEY = 'oidc_nonce';
+    private const SESSION_REDIRECT_KEY = 'oidc_redirect';
 
     public function __construct(
         private OidcConfig $oidcConfig,
@@ -40,9 +41,11 @@ class OidcController extends AbstractController
         $session = $request->getSession();
         $state = bin2hex(random_bytes(16));
         $nonce = bin2hex(random_bytes(16));
+        $redirectUrl = $request->query->getString('redirect', '/');
 
         $session->set(self::SESSION_STATE_KEY, $state);
         $session->set(self::SESSION_NONCE_KEY, $nonce);
+        $session->set(self::SESSION_REDIRECT_KEY, $redirectUrl);
 
         $params = [
             'response_type' => 'code',
@@ -64,6 +67,9 @@ class OidcController extends AbstractController
         $requestState = $request->query->getString('state');
         $session = $request->getSession();
         $sessionState = $session->get(self::SESSION_STATE_KEY);
+        $sessionNonce = $session->get(self::SESSION_NONCE_KEY);
+        $sessionRedirect = $session->get(self::SESSION_REDIRECT_KEY, '/');
+
         if ($requestState !== $sessionState) {
             throw new BadRequestHttpException('Invalid state parameter.');
         }
@@ -89,7 +95,12 @@ class OidcController extends AbstractController
             throw new BadRequestHttpException('Invalid JWKS: ' . $e->getMessage());
         }
 
-        dd($decoded);
+        $nonce = $decoded->nonce ?? null;
+        if ($nonce !== $sessionNonce) {
+            throw new BadRequestHttpException('Invalid nonce in ID Token.');
+        }
+
+        dd($sessionRedirect);
 
         return new RedirectResponse('/');
     }

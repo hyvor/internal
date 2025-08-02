@@ -516,16 +516,59 @@ return static function (RoutingConfigurator $routes): void {
 };
 ```
 
-Trusted provides must also be configured in order to configure dynamic URL generation.
+Update framework configs for sessions and trusted proxies:
 
 ```yaml
 # config/packages/framework.yaml
 framework:
+  session:
+    handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
   trusted_proxies: '%env(TRUSTED_PROXIES)%'
 
 when@dev:
   framework:
     trusted_proxies: '172.16.0.0/12' # docker
+```
+
+```php
+// services.php (or yaml)
+$services->set(PdoSessionHandler::class)
+  ->args([
+      env('DATABASE_URL'),
+      ['db_table' => 'oidc_sessions'],
+  ]);
+```
+
+On AuthoziationListeners, return the login and signup URLs using AuthInterface::authUrl():
+
+```php
+$user = $this->auth->check($request);
+
+if ($user === false) {
+    throw new DataCarryingHttpException(
+        401,
+        [
+            'login_url' => $this->auth->authUrl('login'),
+            'signup_url' => $this->auth->authUrl('signup'),
+        ],
+        'Unauthorized'
+    );
+}
+```
+
+On the frontend (e.g. Console), handle the 401 error:
+
+```ts
+.catch((err) => {
+    if (err.code === 401) {
+        const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
+        const url = new URL(err.data[toPage + '_url'], location.origin);
+        url.searchParams.set('redirect', location.href);
+        location.href = url.toString();
+    } else {
+        toast.error(err.message);
+    }
+});
 ```
 
 ### Development
