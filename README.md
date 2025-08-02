@@ -480,13 +480,15 @@ These migrations are necessary:
 ```sql
 CREATE TABLE oidc_users
 (
-    id          SERIAL PRIMARY KEY,
-    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    sub         VARCHAR(255) NOT NULL UNIQUE,
-    email       VARCHAR(255) NOT NULL UNIQUE,
-    name        VARCHAR(255) NOT NULL,
-    picture_url VARCHAR(255)
+  id          SERIAL PRIMARY KEY,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  iss         text NOT NULL,
+  sub         text NOT NULL,
+  email       text NOT NULL,
+  name        text NOT NULL,
+  picture_url text,
+  UNIQUE (iss, sub)
 );
 
 CREATE TABLE oidc_sessions

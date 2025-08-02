@@ -100,7 +100,13 @@ class OidcController extends AbstractController
             throw new BadRequestHttpException('Invalid nonce in ID Token.');
         }
 
-        dd($sessionRedirect);
+        $emailVerified = $decoded->email_verified ?? false;
+        if (!$emailVerified) {
+            throw new BadRequestHttpException('Email not verified. Only verified emails are allowed.');
+        }
+
+
+        dd($decoded);
 
         return new RedirectResponse('/');
     }

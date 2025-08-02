@@ -12,7 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 class OidcAuth implements AuthInterface
 {
 
-    public function __construct()
+    public function __construct(
+        //
+    )
     {
     }
 
@@ -42,21 +44,21 @@ class OidcAuth implements AuthInterface
 
     public function fromEmails(iterable $emails)
     {
-        // TODO: Implement fromEmails() method.
+        throw new \LogicException('OIDC email is not unique. Do not use fromEmails() method.');
     }
 
     public function fromEmail(string $email): ?AuthUser
     {
-        // TODO: Implement fromEmail() method.
+        throw new \LogicException('OIDC email is not unique. Do not use fromEmail() method.');
     }
 
     public function fromUsernames(iterable $usernames)
     {
-        // TODO: Implement fromUsernames() method.
+        throw new \LogicException('OIDC does not implement fromUsernames().');
     }
 
     public function fromUsername(string $username): ?AuthUser
     {
-        // TODO: Implement fromUsername() method.
+        throw new \LogicException('OIDC does not implement fromUsername().');
     }
 }
