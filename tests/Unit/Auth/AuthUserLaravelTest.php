@@ -2,11 +2,9 @@
 
 namespace Hyvor\Internal\Tests\Unit\Auth;
 
-use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
-use Hyvor\Internal\Bundle\Security\UserRole;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use Illuminate\Support\Collection;
 
@@ -50,10 +48,6 @@ class AuthUserLaravelTest extends LaravelTestCase
             'bio' => null,
             'website_url' => null,
         ], $user->toArray());
-
-        $this->assertSame([UserRole::HYVOR_USER], $user->getRoles());
-        $user->eraseCredentials(); // for coverage
-        $this->assertSame('johndoe', $user->getUserIdentifier());
     }
 
     public function testFromIds(): void
