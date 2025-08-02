@@ -13,6 +13,7 @@ class OidcWellKnownConfigDto
         public string $authorizationEndpoint,
         public string $tokenEndpoint,
         public string $userinfoEndpoint,
+        public string $jwksUri,
     ) {
     }
 

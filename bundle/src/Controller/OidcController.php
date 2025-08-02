@@ -2,17 +2,18 @@
 
 namespace Hyvor\Internal\Bundle\Controller;
 
-use Hyvor\Internal\Auth\Oidc\Exception\UnableToCallOidcEndpointException;
-use Hyvor\Internal\Auth\Oidc\Exception\UnableToFetchWellKnownException;
+use Firebase\JWT\JWT;
+use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
-use Hyvor\Internal\Auth\Oidc\OidcTokenService;
-use Hyvor\Internal\Auth\Oidc\OidcWellKnownService;
+use Hyvor\Internal\Auth\Oidc\OidcApiService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Firebase\JWT\JWK;
 
 class OidcController extends AbstractController
 {
@@ -22,17 +23,17 @@ class OidcController extends AbstractController
 
     public function __construct(
         private OidcConfig $oidcConfig,
-        private OidcWellKnownService $oidcWellKnownService,
-        private OidcTokenService $oidcTokenService,
+        private OidcApiService $oidcApiService,
+        private LoggerInterface $logger,
     ) {
     }
 
-    #[Route('/api/oidc/login', methods: 'GET')]
+    #[Route('/login', methods: 'GET')]
     public function oidcLogin(Request $request): RedirectResponse
     {
         try {
-            $loginUrl = $this->oidcWellKnownService->getWellKnownConfig()->authorizationEndpoint;
-        } catch (UnableToFetchWellKnownException $e) {
+            $loginUrl = $this->oidcApiService->getWellKnownConfig()->authorizationEndpoint;
+        } catch (OidcApiException $e) {
             throw new HttpException(500, $e->getMessage());
         }
 
@@ -57,7 +58,7 @@ class OidcController extends AbstractController
         return new RedirectResponse($loginUrl);
     }
 
-    #[Route('/api/oidc/callback', methods: 'GET')]
+    #[Route('/callback', methods: 'GET')]
     public function oidcCallback(Request $request): RedirectResponse
     {
         $requestState = $request->query->getString('state');
@@ -73,14 +74,22 @@ class OidcController extends AbstractController
         }
 
         try {
-            $idToken = $this->oidcTokenService->getIdToken($code);
-        } catch (UnableToCallOidcEndpointException $e) {
+            $idToken = $this->oidcApiService->getIdToken($code);
+            $jwks = $this->oidcApiService->getJwks();
+        } catch (OidcApiException $e) {
+            $this->logger->error('OIDC authentication failed: ' . $e->getMessage());
             throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
         }
 
-        //
+        try {
+            $keys = JWK::parseKeySet($jwks);
+            $decoded = JWT::decode($idToken, $keys);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to parse JWKS: ' . $e->getMessage());
+            throw new BadRequestHttpException('Invalid JWKS: ' . $e->getMessage());
+        }
 
-        dd($idToken);
+        dd($decoded);
 
         return new RedirectResponse('/');
     }

@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Tests\Unit\Auth\Oidc;
 
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
-use Hyvor\Internal\Auth\Oidc\OidcTokenService;
+use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 #[CoversClass(OidcController::class)]
 #[CoversClass(OidcConfig::class)]
-#[CoversClass(OidcTokenService::class)]
+#[CoversClass(OidcApiService::class)]
 class OidcControllerCallbackTest extends SymfonyTestCase
 {
 

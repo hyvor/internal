@@ -6,6 +6,6 @@ enum AuthMethod: string
 {
 
     case HYVOR = 'hyvor';
-    case OPENID = 'openid';
+    case OIDC = 'oidc';
 
 }

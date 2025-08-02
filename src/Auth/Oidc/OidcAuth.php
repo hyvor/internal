@@ -5,7 +5,6 @@ namespace Hyvor\Internal\Auth\Oidc;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Only Symfony!

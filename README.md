@@ -499,6 +499,35 @@ CREATE TABLE oidc_sessions
 CREATE INDEX idx_oidc_sessions_sess_lifetime ON sessions (sess_lifetime);
 ```
 
+Then, add the routes in routes.php (if the app handles multiple domains, domain restrictions should be added):
+
+```php
+<?php
+
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+
+return static function (RoutingConfigurator $routes): void {
+    // other routes...
+
+    // OIDC routes
+    $routes->import('@InternalBundle/src/Controller/OidcController.php', 'attribute')
+        ->prefix('/api/oidc')
+        ->namePrefix('api_oidc_');
+};
+```
+
+Trusted provides must also be configured in order to configure dynamic URL generation.
+
+```yaml
+# config/packages/framework.yaml
+framework:
+  trusted_proxies: '%env(TRUSTED_PROXIES)%'
+
+when@dev:
+  framework:
+    trusted_proxies: '172.16.0.0/12' # docker
+```
+
 ### Development
 
 #### PHPStorm
