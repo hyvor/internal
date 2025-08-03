@@ -519,7 +519,7 @@ return static function (RoutingConfigurator $routes): void {
 };
 ```
 
-Update framework configs for sessions and trusted proxies:
+Update configs for sessions, entities, and trusted proxies:
 
 ```yaml
 # config/packages/framework.yaml
@@ -540,6 +540,19 @@ $services->set(PdoSessionHandler::class)
       env('DATABASE_URL'),
       ['db_table' => 'oidc_sessions'],
   ]);
+```
+
+```yaml
+# config/packages/doctrine.yaml
+doctrine:
+  orm:
+    mappings:
+      InternalBundle:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/vendor/hyvor/internal/bundle/src/Entity'
+        prefix: 'Hyvor\Internal\Bundle\Entity'
+        alias: InternalBundle
 ```
 
 On AuthoziationListeners, return the login and signup URLs using AuthInterface::authUrl():

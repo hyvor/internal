@@ -8,10 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 interface AuthInterface
 {
 
-    /**
-     * For backward compatibility, this method accepts a cookie, but for new applications, always send a Request object.
-     */
-    public function check(string|Request $request): false|AuthUser;
+    public function check(Request $request): false|AuthUser;
 
     /**
      * Redirect to a login, signup, or logout page of the core
@@ -20,7 +17,7 @@ interface AuthInterface
      * @param string|null|Request $redirect The URL to redirect to after authentication.
      *                                       If null, no redirection will be performed.
      *                                       If a string is provided, it should be an absolute URL.
-     *                                       If a Request object is provided, it will be converted to a string.
+     *                                       If a Request object is provided, the redirect URL will be created from it.
      */
     public function authUrl(string $page, null|string|Request $redirect = null): string;
 

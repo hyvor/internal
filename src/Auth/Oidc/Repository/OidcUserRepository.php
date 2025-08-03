@@ -4,7 +4,7 @@ namespace Hyvor\Internal\Auth\Oidc\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Hyvor\Internal\Auth\Oidc\Entity\OidcUser;
+use Hyvor\Internal\Bundle\Entity\OidcUser;
 
 /**
  * @extends ServiceEntityRepository<OidcUser>

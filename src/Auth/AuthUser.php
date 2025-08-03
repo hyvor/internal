@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Hyvor\Internal\Auth;
 
+use Hyvor\Internal\Bundle\Entity\OidcUser;
+
 /**
  * @phpstan-type AuthUserArray array{
  *  id: int,
@@ -56,6 +58,20 @@ class AuthUser
             location: $data['location'] ?? null,
             bio: $data['bio'] ?? null,
             website_url: $data['website_url'] ?? null,
+        );
+    }
+
+    public static function fromOidcUser(OidcUser $oidcUser): static
+    {
+        return new static(
+            id: $oidcUser->getId(),
+            username: $oidcUser->getSub(),
+            name: $oidcUser->getName(),
+            email: $oidcUser->getEmail(),
+            picture_url: $oidcUser->getPictureUrl(),
+            location: null,
+            bio: null,
+            website_url: $oidcUser->getWebsiteUrl(),
         );
     }
 

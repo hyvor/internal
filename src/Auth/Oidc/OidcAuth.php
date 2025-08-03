@@ -5,7 +5,7 @@ namespace Hyvor\Internal\Auth\Oidc;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
-use Hyvor\Internal\Auth\Oidc\Entity\OidcUser;
+use Hyvor\Internal\Bundle\Entity\OidcUser;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -16,16 +16,20 @@ class OidcAuth implements AuthInterface
 
     public function __construct(
         private EntityManagerInterface $em,
+        private OidcUserService $oidcUserService,
     ) {
     }
 
-    public function check(string|Request $request): false|AuthUser
+    public function check(Request $request): false|AuthUser
     {
-        assert($request instanceof Request, 'OpenIdAuth::check() expects a Request object.');
+        $session = $request->getSession();
+        $oidcUser = $this->oidcUserService->getCurrentUser($session);
 
-        // check JWT
+        if ($oidcUser === null) {
+            return false;
+        }
 
-        return false;
+        return AuthUser::fromOidcUser($oidcUser);
     }
 
     public function authUrl(string $page, string|Request|null $redirect = null): string

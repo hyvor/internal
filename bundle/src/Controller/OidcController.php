@@ -7,6 +7,7 @@ use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
+use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,22 +16,22 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Firebase\JWT\JWK;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OidcController extends AbstractController
 {
 
-    private const SESSION_STATE_KEY = 'oidc_state';
-    private const SESSION_NONCE_KEY = 'oidc_nonce';
-    private const SESSION_REDIRECT_KEY = 'oidc_redirect';
+    private const string SESSION_STATE_KEY = 'oidc_state';
+    private const string SESSION_NONCE_KEY = 'oidc_nonce';
+    private const string SESSION_REDIRECT_KEY = 'oidc_redirect';
 
     public function __construct(
         private OidcConfig $oidcConfig,
         private OidcApiService $oidcApiService,
+        private OidcUserService $oidcUserService,
         private LoggerInterface $logger,
-        private SerializerInterface&Serializer $serializer,
+        private DenormalizerInterface $denormalizer,
         private ValidatorInterface $validator,
     ) {
     }
@@ -101,26 +102,35 @@ class OidcController extends AbstractController
             throw new BadRequestHttpException('Invalid JWKS: ' . $e->getMessage());
         }
 
-        $decodedIdToken = $this->serializer->denormalize($decoded, OidcDecodedIdTokenDto::class);
-        $errors = $this->validator->validate($decodedIdToken);
+        try {
+            /** @var OidcDecodedIdTokenDto $decodedIdToken */
+            $decodedIdToken = $this->denormalizer->denormalize($decoded, OidcDecodedIdTokenDto::class);
+        } catch (\Throwable $e) {
+            $this->logger->error('Failed to decode ID Token: ' . $e->getMessage());
+            throw new BadRequestHttpException('Invalid ID Token: ' . $e->getMessage());
+        }
 
+        $errors = $this->validator->validate($decodedIdToken);
         if (count($errors) > 0) {
             throw new BadRequestHttpException((string)$errors);
         }
 
-        $nonce = $decoded->nonce ?? null;
-        if ($nonce !== $sessionNonce) {
+        if ($decodedIdToken->nonce !== $sessionNonce) {
             throw new BadRequestHttpException('Invalid nonce in ID Token.');
         }
 
-        $emailVerified = $decoded->email_verified ?? false;
-        if (!$emailVerified) {
+        if (!$decodedIdToken->email_verified) {
             throw new BadRequestHttpException('Email not verified. Only verified emails are allowed.');
         }
 
-        dd($decoded);
+        $oidcUser = $this->oidcUserService->loginOrSignup($decodedIdToken, $session);
 
-        return new RedirectResponse('/');
+        $this->logger->info('OIDC user logged in', [
+            'id' => $oidcUser->getId(),
+            'email' => $oidcUser->getEmail(),
+        ]);
+
+        return new RedirectResponse($sessionRedirect);
     }
 
 }
