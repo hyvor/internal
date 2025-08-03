@@ -2,8 +2,10 @@
 
 namespace Hyvor\Internal\Auth\Oidc;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\Oidc\Entity\OidcUser;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,9 +15,8 @@ class OidcAuth implements AuthInterface
 {
 
     public function __construct(
-        //
-    )
-    {
+        private EntityManagerInterface $em,
+    ) {
     }
 
     public function check(string|Request $request): false|AuthUser
@@ -39,7 +40,9 @@ class OidcAuth implements AuthInterface
 
     public function fromId(int $id): ?AuthUser
     {
-        // TODO: Implement fromId() method.
+        return $this->em
+            ->getRepository(OidcUser::class)
+            ->find($id);
     }
 
     public function fromEmails(iterable $emails)

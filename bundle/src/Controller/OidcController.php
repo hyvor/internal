@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Bundle\Controller;
 
 use Firebase\JWT\JWT;
+use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
@@ -14,6 +15,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Firebase\JWT\JWK;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OidcController extends AbstractController
 {
@@ -26,6 +30,8 @@ class OidcController extends AbstractController
         private OidcConfig $oidcConfig,
         private OidcApiService $oidcApiService,
         private LoggerInterface $logger,
+        private SerializerInterface&Serializer $serializer,
+        private ValidatorInterface $validator,
     ) {
     }
 
@@ -95,6 +101,13 @@ class OidcController extends AbstractController
             throw new BadRequestHttpException('Invalid JWKS: ' . $e->getMessage());
         }
 
+        $decodedIdToken = $this->serializer->denormalize($decoded, OidcDecodedIdTokenDto::class);
+        $errors = $this->validator->validate($decodedIdToken);
+
+        if (count($errors) > 0) {
+            throw new BadRequestHttpException((string)$errors);
+        }
+
         $nonce = $decoded->nonce ?? null;
         if ($nonce !== $sessionNonce) {
             throw new BadRequestHttpException('Invalid nonce in ID Token.');
@@ -104,7 +117,6 @@ class OidcController extends AbstractController
         if (!$emailVerified) {
             throw new BadRequestHttpException('Email not verified. Only verified emails are allowed.');
         }
-
 
         dd($decoded);
 

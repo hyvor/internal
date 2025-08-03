@@ -488,6 +488,7 @@ CREATE TABLE oidc_users
   email       text NOT NULL,
   name        text NOT NULL,
   picture_url text,
+  website_url text,
   UNIQUE (iss, sub)
 );
 
