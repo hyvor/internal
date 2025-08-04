@@ -1,7 +1,8 @@
-## 3.1.0 - 2025-08-04
+## Unreleased
 
 - `AuthInterface::check` now requires a `Request` object.
-- OIDC support added
+- `AuthInterface::fromEmail` now returns an array of `AuthUser` objects instead of a single object (email is not unique in OIDC).
+- OIDC support added.
 
 ## 3.0.7 - 2025-07-25
 

@@ -68,6 +68,7 @@ class InternalBundleTest extends TestCase
         $config = [
             'component' => 'core',
             'instance' => 'https://hyvor.com',
+            'auth_method' => 'hyvor',
             'private_instance' => null,
             'fake' => $dev,
             'i18n' => [
@@ -101,6 +102,7 @@ class InternalBundleTest extends TestCase
 
     public function test_load_extension_on_dev(): void
     {
+        $_ENV['HYVOR_FAKE'] = '1';
         $containerBuilder = $this->getContainerBuilder(true);
         $this->assertSame(AuthFake::class, (string)$containerBuilder->getAlias(AuthInterface::class));
     }

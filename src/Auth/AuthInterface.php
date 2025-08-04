@@ -23,7 +23,7 @@ interface AuthInterface
 
     /**
      * @param iterable<int> $ids
-     * @return Collection<int, AuthUser>
+     * @return array<int, AuthUser> Indexed by user ID.
      */
     public function fromIds(iterable $ids);
 
@@ -31,18 +31,23 @@ interface AuthInterface
 
     /**
      * @param iterable<string> $emails
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser[]> Indexed by email.
      */
     public function fromEmails(iterable $emails);
 
-    public function fromEmail(string $email): ?AuthUser;
+    /**
+     * @return AuthUser[]
+     */
+    public function fromEmail(string $email): array;
 
     /**
+     * OIDC does not support this method.
      * @param iterable<string> $usernames
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser> Indexed by username.
      */
     public function fromUsernames(iterable $usernames);
 
+    // OIDC does not support this method.
     public function fromUsername(string $username): ?AuthUser;
 
 }

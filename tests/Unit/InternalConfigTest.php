@@ -14,6 +14,7 @@ class InternalConfigTest extends SymfonyTestCase
         $internalConfig = new InternalConfig(
             appSecret: 'c2VjcmV0',
             component: 'core',
+            authMethod: 'hyvor',
             instance: 'https://hyvor.com',
             privateInstance: 'https://hyvor.internal',
             fake: false,
@@ -37,6 +38,7 @@ class InternalConfigTest extends SymfonyTestCase
         $internalConfig = new InternalConfig(
             appSecret: 'c2VjcmV0',
             component: 'core',
+            authMethod: 'hyvor',
             instance: 'https://hyvor.com',
             privateInstance: 'https://hyvor.internal',
             fake: false,

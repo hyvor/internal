@@ -44,9 +44,8 @@ class OidcAuth implements AuthInterface
 
     public function fromId(int $id): ?AuthUser
     {
-        return $this->em
-            ->getRepository(OidcUser::class)
-            ->find($id);
+        $oidcUser = $this->em->getRepository(OidcUser::class)->find($id);
+        return $oidcUser ? AuthUser::fromOidcUser($oidcUser) : null;
     }
 
     public function fromEmails(iterable $emails)

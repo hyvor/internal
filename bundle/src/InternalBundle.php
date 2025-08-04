@@ -92,7 +92,7 @@ class InternalBundle extends AbstractBundle
         }
         // @codeCoverageIgnoreEnd
 
-        $isFake = $builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true) === '1';
+        $isFake = boolval($builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true));
         if ($isFake && $container->env() === 'dev') {
             $this->setupFake($container);
         }

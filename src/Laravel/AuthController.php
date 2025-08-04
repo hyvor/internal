@@ -29,8 +29,7 @@ class AuthController
 
     public function check(): JsonResponse
     {
-        $cookie = (string)request()->cookies->get(Auth::HYVOR_SESSION_COOKIE_NAME);
-        $user = $this->getAuthInterface()->check($cookie);
+        $user = $this->getAuthInterface()->check(request());
 
         return Response::json([
             'is_logged_in' => $user !== false,
