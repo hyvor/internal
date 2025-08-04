@@ -14,6 +14,7 @@ class OidcUserService
     use ClockAwareTrait;
 
     private const string SESSION_OIDC_USER_ID = 'oidc_user_id';
+    private const string SESSION_OIDC_ID_TOKEN = 'oidc_id_token';
 
     public function __construct(
         private EntityManagerInterface $em
@@ -46,6 +47,7 @@ class OidcUserService
 
         $session->invalidate();
         $session->set(self::SESSION_OIDC_USER_ID, $user->getId());
+        $session->set(self::SESSION_OIDC_ID_TOKEN, $idToken->raw_token);
 
         return $user;
     }

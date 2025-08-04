@@ -14,6 +14,7 @@ class OidcWellKnownConfigDto
         public string $tokenEndpoint,
         public string $userinfoEndpoint,
         public string $jwksUri,
+        public ?string $endSessionEndpoint,
     ) {
     }
 

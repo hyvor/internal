@@ -70,6 +70,7 @@ class OidcApiService
             tokenEndpoint: $data['token_endpoint'],
             userinfoEndpoint: $data['userinfo_endpoint'],
             jwksUri: $data['jwks_uri'],
+            endSessionEndpoint: $data['end_session_endpoint'] ?? null,
         );
     }
 

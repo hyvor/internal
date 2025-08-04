@@ -1,3 +1,8 @@
+## 3.1.0 - 2025-08-04
+
+- `AuthInterface::check` now requires a `Request` object.
+- OIDC support added
+
 ## 3.0.7 - 2025-07-25
 
 - `app:dev:reset` command added

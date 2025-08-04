@@ -26,9 +26,11 @@ class Auth implements AuthInterface
     /**
      * @throws InternalApiCallFailedException
      */
-    public function check(string|Request $request): false|AuthUser
+    public function check(Request $request): false|AuthUser
     {
-        if (empty($request)) {
+        $cookie = $request->cookies->get(self::HYVOR_SESSION_COOKIE_NAME);
+
+        if (!$cookie) {
             return false;
         }
 

@@ -103,6 +103,7 @@ class OidcController extends AbstractController
         }
 
         try {
+            $decoded->raw_token = $idToken;
             /** @var OidcDecodedIdTokenDto $decodedIdToken */
             $decodedIdToken = $this->denormalizer->denormalize($decoded, OidcDecodedIdTokenDto::class);
         } catch (\Throwable $e) {
@@ -131,6 +132,39 @@ class OidcController extends AbstractController
         ]);
 
         return new RedirectResponse($sessionRedirect);
+    }
+
+    #[Route('/logout', methods: 'GET')]
+    public function oidcLogout(Request $request): RedirectResponse
+    {
+        $session = $request->getSession();
+        $session->invalidate();
+        $rawRedirectResponse = new RedirectResponse('/');
+
+        try {
+            $logoutUrl = $this->oidcApiService->getWellKnownConfig()->endSessionEndpoint;
+        } catch (OidcApiException $e) {
+            $this->logger->error('Ignoring OIDC logout due to API error: ' . $e->getMessage());
+            return $rawRedirectResponse;
+        }
+
+        if ($logoutUrl === null) {
+            $this->logger->error('OIDC end session endpoint not configured.');
+            return $rawRedirectResponse;
+        }
+
+        $homepageUrl = $request->getSchemeAndHttpHost();
+
+        $params = [
+            'client_id' => $this->oidcConfig->getClientId(),
+            'post_logout_redirect_uri' => $homepageUrl,
+        ];
+        $query = http_build_query($params);
+        $logoutUrl .= '?' . $query;
+
+        $this->logger->info('OIDC: Redirecting for logout', ['url' => $logoutUrl]);
+
+        return new RedirectResponse($logoutUrl);
     }
 
 }

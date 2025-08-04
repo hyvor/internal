@@ -31,4 +31,7 @@ class OidcDecodedIdTokenDto
     public ?string $picture = null;
     public ?string $website = null;
 
+    #[Assert\NotBlank]
+    public string $raw_token;
+
 }
