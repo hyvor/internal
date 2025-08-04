@@ -27,7 +27,6 @@ class SymfonyTestBundle extends AbstractBundle
             ->set('kernel', SymfonyKernel::class)
             ->set(HttpClientInterface::class, MockHttpClient::class)
             ->set(CacheInterface::class, ArrayAdapter::class)
-            ->set(EntityManagerInterface::class, EntityManager::class)
             ->set(ManagerRegistry::class, Registry::class)
             ->public();
     }

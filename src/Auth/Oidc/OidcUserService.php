@@ -30,6 +30,20 @@ class OidcUserService
         return $this->em->getRepository(OidcUser::class)->find($userId);
     }
 
+    public function findById(int $id): ?OidcUser
+    {
+        return $this->em->getRepository(OidcUser::class)->find($id);
+    }
+
+    /**
+     * @param iterable<int> $ids
+     * @return OidcUser[]
+     */
+    public function findByIds(iterable $ids): array
+    {
+        return $this->em->getRepository(OidcUser::class)->findBy(['id' => $ids]);
+    }
+
     public function loginOrSignup(OidcDecodedIdTokenDto $idToken, SessionInterface $session): OidcUser
     {
         $user = $this->getUserByIssAndSub($idToken->iss, $idToken->sub);

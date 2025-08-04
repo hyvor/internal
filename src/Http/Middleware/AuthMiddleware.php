@@ -13,8 +13,7 @@ class AuthMiddleware
 
     public function handle(Request $request, Closure $next): mixed
     {
-        $cookie = $request->cookie(Auth::HYVOR_SESSION_COOKIE_NAME);
-        $user = app(AuthInterface::class)->check(is_string($cookie) ? $cookie : '');
+        $user = app(AuthInterface::class)->check($request);
 
         if (!$user) {
             throw new HttpException('Unauthorized', 401);

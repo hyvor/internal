@@ -35,7 +35,6 @@ class AuthUserLaravelTest extends LaravelTestCase
         $this->assertNull($user->location);
         $this->assertNull($user->bio);
         $this->assertNull($user->website_url);
-        $this->assertNull($user->email_relay);
 
         $this->assertSame([
             'id' => 1,

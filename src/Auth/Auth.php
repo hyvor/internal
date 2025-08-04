@@ -108,7 +108,7 @@ class Auth implements AuthInterface
         return $this->getUsersByField('emails', $emails);
     }
 
-    public function fromEmail(string $email): ?AuthUser
+    public function fromEmail(string $email): array
     {
         return $this->fromEmails([$email])->get($email);
     }

@@ -35,9 +35,16 @@ trait AuthTestTrait
         $httpClient->setResponseFactory($response);
     }
 
+    private function requestWithCookie(string $cookie): Request
+    {
+        $request = Request::create('https://hyvor.internal/api/internal/auth/check');
+        $request->cookies->set('hyvor_auth', $cookie);
+        return $request;
+    }
+
     public function testCheckWhenNoCookieSet(): void
     {
-        $this->assertFalse($this->getAuth()->check(''));
+        $this->assertFalse($this->getAuth()->check($this->requestWithCookie('')));
     }
 
     public function testCheckWhenCookieIsSet(): void
@@ -52,7 +59,7 @@ trait AuthTestTrait
         ]);
         $this->setResponseFactory($response);
 
-        $user = $this->getAuth()->check('test-cookie');
+        $user = $this->getAuth()->check($this->requestWithCookie('test-cookie'));
 
         $this->assertInstanceOf(AuthUser::class, $user);
         $this->assertEquals(1, $user->id);
@@ -75,7 +82,7 @@ trait AuthTestTrait
             'user' => null
         ]);
         $this->setResponseFactory($response);
-        $this->assertFalse($this->getAuth()->check('test'));
+        $this->assertFalse($this->getAuth()->check($this->requestWithCookie('test')));
     }
 
     public function test_auth_url(): void

@@ -46,10 +46,4 @@ readonly class OidcConfig
         return $currentUrlOrigin . '/api/oidc/callback';
     }
 
-
-    public function callEndpoint(string $endpoint): array
-    {
-        //
-    }
-
 }

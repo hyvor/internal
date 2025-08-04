@@ -114,7 +114,7 @@ final class AuthFake implements AuthInterface
         return $this->multiSearch('email', $emails);
     }
 
-    public function fromEmail(string $email): ?AuthUser
+    public function fromEmail(string $email): array
     {
         return $this->singleSearch('email', $email);
     }

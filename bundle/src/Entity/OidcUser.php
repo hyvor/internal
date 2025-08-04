@@ -16,10 +16,10 @@ class OidcUser
     private int $id;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $created_at;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updated_at;
 
     #[ORM\Column()]
     private string $iss;
@@ -34,10 +34,10 @@ class OidcUser
     private string $name;
 
     #[ORM\Column()]
-    private ?string $pictureUrl = null;
+    private ?string $picture_url = null;
 
     #[ORM\Column()]
-    private ?string $websiteUrl = null;
+    private ?string $website_url = null;
 
     public function getId(): int
     {
@@ -52,23 +52,23 @@ class OidcUser
 
     public function getCreatedAt(): \DateTimeImmutable
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
         return $this;
     }
 
     public function getUpdatedAt(): \DateTimeImmutable
     {
-        return $this->updatedAt;
+        return $this->updated_at;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
-        $this->updatedAt = $updatedAt;
+        $this->updated_at = $updated_at;
         return $this;
     }
 
@@ -118,23 +118,23 @@ class OidcUser
 
     public function getPictureUrl(): ?string
     {
-        return $this->pictureUrl;
+        return $this->picture_url;
     }
 
-    public function setPictureUrl(?string $pictureUrl): static
+    public function setPictureUrl(?string $picture_url): static
     {
-        $this->pictureUrl = $pictureUrl;
+        $this->picture_url = $picture_url;
         return $this;
     }
 
     public function getWebsiteUrl(): ?string
     {
-        return $this->websiteUrl;
+        return $this->website_url;
     }
 
-    public function setWebsiteUrl(?string $websiteUrl): static
+    public function setWebsiteUrl(?string $website_url): static
     {
-        $this->websiteUrl = $websiteUrl;
+        $this->website_url = $website_url;
         return $this;
     }
 

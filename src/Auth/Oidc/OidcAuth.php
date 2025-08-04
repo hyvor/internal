@@ -2,10 +2,9 @@
 
 namespace Hyvor\Internal\Auth\Oidc;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
-use Hyvor\Internal\Bundle\Entity\OidcUser;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -15,7 +14,6 @@ class OidcAuth implements AuthInterface
 {
 
     public function __construct(
-        private EntityManagerInterface $em,
         private OidcUserService $oidcUserService,
     ) {
     }
@@ -34,28 +32,42 @@ class OidcAuth implements AuthInterface
 
     public function authUrl(string $page, string|Request|null $redirect = null): string
     {
-        return '/api/oidc/login';
+        $redirect = Auth::resolveRedirect($redirect);
+        $redirect = $redirect ? '?redirect=' . urlencode($redirect) : '';
+
+        if ($page === 'logout') {
+            // logout always redirects to the homepage
+            return '/api/oidc/logout';
+        } else {
+            return '/api/oidc/login' . $redirect;
+        }
     }
 
-    public function fromIds(iterable $ids)
+    public function fromIds(iterable $ids): array
     {
-        // TODO: Implement fromIds() method.
+        $oidcUsers = $this->oidcUserService->findByIds($ids);
+        $indexedUsers = [];
+        foreach ($oidcUsers as $oidcUser) {
+            $indexedUsers[$oidcUser->getId()] = AuthUser::fromOidcUser($oidcUser);
+        }
+        return $indexedUsers;
     }
 
     public function fromId(int $id): ?AuthUser
     {
-        $oidcUser = $this->em->getRepository(OidcUser::class)->find($id);
+        $oidcUser = $this->oidcUserService->findById($id);
         return $oidcUser ? AuthUser::fromOidcUser($oidcUser) : null;
     }
 
     public function fromEmails(iterable $emails)
     {
-        throw new \LogicException('OIDC email is not unique. Do not use fromEmails() method.');
+        // TODO
     }
 
-    public function fromEmail(string $email): ?AuthUser
+    public function fromEmail(string $email): array
     {
-        throw new \LogicException('OIDC email is not unique. Do not use fromEmail() method.');
+        // TODO
+        return [];
     }
 
     public function fromUsernames(iterable $usernames)

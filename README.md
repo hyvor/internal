@@ -491,6 +491,7 @@ CREATE TABLE oidc_users
   website_url text,
   UNIQUE (iss, sub)
 );
+CREATE INDEX idx_oidc_users_email ON oidc_users (email);
 
 CREATE TABLE oidc_sessions
 (

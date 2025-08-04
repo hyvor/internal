@@ -2,9 +2,13 @@
 
 namespace Hyvor\Internal\Tests;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Hyvor\Internal\Bundle\InternalBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
@@ -19,7 +23,36 @@ class SymfonyKernel extends Kernel
             new SymfonyTestBundle(),
             new InternalBundle(),
             new FrameworkBundle(), // needed for HttpKernel
+            new DoctrineBundle(),
         ];
+    }
+
+    protected function configureContainer(
+        ContainerConfigurator $container,
+        LoaderInterface $loader,
+        ContainerBuilder $builder
+    ): void {
+        // set up doctrine with SQLite in memory
+        $container->extension('doctrine', [
+            'dbal' => [
+                'driver' => 'pdo_sqlite',
+                'memory' => true,
+            ],
+            'orm' => [
+                'auto_generate_proxy_classes' => true,
+                'entity_managers' => [
+                    'default' => [
+                        'mappings' => [
+                            'InternalBundle' => [
+                                'type' => 'attribute',
+                                'dir' => '%kernel.project_dir%/bundle/src/Entity',
+                                'prefix' => 'Hyvor\\Internal\\Bundle\\Entity',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void
