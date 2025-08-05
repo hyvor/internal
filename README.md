@@ -588,6 +588,26 @@ On the frontend (e.g. Console), handle the 401 error:
 });
 ```
 
+## Sudo Setup
+
+Every application has sudo users, who can access /sudo and perform administrative tasks. The internal library abstracts sudo user management.
+
+- Commands
+  - `sudo:list` - List all sudo users.
+  - `sudo:add <email>` - Add a sudo user by email.
+  - `sudo:remove <id>` - Remove a sudo user by ID from `sudo:list`.
+  - `sudo:clear` - Clear all sudo users.
+
+First, add the migration:
+
+```sql
+CREATE TABLE sudo_users (
+  user_id BIGINT PRIMARY KEY,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL
+);
+```
+
 ### Development
 
 #### PHPStorm

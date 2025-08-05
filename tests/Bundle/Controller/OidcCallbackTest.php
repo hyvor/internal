@@ -9,7 +9,7 @@ use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
 use Hyvor\Internal\Tests\SymfonyTestCase;
-use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactory;
+use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class OidcCallbackTest extends SymfonyTestCase
 {
 
-    use OidcUserFactory;
+    use OidcUserFactoryTrait;
 
     private function setTestOidcEnv(): void
     {
