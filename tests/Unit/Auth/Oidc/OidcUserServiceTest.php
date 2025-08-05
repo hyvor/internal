@@ -4,7 +4,6 @@ namespace Hyvor\Internal\Tests\Unit\Auth\Oidc;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
-use Hyvor\Internal\Auth\Oidc\Repository\OidcUserRepository;
 use Mockery\MockInterface;
 
 class OidcUserServiceTest

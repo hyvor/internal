@@ -59,10 +59,17 @@ class OidcAuth implements AuthInterface
         return $oidcUser ? AuthUser::fromOidcUser($oidcUser) : null;
     }
 
-    public function fromEmails(iterable $emails)
+    public function fromEmails(iterable $emails): array
     {
-        // TODO:
-        return [];
+        $oidcUsers = $this->oidcUserService->findByEmails((array)$emails);
+
+        $indexedUsers = [];
+
+        foreach ($oidcUsers as $oidcUser) {
+            $indexedUsers[$oidcUser->getEmail()][] = AuthUser::fromOidcUser($oidcUser);
+        }
+
+        return $indexedUsers;
     }
 
     public function fromEmail(string $email): array
@@ -74,11 +81,17 @@ class OidcAuth implements AuthInterface
         );
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function fromUsernames(iterable $usernames)
     {
         throw new \LogicException('OIDC does not implement fromUsernames().');
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function fromUsername(string $username): ?AuthUser
     {
         throw new \LogicException('OIDC does not implement fromUsername().');
