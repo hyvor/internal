@@ -11,6 +11,7 @@ use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 
 #[CoversClass(BillingFake::class)]
 class BillingFakeLaravelTest extends LaravelTestCase
@@ -29,7 +30,9 @@ class BillingFakeLaravelTest extends LaravelTestCase
         $this->assertNull($fake->license(1, 1));
     }
 
-    public function test_enable_and_licenses(): void
+    #[TestWith([true])]
+    #[TestWith([false])]
+    public function test_enable_and_licenses(bool $callback): void
     {
         $license1 = new BlogsLicense;
         $license2 = new BlogsLicense(users: 5);
@@ -52,7 +55,7 @@ class BillingFakeLaravelTest extends LaravelTestCase
             ]
         ], Component::BLOGS);
 
-        BillingFake::enable(licenses: $collection);
+        BillingFake::enable(licenses: $callback ? fn() => $collection : $collection);
         $fake = app(BillingInterface::class);
         $this->assertInstanceOf(BillingFake::class, $fake);
 

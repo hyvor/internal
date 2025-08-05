@@ -95,5 +95,4 @@ class AuthUserLaravelTest extends LaravelTestCase
         $this->assertCount(1, $user);
         $this->assertEquals('jimdoe@hyvor.com', $user[0]->email);
     }
-
 }

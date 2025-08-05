@@ -237,6 +237,33 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->kernel->handle($request, catch: false);
     }
 
+    public function test_when_api_does_not_have_id_token(): void
+    {
+        $wellKnownResponse = $this->wellKnownResponse();
+        $idTokenResponse = new JsonMockResponse([]);
+
+        $this->setHttpClientResponse([$wellKnownResponse, $idTokenResponse]);
+        $request = $this->createRequest();
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Unable to authenticate ID Token not found in the response');
+        $this->kernel->handle($request, catch: false);
+    }
+
+    public function test_when_jwk_fails(): void
+    {
+        $wellKnownResponse = $this->wellKnownResponse();
+        $idTokenResponse = new JsonMockResponse(['id_token' => 'dummy.jwt.token']);
+        $jwksResponse = new JsonMockResponse(info: ['status' => 500, 'error' => 'NO JWKS']);
+
+        $this->setHttpClientResponse([$wellKnownResponse, $idTokenResponse, $jwksResponse]);
+        $request = $this->createRequest();
+
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('Unable to authenticate Failed to fetch JWKS: NO JWKS');
+        $this->kernel->handle($request, catch: false);
+    }
+
     public function test_jwks_parsing(): void
     {
         $wellKnownResponse = $this->wellKnownResponse();

@@ -47,7 +47,7 @@ class InternalFake
 
     /**
      * Returns a collection of licenses for the given LicenseOf objects.
-     *
+     * @@codeCoverageIgnore TODO: add coverage later
      * @param LicenseOf[] $of
      */
     public function licenses(array $of, Component $component): LicensesCollection

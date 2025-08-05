@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 #[CoversClass(OidcUserService::class)]
 #[CoversClass(OidcUserRepository::class)]
 #[CoversClass(OidcUser::class)]
+#[CoversClass(AuthUser::class)]
 class OidcAuthTest extends SymfonyTestCase
 {
 

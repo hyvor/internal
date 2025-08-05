@@ -24,6 +24,19 @@ class OidcLoginTest extends SymfonyTestCase
         $this->kernel->handle($request, catch: false);
     }
 
+    public function test_handles_oidc_api_error_string_test(): void
+    {
+        $this->setHttpClientResponse(new JsonMockResponse([
+            'issuer' => false
+        ]));
+
+        $request = Request::create('/api/oidc/login');
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage("Key 'issuer' in discovery document must be a string.");
+        $this->kernel->handle($request, catch: false);
+    }
+
     public function test_sets_session_and_redirects(): void
     {
         $_ENV['OIDC_CLIENT_ID'] = 'my-client-id';
