@@ -7,6 +7,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
  * @extends PersistentProxyObjectFactory<SudoUser>
+ * @codeCoverageIgnore
  */
 final class SudoUserFactory extends PersistentProxyObjectFactory
 {

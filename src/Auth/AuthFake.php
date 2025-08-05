@@ -42,6 +42,11 @@ final class AuthFake implements AuthInterface
         $this->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
     }
 
+    public function __destruct()
+    {
+        self::$symfonyContainer = null;
+    }
+
     /**
      * Laravel-only
      * @param AuthUser|AuthUserArrayPartial|null $user
