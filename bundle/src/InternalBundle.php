@@ -84,14 +84,6 @@ class InternalBundle extends AbstractBundle
         );
         $billingInterface = $container->services()->alias(BillingInterface::class, Billing::class);
 
-        // sometimes we need to replace services dynamically in services
-        // it is only possible for public services
-        // @codeCoverageIgnoreStart
-        if ($container->env() === 'test') {
-            $authInterface->public();
-        }
-        // @codeCoverageIgnoreEnd
-
         $isFake = boolval($builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true));
         if ($isFake && $container->env() === 'dev') {
             $this->setupFake($container);

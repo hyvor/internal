@@ -18,17 +18,24 @@ trait AuthFakeTestTrait
 
     abstract protected function enable(?array $user = null): void;
 
-    public function testCheckBasedOnUserIdConfig(): void
+    public function testCheckBasedOnUserIdConfig_1(): void
     {
         $this->enable(['id' => 1]);
         $this->assertSame(1, $this->getAuthFake()->user?->id);
+    }
 
+    public function testCheckBasedOnUserIdConfig_2(): void
+    {
         $this->enable(['id' => 2]);
         $this->assertSame(2, $this->getAuthFake()->user?->id);
+    }
 
+    public function testCheckBasedOnUserIdConfig_3(): void
+    {
         $this->enable(null);
         $this->assertNull($this->getAuthFake()->user);
     }
+
 
     public function test_auth_url(): void
     {
