@@ -32,9 +32,7 @@ trait InternalApiTestTrait
 
     private function setResponseFactory(MockResponse $response): void
     {
-        $httpClient = $this->getContainer()->get(HttpClientInterface::class);
-        assert($httpClient instanceof MockHttpClient);
-        $httpClient->setResponseFactory($response);
+        $this->setHttpClientResponse($response);
     }
 
     public function testCallsTalkInternalApi(): void

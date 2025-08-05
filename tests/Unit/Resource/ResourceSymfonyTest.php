@@ -32,9 +32,7 @@ class ResourceSymfonyTest extends SymfonyTestCase
 
     protected function setResponseFactory(JsonMockResponse $response): void
     {
-        $httpClient = $this->container->get(HttpClientInterface::class);
-        assert($httpClient instanceof MockHttpClient);
-        $httpClient->setResponseFactory($response);
+        $this->setHttpClientResponse($response);
     }
 
 }
