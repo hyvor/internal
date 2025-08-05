@@ -6,7 +6,6 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Tests\LaravelTestCase;
-use Illuminate\Support\Collection;
 
 class AuthUserLaravelTest extends LaravelTestCase
 {
@@ -53,11 +52,10 @@ class AuthUserLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $users = $this->getAuth()->fromIds([1, 2]);
 
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
-        $this->assertInstanceOf(AuthUser::class, $users->first());
-        $this->assertEquals(1, $users->first()->id);
-        $this->assertEquals(2, $users->last()?->id);
+        $this->assertInstanceOf(AuthUser::class, $users[1]);
+        $this->assertEquals(1, $users[1]->id);
+        $this->assertEquals(2, $users[2]->id);
 
         $user = $this->getAuth()->fromId(3);
 
@@ -71,11 +69,10 @@ class AuthUserLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $users = $this->getAuth()->fromUsernames(['johndoe', 'janedoe']);
 
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
-        $this->assertInstanceOf(AuthUser::class, $users->first());
-        $this->assertEquals('johndoe', $users->first()->username);
-        $this->assertEquals('janedoe', $users->last()?->username);
+        $this->assertInstanceOf(AuthUser::class, $users['johndoe']);
+        $this->assertEquals('johndoe', $users['johndoe']->username);
+        $this->assertEquals('janedoe', $users['janedoe']->username);
 
         $user = $this->getAuth()->fromUsername('jimdoe');
 
@@ -88,17 +85,15 @@ class AuthUserLaravelTest extends LaravelTestCase
         AuthFake::enable();
         $users = $this->getAuth()->fromEmails(['johndoe@hyvor.com', 'janedoe@hyvor.com']);
 
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
-        $this->assertInstanceOf(AuthUser::class, $users->first());
 
-        $this->assertEquals('johndoe@hyvor.com', $users->first()->email);
-        $this->assertEquals('janedoe@hyvor.com', $users->last()?->email);
+        $this->assertEquals('johndoe@hyvor.com', $users['johndoe@hyvor.com'][0]->email);
+        $this->assertEquals('janedoe@hyvor.com', $users['janedoe@hyvor.com'][0]->email);
 
         $user = $this->getAuth()->fromEmail('jimdoe@hyvor.com');
 
-        $this->assertInstanceOf(AuthUser::class, $user);
-        $this->assertEquals('jimdoe@hyvor.com', $user->email);
+        $this->assertCount(1, $user);
+        $this->assertEquals('jimdoe@hyvor.com', $user[0]->email);
     }
 
 }

@@ -30,9 +30,7 @@ trait AuthTestTrait
 
     private function setResponseFactory(JsonMockResponse $response): void
     {
-        $httpClient = $this->getContainer()->get(HttpClientInterface::class);
-        assert($httpClient instanceof MockHttpClient);
-        $httpClient->setResponseFactory($response);
+        $this->setHttpClientResponse($response);
     }
 
     private function requestWithCookie(string $cookie): Request
