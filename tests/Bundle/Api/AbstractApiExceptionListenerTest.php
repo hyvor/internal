@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Tests\Bundle\Api;
 
 use Hyvor\Internal\Bundle\Api\AbstractApiExceptionListener;
+use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 #[CoversClass(AbstractApiExceptionListener::class)]
+#[CoversClass(DataCarryingHttpException::class)]
 class AbstractApiExceptionListenerTest extends SymfonyTestCase
 {
 
@@ -107,6 +109,36 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
         $listener($exceptionEvent);
         $this->assertNull($exceptionEvent->getResponse());
+    }
+
+    public function test_data_carrying_http_exception(): void
+    {
+        $listener = new ApiExceptionListener('dev');
+
+        $exceptionEvent = new ExceptionEvent(
+            $this->kernel,
+            new Request(
+                server: [
+                    'REQUEST_METHOD' => 'GET',
+                    'REQUEST_URI' => '/api/console/some/endpoint',
+                ]
+            ),
+            0,
+            new DataCarryingHttpException(
+                400,
+                ['foo' => 'bar'],
+                'Custom error message'
+            )
+        );
+
+        $listener($exceptionEvent);
+
+        $response = $exceptionEvent->getResponse();
+        $this->assertNotNull($response);
+        $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Custom error message', $data['message']);
+        $this->assertSame(['foo' => 'bar'], $data['data']);
     }
 
 }

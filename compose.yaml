@@ -8,6 +8,7 @@ services:
     volumes:
       - ./bundle:/app/bundle
       - ./src:/app/src
+      - ./bundle:/app/bundle
       - ./tests:/app/tests
       - ./types:/app/types
       - ./composer.json:/app/composer.json

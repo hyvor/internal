@@ -1,3 +1,10 @@
+## 3.0.8 - 2025-08-05
+
+- `AuthInterface::check` now requires a `Request` object.
+- `AuthInterface::fromEmail` now returns an array of `AuthUser` objects instead of a single object (email is not unique in OIDC).
+- `AuthInterface` user data methods now return arrays instead of Laravel Collections.
+- OIDC support added.
+
 ## 3.0.7 - 2025-07-25
 
 - `app:dev:reset` command added

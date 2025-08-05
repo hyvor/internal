@@ -6,7 +6,6 @@ use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -26,9 +25,11 @@ class Auth implements AuthInterface
     /**
      * @throws InternalApiCallFailedException
      */
-    public function check(string $cookie): false|AuthUser
+    public function check(Request $request): false|AuthUser
     {
-        if (empty($cookie)) {
+        $cookie = $request->cookies->get(self::HYVOR_SESSION_COOKIE_NAME);
+
+        if (!$cookie) {
             return false;
         }
 
@@ -67,9 +68,9 @@ class Auth implements AuthInterface
      * @template T of int|string
      * @param 'ids'|'emails'|'usernames' $field
      * @param iterable<T> $values
-     * @return Collection<T, AuthUser> keyed by the field
+     * @return array<T, AuthUser> keyed by the field
      */
-    protected function getUsersByField(string $field, iterable $values): Collection
+    protected function getUsersByField(string $field, iterable $values): array
     {
         $response = $this->internalApi->call(
             Component::CORE,
@@ -79,13 +80,18 @@ class Auth implements AuthInterface
             ]
         );
 
-        $users = collect($response);
-        return $users->map(fn($user) => AuthUser::fromArray($user));
+        $return = [];
+
+        foreach ($response as $index => $user) {
+            $return[$index] = AuthUser::fromArray($user);
+        }
+
+        return $return;
     }
 
     /**
      * @param iterable<int> $ids
-     * @return Collection<int, AuthUser>
+     * @return array<int, AuthUser>
      */
     public function fromIds(iterable $ids)
     {
@@ -94,35 +100,39 @@ class Auth implements AuthInterface
 
     public function fromId(int $id): ?AuthUser
     {
-        return $this->fromIds([$id])->get($id);
+        return $this->fromIds([$id])[$id] ?? null;
     }
 
     /**
      * @param iterable<string> $emails
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser[]>
      */
-    public function fromEmails(iterable $emails)
+    public function fromEmails(iterable $emails): array
     {
-        return $this->getUsersByField('emails', $emails);
+        // this is email => AuthUser
+        $response = $this->getUsersByField('emails', $emails);
+
+        // convert it to email => AuthUser[]
+        return array_map(fn($user) => [$user], $response);
     }
 
-    public function fromEmail(string $email): ?AuthUser
+    public function fromEmail(string $email): array
     {
-        return $this->fromEmails([$email])->get($email);
+        return $this->fromEmails([$email])[$email] ?? [];
     }
 
     /**
      * @param iterable<string> $usernames
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser>
      */
-    public function fromUsernames(iterable $usernames)
+    public function fromUsernames(iterable $usernames): array
     {
         return $this->getUsersByField('usernames', $usernames);
     }
 
     public function fromUsername(string $username): ?AuthUser
     {
-        return $this->fromUsernames([$username])->get($username);
+        return $this->fromUsernames([$username])[$username] ?? null;
     }
 
 }

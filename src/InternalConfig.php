@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal;
 
+use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
 
 class InternalConfig
@@ -19,6 +20,7 @@ class InternalConfig
          * Component name
          */
         private string $component,
+        private string $authMethod,
         private string $instance,
         private ?string $privateInstance,
         private bool $fake,
@@ -44,6 +46,11 @@ class InternalConfig
     public function getComponent(): Component
     {
         return Component::from($this->component);
+    }
+
+    public function getAuthMethod(): AuthMethod
+    {
+        return AuthMethod::from($this->authMethod);
     }
 
     public function getInstance(): string

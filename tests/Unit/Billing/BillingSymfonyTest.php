@@ -31,9 +31,7 @@ class BillingSymfonyTest extends SymfonyTestCase
 
     protected function setHttpResponse(MockResponse $response): void
     {
-        $currentClient = $this->container->get(HttpClientInterface::class);
-        assert($currentClient instanceof MockHttpClient);
-        $currentClient->setResponseFactory($response);
+        $this->setHttpClientResponse($response);
     }
 
     protected function getInternalApi(): InternalApi

@@ -38,4 +38,15 @@ trait InstanceUrlResolverTestTrait
         $this->assertEquals('https://talk.hyvor.internal', $resolver->privateUrlOf(Component::TALK));
     }
 
+    public function test_current_url(): void
+    {
+        $resolver = $this->getInstanceUrlResolver();
+        $this->assertEquals('https://hyvor.com', $resolver->publicUrlOfCurrent());
+        $this->assertEquals('https://hyvor.internal', $resolver->privateUrlOfCurrent());
+
+        $this->updateInternalConfig('component', 'talk');
+        $this->assertEquals('https://talk.hyvor.com', $resolver->publicUrlOfCurrent());
+        $this->assertEquals('https://talk.hyvor.internal', $resolver->privateUrlOfCurrent());
+    }
+
 }

@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests;
 
 use Illuminate\Container\Container;
 use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class LaravelTestCase extends \Orchestra\Testbench\TestCase
@@ -24,6 +25,15 @@ class LaravelTestCase extends \Orchestra\Testbench\TestCase
     protected function getContainer(): Container
     {
         return app();
+    }
+
+    /**
+     * @param MockResponse|MockResponse[] $response
+     */
+    protected function setHttpClientResponse(MockResponse|array $response): void
+    {
+        $client = new MockHttpClient($response);
+        app()->singleton(HttpClientInterface::class, fn() => $client);
     }
 
 }

@@ -8,7 +8,6 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
-use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
@@ -50,6 +49,7 @@ class InternalServiceProvider extends ServiceProvider
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
             (string)config('internal.component'),
+            'hyvor',
             (string)config('internal.instance'),
             $privateInstance,
             (bool)config('internal.fake'),

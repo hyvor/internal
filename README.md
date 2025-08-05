@@ -1,12 +1,12 @@
 # internal
 
-This package provides the following features for HYVOR applications in Laravel:
+This package provides the following features for HYVOR applications:
 
-- Authentication (with fake provider)
-- HTTP helpers
-- Internationalization
+- Authentication: HYVOR and OpenID Connect
 - Component API
 - Billing API
+- HTTP helpers
+- Internationalization
 
 ## Installation
 
@@ -23,14 +23,7 @@ includes:
     - ./vendor/hyvor/internal/extension.neon
 ```
 
-## Auth
-
-This library connects with the HYVOR Auth API to authenticate users. It supports the following providers:
-
-### Configuration
-
-The following environment variables are supported. See `config.php` for configuration options. Environment variables
-should be set in the `.env` file.
+### Environment Variables
 
 <table>
     <tr>
@@ -39,34 +32,45 @@ should be set in the `.env` file.
         <td>Default</td>
     </tr>
     <tr>
-        <td><code>AUTH_HYVOR_URL</code></td>
-        <td>Public URL of the HYVOR instance. Users are redirected here for login and signup</td>
-        <td><code>https://hyvor.com</code></td>
-    </tr>
-    <tr>
-        <td><code>AUTH_HYVOR_PRIVATE_URL</code></td>
-        <td>
-            If the HYVOR instance is on a private network, set this to the private URL. Otherwise, the public URL will be used.
-        </td>
-        <td><code>AUTH_HYVOR_URL</code></td>
-    </tr>
-    <tr>
-        <td><code>AUTH_HYVOR_API_KEY</code></td>
+        <td><code>AUTH_METHOD</code></td>
         <td>
             <strong>REQUIRED</strong>. The API key of the HYVOR instance. This is used to fetch user data.
         </td>
         <td><code>test-key</code></td>
     </tr>
+    <tr>
+        <td><code>HYVOR_INSTANCE</code></td>
+        <td>Public URL of the HYVOR instance. Users are redirected here for login, signup, and billing.</td>
+        <td><code>https://hyvor.com</code></td>
+    </tr>
+    <tr>
+        <td><code>HYVOR_PRIVATE_INSTANCE</code></td>
+        <td>
+            If the HYVOR instance is on a private network, set this to the private URL for internal communication.
+        </td>
+        <td><code>AUTH_HYVOR_URL</code></td>
+    </tr>
+    <tr>
+        <td><code>HYVOR_FAKE</code></td>
+        <td>
+            Whether to fake auth, billing, and component APIs. This is used in development.
+        </td>
+        <td><code>0</code></td>
+    </tr>
 </table>
+
+## Auth
+
+This library provides authentication. Cloud uses HYVOR Auth API, while self-hosted applications can use OpenID Connect.
 
 ### User Data
 
 The `AuthUser` class is used to represent the user. It has the following properties:
 
 - `int $id` - the user ID
+- `string $username` - the user's username (empty string for OIDC)
 - `string $name` - the user's name
 - `string $email` - the user's email
-- `?string $username` - the user's username (only HYVOR)
 - `?string $picture_url` - the user's picture URL
 - `?string $location` - the user's location
 - `?string $bio` - the user's bio
@@ -464,6 +468,124 @@ $i18n = app(I18n::class);
 $i18n->getAvailableLocales(); // ['en-US', 'fr-FR', 'es', ...]
 $i18n->getLocaleStrings('en-US'); // returns the strings from the JSON file as an array
 $i18n->getDefaultLocaleStrings(); // strings of the default locale
+```
+
+## OpenID Connect Setup
+
+Self-hostable applications must be configured to use OpenID Connect (OIDC) for authentication without relying on HYVOR
+core.
+
+These migrations are necessary:
+
+```sql
+CREATE TABLE oidc_users
+(
+  id          SERIAL PRIMARY KEY,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+  iss         text NOT NULL,
+  sub         text NOT NULL,
+  email       text NOT NULL,
+  name        text NOT NULL,
+  picture_url text,
+  website_url text,
+  UNIQUE (iss, sub)
+);
+CREATE INDEX idx_oidc_users_email ON oidc_users (email);
+
+CREATE TABLE oidc_sessions
+(
+    sess_id       VARCHAR(128) NOT NULL PRIMARY KEY,
+    sess_data     BYTEA        NOT NULL,
+    sess_lifetime INTEGER      NOT NULL,
+    sess_time     INTEGER      NOT NULL
+);
+CREATE INDEX idx_oidc_sessions_sess_lifetime ON sessions (sess_lifetime);
+```
+
+Then, add the routes in routes.php (if the app handles multiple domains, domain restrictions should be added):
+
+```php
+<?php
+
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+
+return static function (RoutingConfigurator $routes): void {
+    // other routes...
+
+    // OIDC routes
+    $routes->import('@InternalBundle/src/Controller/OidcController.php', 'attribute')
+        ->prefix('/api/oidc')
+        ->namePrefix('api_oidc_');
+};
+```
+
+Update configs for sessions, entities, and trusted proxies:
+
+```yaml
+# config/packages/framework.yaml
+framework:
+  session:
+    handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+  trusted_proxies: '%env(TRUSTED_PROXIES)%'
+
+when@dev:
+  framework:
+    trusted_proxies: '172.16.0.0/12' # docker
+```
+
+```php
+// services.php (or yaml)
+$services->set(PdoSessionHandler::class)
+  ->args([
+      env('DATABASE_URL'),
+      ['db_table' => 'oidc_sessions'],
+  ]);
+```
+
+```yaml
+# config/packages/doctrine.yaml
+doctrine:
+  orm:
+    mappings:
+      InternalBundle:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/vendor/hyvor/internal/bundle/src/Entity'
+        prefix: 'Hyvor\Internal\Bundle\Entity'
+        alias: InternalBundle
+```
+
+On AuthoziationListeners, return the login and signup URLs using AuthInterface::authUrl():
+
+```php
+$user = $this->auth->check($request);
+
+if ($user === false) {
+    throw new DataCarryingHttpException(
+        401,
+        [
+            'login_url' => $this->auth->authUrl('login'),
+            'signup_url' => $this->auth->authUrl('signup'),
+        ],
+        'Unauthorized'
+    );
+}
+```
+
+On the frontend (e.g. Console), handle the 401 error:
+
+```ts
+.catch((err) => {
+    if (err.code === 401) {
+        const toPage = $page.url.searchParams.has('signup') ? 'signup' : 'login';
+        const url = new URL(err.data[toPage + '_url'], location.origin);
+        url.searchParams.set('redirect', location.href);
+        location.href = url.toString();
+    } else {
+        toast.error(err.message);
+    }
+});
 ```
 
 ### Development

@@ -2,13 +2,12 @@
 
 namespace Hyvor\Internal\Auth;
 
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
 
 interface AuthInterface
 {
 
-    public function check(string $cookie): false|AuthUser;
+    public function check(Request $request): false|AuthUser;
 
     /**
      * Redirect to a login, signup, or logout page of the core
@@ -17,13 +16,13 @@ interface AuthInterface
      * @param string|null|Request $redirect The URL to redirect to after authentication.
      *                                       If null, no redirection will be performed.
      *                                       If a string is provided, it should be an absolute URL.
-     *                                       If a Request object is provided, it will be converted to a string.
+     *                                       If a Request object is provided, the redirect URL will be created from it.
      */
     public function authUrl(string $page, null|string|Request $redirect = null): string;
 
     /**
      * @param iterable<int> $ids
-     * @return Collection<int, AuthUser>
+     * @return array<int, AuthUser> Indexed by user ID.
      */
     public function fromIds(iterable $ids);
 
@@ -31,18 +30,23 @@ interface AuthInterface
 
     /**
      * @param iterable<string> $emails
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser[]> Indexed by email.
      */
     public function fromEmails(iterable $emails);
 
-    public function fromEmail(string $email): ?AuthUser;
+    /**
+     * @return AuthUser[]
+     */
+    public function fromEmail(string $email): array;
 
     /**
+     * OIDC does not support this method.
      * @param iterable<string> $usernames
-     * @return Collection<string, AuthUser>
+     * @return array<string, AuthUser> Indexed by username.
      */
     public function fromUsernames(iterable $usernames);
 
+    // OIDC does not support this method.
     public function fromUsername(string $username): ?AuthUser;
 
 }
