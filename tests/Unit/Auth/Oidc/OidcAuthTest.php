@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class OidcAuthTest extends SymfonyTestCase
 {
 
-    use OidcUserFactory;
+    use OidcUserFactoryTrait;
 
     private function getOidcAuth(): OidcAuth
     {

@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Zenstruck\Foundry\ZenstruckFoundryBundle;
 
 class SymfonyKernel extends Kernel
 {
@@ -24,6 +25,7 @@ class SymfonyKernel extends Kernel
             new InternalBundle(),
             new FrameworkBundle(), // needed for HttpKernel
             new DoctrineBundle(),
+            new ZenstruckFoundryBundle(),
         ];
     }
 
@@ -58,6 +60,13 @@ class SymfonyKernel extends Kernel
                         ],
                     ],
                 ],
+            ],
+        ]);
+
+        // foundry configuration
+        $container->extension('zenstruck_foundry', [
+            'persistence' => [
+                'flush_once' => true,
             ],
         ]);
     }

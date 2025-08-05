@@ -41,6 +41,7 @@ class AuthUser
         public ?string $location = null,
         public ?string $bio = null,
         public ?string $website_url = null,
+        public ?string $oidc_sub = null,
     ) {
     }
 
@@ -72,6 +73,7 @@ class AuthUser
             location: null,
             bio: null,
             website_url: $oidcUser->getWebsiteUrl(),
+            oidc_sub: $oidcUser->getSub(),
         );
     }
 

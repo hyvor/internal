@@ -1,3 +1,10 @@
+## 3.1.1 - 2025-08-05
+
+- Adds Sudo support
+   - SudoUser entity added
+   - SudoUserService added for applications to use sudo
+   - `sudo:list`, `sudo:add`, `sudo:remove` commands added (Symfony only)
+
 ## 3.1.0 - 2025-08-05
 
 - `AuthInterface::check` now requires a `Request` object.
