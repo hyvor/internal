@@ -38,7 +38,7 @@ trait AuthTestTrait
     private function requestWithCookie(string $cookie): Request
     {
         $request = Request::create('https://hyvor.internal/api/internal/auth/check');
-        $request->cookies->set('hyvor_auth', $cookie);
+        $request->cookies->set(Auth::HYVOR_SESSION_COOKIE_NAME, $cookie);
         return $request;
     }
 
@@ -127,8 +127,6 @@ trait AuthTestTrait
         $this->setResponseFactory($response);
 
         $users = $this->getAuth()->fromIds([1, 2]);
-
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
 
         $this->assertInstanceOf(AuthUser::class, $users[1]);
@@ -209,8 +207,6 @@ trait AuthTestTrait
         $this->setResponseFactory($response);
 
         $users = $this->getAuth()->fromUsernames(['test', 'test2']);
-
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
 
         $this->assertInstanceOf(AuthUser::class, $users['test']);
@@ -288,21 +284,27 @@ trait AuthTestTrait
         $this->setResponseFactory($response);
 
         $users = $this->getAuth()->fromEmails(['test@hyvor.com', 'test2@hyvor.com']);
-
-        $this->assertInstanceOf(Collection::class, $users);
         $this->assertCount(2, $users);
 
-        $this->assertInstanceOf(AuthUser::class, $users['test@hyvor.com']);
-        $this->assertEquals(1, $users['test@hyvor.com']->id);
-        $this->assertEquals('test', $users['test@hyvor.com']->name);
-        $this->assertEquals('test', $users['test@hyvor.com']->username);
-        $this->assertEquals('test@hyvor.com', $users['test@hyvor.com']->email);
+        $user1 = $users['test@hyvor.com'];
+        $this->assertCount(1, $user1);
+        $user1 = $user1[0];
 
-        $this->assertInstanceOf(AuthUser::class, $users['test2@hyvor.com']);
-        $this->assertEquals(2, $users['test2@hyvor.com']->id);
-        $this->assertEquals('test2', $users['test2@hyvor.com']->name);
-        $this->assertEquals('test2', $users['test2@hyvor.com']->username);
-        $this->assertEquals('test2@hyvor.com', $users['test2@hyvor.com']->email);
+        $this->assertInstanceOf(AuthUser::class, $user1);
+        $this->assertEquals(1, $user1->id);
+        $this->assertEquals('test', $user1->name);
+        $this->assertEquals('test', $user1->username);
+        $this->assertEquals('test@hyvor.com', $user1->email);
+
+        $user2 = $users['test2@hyvor.com'];
+        $this->assertCount(1, $user2);
+        $user2 = $user2[0];
+
+        $this->assertInstanceOf(AuthUser::class, $user2);
+        $this->assertEquals(2, $user2->id);
+        $this->assertEquals('test2', $user2->name);
+        $this->assertEquals('test2', $user2->username);
+        $this->assertEquals('test2@hyvor.com', $user2->email);
 
         $this->assertSame(
             'https://hyvor.internal/api/internal/auth/users/from/emails',
@@ -325,6 +327,8 @@ trait AuthTestTrait
         $this->setResponseFactory($response);
 
         $user = $this->getAuth()->fromEmail('test@hyvor.com');
+        $this->assertCount(1, $user);
+        $user = $user[0];
 
         $this->assertInstanceOf(AuthUser::class, $user);
         $this->assertEquals(1, $user->id);
@@ -345,7 +349,7 @@ trait AuthTestTrait
         $response = new JsonMockResponse([]);
         $this->setResponseFactory($response);
         $user = $this->getAuth()->fromEmail('test@hyvor.com');
-        $this->assertNull($user);
+        $this->assertCount(0, $user);
     }
 
 }

@@ -44,6 +44,15 @@ class OidcUserService
         return $this->em->getRepository(OidcUser::class)->findBy(['id' => $ids]);
     }
 
+    /**
+     * @return OidcUser[]
+     */
+    public function findByEmail(string $email): array
+    {
+        return $this->em->getRepository(OidcUser::class)->findBy(['email' => $email]);
+    }
+    
+
     public function loginOrSignup(OidcDecodedIdTokenDto $idToken, SessionInterface $session): OidcUser
     {
         $user = $this->getUserByIssAndSub($idToken->iss, $idToken->sub);

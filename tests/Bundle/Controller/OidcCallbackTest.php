@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 #[CoversClass(OidcConfig::class)]
 #[CoversClass(OidcApiService::class)]
 #[CoversClass(OidcUserService::class)]
+#[CoversClass(OidcUser::class)]
 class OidcCallbackTest extends SymfonyTestCase
 {
 
@@ -205,6 +206,8 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->assertSame('Jane', $user->getName());
         $this->assertSame('jane@example.com', $user->getEmail());
         $this->assertSame('https://issuer.com', $user->getIss());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $user->getCreatedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $user->getUpdatedAt());
 
         $this->assertSame('https://example.com/.well-known/openid-configuration', $wellKnownResponse->getRequestUrl());
         $this->assertSame('https://example.com/token', $idTokenResponse->getRequestUrl());

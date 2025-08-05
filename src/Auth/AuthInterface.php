@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal\Auth;
 
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
 
 interface AuthInterface

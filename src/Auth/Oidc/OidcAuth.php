@@ -61,13 +61,17 @@ class OidcAuth implements AuthInterface
 
     public function fromEmails(iterable $emails)
     {
-        // TODO
+        // TODO:
+        return [];
     }
 
     public function fromEmail(string $email): array
     {
-        // TODO
-        return [];
+        $oidcUsers = $this->oidcUserService->findByEmail($email);
+        return array_map(
+            fn($oidcUser) => AuthUser::fromOidcUser($oidcUser),
+            $oidcUsers
+        );
     }
 
     public function fromUsernames(iterable $usernames)

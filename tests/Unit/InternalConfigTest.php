@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal\Tests\Unit;
 
+use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
@@ -31,6 +32,7 @@ class InternalConfigTest extends SymfonyTestCase
         $this->assertFalse($internalConfig->isFake());
         $this->assertSame('i18n', $internalConfig->getI18nFolder());
         $this->assertSame('en', $internalConfig->getI18nDefaultLocale());
+        $this->assertSame(AuthMethod::HYVOR, $internalConfig->getAuthMethod());
     }
 
     public function test_internal_config_i18n_realpath(): void

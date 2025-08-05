@@ -44,6 +44,9 @@ class OidcUser
         return $this->id;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function setId(int $id): static
     {
         $this->id = $id;

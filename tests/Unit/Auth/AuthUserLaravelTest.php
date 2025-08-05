@@ -41,7 +41,6 @@ class AuthUserLaravelTest extends LaravelTestCase
             'username' => 'johndoe',
             'name' => 'John Doe',
             'email' => 'john@hyvor.com',
-            'email_relay' => null,
             'picture_url' => 'https://hyvor.com/john.jpg',
             'location' => null,
             'bio' => null,

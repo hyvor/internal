@@ -59,6 +59,8 @@ trait AuthFakeTestTrait
         $this->assertSame('Jane', $db[1]->name);
 
         AuthFake::databaseAdd(['id' => 3, 'name' => 'Jack']);
+        $db = AuthFake::databaseGet();
+        $this->assertNotNull($db);
         $this->assertCount(3, $db);
         $this->assertSame('Jack', $db[2]->name);
 
@@ -120,7 +122,8 @@ trait AuthFakeTestTrait
     {
         $this->enable();
         $email20 = $this->getAuthFake()->fromEmail('20@test.com');
-        $this->assertNotNull($email20);
+        $this->assertCount(1, $email20);
+        $email20 = $email20[0];
         $this->assertSame('20@test.com', $email20->email);
 
         // with DB
@@ -130,12 +133,14 @@ trait AuthFakeTestTrait
         ]);
 
         $email1 = $this->getAuthFake()->fromEmail('john@test.com');
-        $this->assertNotNull($email1);
+        $this->assertCount(1, $email1);
+        $email1 = $email1[0];
+
         $this->assertSame('John', $email1->name);
         $this->assertSame('john@test.com', $email1->email);
 
         $email3 = $this->getAuthFake()->fromEmail('supun@test.com');
-        $this->assertNull($email3);
+        $this->assertCount(0, $email3);
     }
 
     public function testFromUsername(): void
@@ -207,8 +212,15 @@ trait AuthFakeTestTrait
         $this->enable();
         $emails = $this->getAuthFake()->fromEmails(['user1@test.com', 'user2@test.com']);
         $this->assertCount(2, $emails);
-        $this->assertSame('user1@test.com', $emails['user1@test.com']->email);
-        $this->assertSame('user2@test.com', $emails['user2@test.com']->email);
+
+        $email1 = $emails['user1@test.com'];
+        $this->assertCount(1, $email1);
+
+        $email2 = $emails['user2@test.com'];
+        $this->assertCount(1, $email2);
+
+        $this->assertSame('user1@test.com', $email1[0]->email);
+        $this->assertSame('user2@test.com', $email2[0]->email);
 
         // with DB
         AuthFake::databaseSet([
@@ -218,8 +230,8 @@ trait AuthFakeTestTrait
 
         $emails = $this->getAuthFake()->fromEmails(['john@test.com', 'jane@test.com', 'roger@test.com']);
         $this->assertCount(2, $emails);
-        $this->assertSame('john@test.com', $emails['john@test.com']->email);
-        $this->assertSame('jane@test.com', $emails['jane@test.com']->email);
+        $this->assertSame('john@test.com', $emails['john@test.com'][0]->email);
+        $this->assertSame('jane@test.com', $emails['jane@test.com'][0]->email);
     }
 
 }
