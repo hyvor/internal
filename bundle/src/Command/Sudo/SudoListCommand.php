@@ -3,9 +3,7 @@
 namespace Hyvor\Internal\Bundle\Command\Sudo;
 
 use Hyvor\Internal\Auth\AuthInterface;
-use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
-use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Sudo\SudoUserRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

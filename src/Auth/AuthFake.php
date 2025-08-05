@@ -73,7 +73,7 @@ final class AuthFake implements AuthInterface
             $user = self::generateUser($user);
         }
         $fake->user = $user;
-        $fake->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
+        $fake->usersDatabase = $usersDatabase !== null ? self::getAuthUsersFromPartial($usersDatabase) : null;
         self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
     }

@@ -20,6 +20,7 @@ class SudoUser
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $updated_at;
 
+
     public function getUserId(): int
     {
         return $this->user_id;

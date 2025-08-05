@@ -595,8 +595,7 @@ Every application has sudo users, who can access /sudo and perform administrativ
 - Commands
   - `sudo:list` - List all sudo users.
   - `sudo:add <email>` - Add a sudo user by email.
-  - `sudo:remove <id>` - Remove a sudo user by ID from `sudo:list`.
-  - `sudo:clear` - Clear all sudo users.
+  - `sudo:remove <id>` - Remove a sudo user by user ID.
 
 First, add the migration:
 
