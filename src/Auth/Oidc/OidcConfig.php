@@ -10,14 +10,14 @@ readonly class OidcConfig
 {
 
     public function __construct(
-        #[Autowire('%env(OIDC_ISSUER_URL)%')]
-        private string $issuerUrl,
+        #[Autowire('%env(default::OIDC_ISSUER_URL)%')]
+        private ?string $issuerUrl,
 
-        #[Autowire('%env(OIDC_CLIENT_ID)%')]
-        private string $clientId,
+        #[Autowire('%env(default::OIDC_CLIENT_ID)%')]
+        private ?string $clientId,
 
-        #[Autowire('%env(OIDC_CLIENT_SECRET)%')]
-        private string $clientSecret,
+        #[Autowire('%env(default::OIDC_CLIENT_SECRET)%')]
+        private ?string $clientSecret,
 
         private ?RequestStack $requestStack = null,
     ) {
@@ -25,17 +25,17 @@ readonly class OidcConfig
 
     public function getIssuerUrl(): string
     {
-        return rtrim($this->issuerUrl, '/');
+        return rtrim($this->issuerUrl ?? '', '/');
     }
 
     public function getClientId(): string
     {
-        return $this->clientId;
+        return $this->clientId ?? '';
     }
 
     public function getClientSecret(): string
     {
-        return $this->clientSecret;
+        return $this->clientSecret ?? '';
     }
 
     public function getCallbackUrl(?Request $request = null): string

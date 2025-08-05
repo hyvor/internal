@@ -32,6 +32,13 @@ class SymfonyKernel extends Kernel
         LoaderInterface $loader,
         ContainerBuilder $builder
     ): void {
+        $container->extension('framework', [
+            'test' => true,
+            'cache' => [
+                'app' => 'cache.adapter.array',
+            ]
+        ]);
+
         // set up doctrine with SQLite in memory
         $container->extension('doctrine', [
             'dbal' => [
@@ -57,6 +64,7 @@ class SymfonyKernel extends Kernel
 
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
-        $routes->import('../bundle/src/Controller/*.php', 'attribute');
+        $routes->import('../bundle/src/Controller/*.php', 'attribute')
+            ->prefix('/api/oidc');
     }
 }

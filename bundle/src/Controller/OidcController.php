@@ -17,6 +17,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Firebase\JWT\JWK;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OidcController extends AbstractController
@@ -113,7 +114,7 @@ class OidcController extends AbstractController
 
         $errors = $this->validator->validate($decodedIdToken);
         if (count($errors) > 0) {
-            throw new BadRequestHttpException((string)$errors);
+            throw new BadRequestHttpException($this->validationErrorsToString($errors));
         }
 
         if ($decodedIdToken->nonce !== $sessionNonce) {
@@ -132,6 +133,15 @@ class OidcController extends AbstractController
         ]);
 
         return new RedirectResponse($sessionRedirect);
+    }
+
+    private function validationErrorsToString(ConstraintViolationListInterface $errors): string
+    {
+        $return = 'ID token validation failed: ';
+        foreach ($errors as $error) {
+            $return .= '[' . $error->getPropertyPath() . '] ' . $error->getMessage();
+        }
+        return $return;
     }
 
     #[Route('/logout', methods: 'GET')]

@@ -57,6 +57,23 @@ class OidcUserService
                 $idToken->picture,
                 $idToken->website
             );
+        } else {
+            $user->setUpdatedAt($this->now());
+            if ($user->getEmail() !== $idToken->email) {
+                $user->setEmail($idToken->email);
+            }
+            if ($user->getName() !== $idToken->name) {
+                $user->setName($idToken->name);
+            }
+            if ($user->getPictureUrl() !== $idToken->picture) {
+                $user->setPictureUrl($idToken->picture);
+            }
+            if ($user->getWebsiteUrl() !== $idToken->website) {
+                $user->setWebsiteUrl($idToken->website);
+            }
+
+            $this->em->persist($user);
+            $this->em->flush();
         }
 
         $session->invalidate();

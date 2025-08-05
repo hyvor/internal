@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 // https://symfonycasts.com/screencast/symfony-bundle/integration-test
 class SymfonyTestCase extends TestCase
@@ -28,7 +30,9 @@ class SymfonyTestCase extends TestCase
         assert($container instanceof Container);
 
         $this->kernel = $kernel;
-        $this->container = $container;
+        /** @var Container $testContainer */
+        $testContainer = $container->get('test.service_container');
+        $this->container = $testContainer;
 
         $this->createTables();
 
@@ -71,6 +75,15 @@ class SymfonyTestCase extends TestCase
         );
         SQL
         );
+    }
+
+    /**
+     * @param MockResponse|MockResponse[] $response
+     */
+    protected function setHttpClientResponse(MockResponse|array $response): void
+    {
+        $client = new MockHttpClient($response);
+        $this->container->set(HttpClientInterface::class, $client);
     }
 
 }

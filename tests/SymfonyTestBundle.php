@@ -3,8 +3,6 @@
 namespace Hyvor\Internal\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,9 +24,7 @@ class SymfonyTestBundle extends AbstractBundle
             ->services()
             ->set('kernel', SymfonyKernel::class)
             ->set(HttpClientInterface::class, MockHttpClient::class)
-            ->set(CacheInterface::class, ArrayAdapter::class)
-            ->set(ManagerRegistry::class, Registry::class)
-            ->public();
+            ->set(ManagerRegistry::class, Registry::class);
     }
 
 }

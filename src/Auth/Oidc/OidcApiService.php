@@ -52,7 +52,6 @@ class OidcApiService
             'issuer',
             'authorization_endpoint',
             'token_endpoint',
-            'userinfo_endpoint',
             'jwks_uri',
         ];
         foreach ($checkedKeys as $key) {
@@ -68,7 +67,6 @@ class OidcApiService
             issuer: $data['issuer'],
             authorizationEndpoint: $data['authorization_endpoint'],
             tokenEndpoint: $data['token_endpoint'],
-            userinfoEndpoint: $data['userinfo_endpoint'],
             jwksUri: $data['jwks_uri'],
             endSessionEndpoint: $data['end_session_endpoint'] ?? null,
         );
