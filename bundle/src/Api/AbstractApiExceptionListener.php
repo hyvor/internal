@@ -2,6 +2,7 @@
 
 namespace Hyvor\Internal\Bundle\Api;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ abstract class AbstractApiExceptionListener
     public function __construct(
         #[Autowire('%kernel.environment%')]
         private string $env,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -77,8 +79,26 @@ abstract class AbstractApiExceptionListener
             }
         }
 
-        if ($shouldThrowOnInternalError && $data['status'] === Response::HTTP_INTERNAL_SERVER_ERROR) {
-            return;
+        if ($data['status'] === Response::HTTP_INTERNAL_SERVER_ERROR) {
+            if ($shouldThrowOnInternalError) {
+                // let symfony handle the exception
+                return;
+            } else {
+                // log the exception
+                $this->logger->critical(
+                    'Unhandled exception in API',
+                    [
+                        'exception' => $exception,
+                        'request' => [
+                            'method' => $event->getRequest()->getMethod(),
+                            'path' => $event->getRequest()->getPathInfo(),
+                            'query' => $event->getRequest()->query->all(),
+                            'body' => $event->getRequest()->request->all(),
+                            'headers' => $this->stripSensitiveHeaders($event->getRequest()->headers->all()),
+                        ],
+                    ]
+                );
+            }
         }
 
         $response->setData($data);
@@ -104,6 +124,19 @@ abstract class AbstractApiExceptionListener
         );
 
         return (string)$message;
+    }
+
+    /**
+     * @param array<string, list<string|null>> $headers
+     * @return array<string, list<string|null>>
+     */
+    private function stripSensitiveHeaders(array $headers): array
+    {
+        $sensitiveHeaders = ['authorization', 'cookie', 'set-cookie', 'x-api-key'];
+        foreach ($sensitiveHeaders as $header) {
+            unset($headers[$header]);
+        }
+        return $headers;
     }
 
 }
