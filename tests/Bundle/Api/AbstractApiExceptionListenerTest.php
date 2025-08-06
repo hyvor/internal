@@ -6,6 +6,8 @@ use Hyvor\Internal\Bundle\Api\AbstractApiExceptionListener;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -19,9 +21,14 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 class AbstractApiExceptionListenerTest extends SymfonyTestCase
 {
 
+    private function getLogger(): LoggerInterface&MockObject
+    {
+        return $this->createMock(LoggerInterface::class);
+    }
+
     public function test_matches_prefix(): void
     {
-        $listener = new ApiExceptionListener('dev');
+        $listener = new ApiExceptionListener('dev', $this->getLogger());
 
         $exceptionEvent = new ExceptionEvent(
             $this->kernel,
@@ -41,7 +48,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
     public function test_validation_exception(): void
     {
-        $listener = new ApiExceptionListener('dev');
+        $listener = new ApiExceptionListener('dev', $this->getLogger());
 
         $exceptionEvent = new ExceptionEvent(
             $this->kernel,
@@ -93,7 +100,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
     public function test_does_not_set_response_for_internal_server_errors_on_dev(): void
     {
-        $listener = new ApiExceptionListener('dev');
+        $listener = new ApiExceptionListener('dev', $this->getLogger());
 
         $exceptionEvent = new ExceptionEvent(
             $this->kernel,
@@ -111,9 +118,57 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
         $this->assertNull($exceptionEvent->getResponse());
     }
 
+    public function test_logs_on_500_error_on_prod(): void
+    {
+        $logger = $this->getLogger();
+        $message = '';
+        $context = [];
+        $logger->method('critical')
+            ->willReturnCallback(function ($m, $c) use (&$message, &$context) {
+                $message = $m;
+                $context = $c;
+            });
+
+        $listener = new ApiExceptionListener('prod', $logger);
+
+        $exceptionEvent = new ExceptionEvent(
+            $this->kernel,
+            new Request(
+                server: [
+                    'REQUEST_METHOD' => 'GET',
+                    'REQUEST_URI' => '/api/console/some/endpoint',
+                    'HTTP_CONTENT_TYPE' => 'application/json',
+                    'HTTP_AUTHORIZATION' => 'Bearer some-token',
+                ]
+            ),
+            0,
+            new \Exception('Test exception')
+        );
+
+        $listener($exceptionEvent);
+
+        $response = $exceptionEvent->getResponse();
+        $this->assertNotNull($response);
+        $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertSame('Internal Server Error. Our team has been notified.', $data['message']);
+
+        $this->assertSame('Unhandled exception in API', $message);
+        $this->assertInstanceOf(\Exception::class, $context['exception']);
+        $request = $context['request'];
+        $this->assertIsArray($request);
+        $this->assertSame('GET', $request['method']);
+        $this->assertSame('/api/console/some/endpoint', $request['path']);
+
+        $headers = $request['headers'];
+        $this->assertArrayHasKey('content-type', $headers);
+        $this->assertSame(['application/json'], $headers['content-type']);
+        $this->assertArrayNotHasKey('authorization', $headers);
+    }
+
     public function test_data_carrying_http_exception(): void
     {
-        $listener = new ApiExceptionListener('dev');
+        $listener = new ApiExceptionListener('dev', $this->getLogger());
 
         $exceptionEvent = new ExceptionEvent(
             $this->kernel,

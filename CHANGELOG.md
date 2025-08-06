@@ -1,3 +1,7 @@
+## 3.1.2 - 2025-08-06
+
+- Logs exceptions in `AbstractApiExceptionListener`
+
 ## 3.1.1 - 2025-08-05
 
 - Adds Sudo support
