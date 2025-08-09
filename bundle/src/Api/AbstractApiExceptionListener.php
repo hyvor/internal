@@ -77,9 +77,8 @@ abstract class AbstractApiExceptionListener
             if ($exception instanceof DataCarryingHttpException) {
                 $data['data'] = $exception->getData();
             }
-        }
-
-        if ($data['status'] === Response::HTTP_INTERNAL_SERVER_ERROR) {
+        } else {
+            // this is an unhandled exception
             if ($shouldThrowOnInternalError) {
                 // let symfony handle the exception
                 return;
