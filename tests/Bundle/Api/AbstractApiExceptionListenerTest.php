@@ -10,7 +10,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -98,7 +97,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
         $this->assertSame('type should by of type test|test2|test3', $data['violations'][1]['message']);
     }
 
-    public function test_does_not_set_response_for_internal_server_errors_on_dev(): void
+    public function test_does_not_set_response_for_unknown_errors_on_dev(): void
     {
         $listener = new ApiExceptionListener('dev', $this->getLogger());
 
@@ -111,7 +110,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
                 ]
             ),
             0,
-            new HttpException(500)
+            new \Exception('Very bad thing')
         );
 
         $listener($exceptionEvent);

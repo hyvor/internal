@@ -56,7 +56,7 @@ class ContextualLogger implements LoggerInterface
      */
     public function __construct(
         private LoggerInterface $logger,
-        private array $baseContext = []
+        private readonly array $baseContext = []
     ) {
     }
 
