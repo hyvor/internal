@@ -1,3 +1,9 @@
+## 3.1.3 - 2025-08-11
+
+- Known server HttpExceptions (500) are now handled gracefully by the `AbstractApiExceptionListener`
+- `ContextualLogger` added to pre-create loggers with context
+- `SchedulerTestingTrait` added
+
 ## 3.1.2 - 2025-08-06
 
 - Logs exceptions in `AbstractApiExceptionListener`

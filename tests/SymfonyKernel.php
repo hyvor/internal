@@ -38,7 +38,13 @@ class SymfonyKernel extends Kernel
             'test' => true,
             'cache' => [
                 'app' => 'cache.adapter.array',
-            ]
+            ],
+            'messenger' => [
+                'transports' => [
+                    'default' => 'in-memory',
+                ],
+                'routing' => [],
+            ],
         ]);
 
         // set up doctrine with SQLite in memory
