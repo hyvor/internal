@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Sudo;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SudoUserService
 {
@@ -14,6 +15,7 @@ class SudoUserService
     public function __construct(
         private SudoUserRepository $sudoUserRepository,
         private EntityManagerInterface $em,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -27,6 +29,14 @@ class SudoUserService
         return $this->sudoUserRepository->find($userId);
     }
 
+    /**
+     * @return SudoUser[]
+     */
+    public function getAll(): array
+    {
+        return $this->sudoUserRepository->findAll();
+    }
+
     public function create(int $userId): void
     {
         $user = new SudoUser();
@@ -36,12 +46,16 @@ class SudoUserService
 
         $this->em->persist($user);
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(new Event\SudoAddedEvent($user));
     }
 
     public function remove(SudoUser $user): void
     {
         $this->em->remove($user);
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(new Event\SudoRemovedEvent($user));
     }
 
 }

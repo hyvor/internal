@@ -2,11 +2,20 @@
 
 namespace Hyvor\Internal\Tests\Bundle\Command\Sudo;
 
+use Hyvor\Internal\Bundle\Command\Sudo\SudoRemoveCommand;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
+use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Sudo\Event\SudoRemovedEvent;
+use Hyvor\Internal\Sudo\SudoUserService;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Sudo\SudoUserFactoryTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Command\Command;
 
+#[CoversClass(SudoRemoveCommand::class)]
+#[CoversClass(SudoRemovedEvent::class)]
+#[CoversClass(SudoUserService::class)]
+#[CoversClass(SudoUser::class)]
 class SudoRemoveCommandTest extends SymfonyTestCase
 {
 
@@ -24,6 +33,7 @@ class SudoRemoveCommandTest extends SymfonyTestCase
 
     public function test_removes_sudo_user_successfully(): void
     {
+        $eventDispatcher = TestEventDispatcher::enable($this->container);
         $sudoUser = $this->createSudoUser(userId: 42, em: $this->em);
 
         $command = $this->getCommandTester('sudo:remove');
@@ -38,6 +48,9 @@ class SudoRemoveCommandTest extends SymfonyTestCase
 
         $sudoUsers = $this->em->getRepository(SudoUser::class)->findAll();
         $this->assertCount(0, $sudoUsers);
+
+        $event = $eventDispatcher->getFirstEvent(SudoRemovedEvent::class);
+        $this->assertSame(42, $event->getSudoUser()->getUserId());
     }
 
 }
