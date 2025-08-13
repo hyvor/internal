@@ -1,3 +1,9 @@
+## 3.1.4 - 2025-08-14
+
+- `UserSignedUpEvent` added (OIDC only currently)
+- `SudoAddedEvent` and `SudoRemovedEvent` added
+- `SudoUserService::getAll` method added
+
 ## 3.1.3 - 2025-08-11
 
 - Known server HttpExceptions (500) are now handled gracefully by the `AbstractApiExceptionListener`
