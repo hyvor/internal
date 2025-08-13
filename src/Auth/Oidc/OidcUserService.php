@@ -3,9 +3,12 @@
 namespace Hyvor\Internal\Auth\Oidc;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\Event\UserSignedUpEvent;
 use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class OidcUserService
@@ -17,7 +20,8 @@ class OidcUserService
     private const string SESSION_OIDC_ID_TOKEN = 'oidc_id_token';
 
     public function __construct(
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -129,6 +133,8 @@ class OidcUserService
 
         $this->em->persist($user);
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(new UserSignedUpEvent(AuthUser::fromOidcUser($user)));
 
         return $user;
     }
