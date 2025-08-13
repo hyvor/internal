@@ -3,11 +3,13 @@
 namespace Hyvor\Internal\Tests\Bundle\Controller;
 
 use Firebase\JWT\JWT;
+use Hyvor\Internal\Auth\Event\UserSignedUpEvent;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
+use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -23,6 +25,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 #[CoversClass(OidcApiService::class)]
 #[CoversClass(OidcUserService::class)]
 #[CoversClass(OidcUser::class)]
+#[CoversClass(UserSignedUpEvent::class)]
 class OidcCallbackTest extends SymfonyTestCase
 {
 
@@ -178,6 +181,8 @@ class OidcCallbackTest extends SymfonyTestCase
 
     public function test_gets_id_token_and_signs_up(): void
     {
+        $eventDispatcher = TestEventDispatcher::enable($this->container);
+
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
@@ -222,6 +227,9 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->assertSame('http://localhost/api/oidc/callback', $parsedBody['redirect_uri']);
         $this->assertSame('test_client_id', $parsedBody['client_id']);
         $this->assertSame('test_client_secret', $parsedBody['client_secret']);
+
+        $event = $eventDispatcher->getFirstEvent(UserSignedUpEvent::class);
+        $this->assertSame('user123', $event->getUser()->oidc_sub);
     }
 
     public function test_when_id_token_api_call_fails(): void

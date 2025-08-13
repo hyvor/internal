@@ -8,6 +8,7 @@ use Hyvor\Internal\Bundle\Entity\SudoUser;
 
 /**
  * @extends ServiceEntityRepository<SudoUser>
+ * @codeCoverageIgnore
  */
 class SudoUserRepository extends ServiceEntityRepository
 {

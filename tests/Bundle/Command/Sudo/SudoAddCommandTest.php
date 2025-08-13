@@ -19,6 +19,7 @@ use Symfony\Component\Console\Command\Command;
 #[CoversClass(SudoAddCommand::class)]
 #[CoversClass(SudoUserService::class)]
 #[CoversClass(SudoUser::class)]
+#[CoversClass(SudoAddedEvent::class)]
 class SudoAddCommandTest extends SymfonyTestCase
 {
 
