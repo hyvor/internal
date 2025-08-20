@@ -156,17 +156,24 @@ final class AuthFake implements AuthInterface
         return $this->generateUser([$key => $value]);
     }
 
+    /**
+     * @return AuthUser[]
+     */
     private function singleSearchMultipleHit(string $key, string|int $value): array
     {
         if ($this->usersDatabase !== null) {
-            return array_filter(
-                $this->usersDatabase,
-                fn(AuthUser $user) => $user->{$key} === $value
-            );
+            $matches = [];
+            foreach ($this->usersDatabase as $user) {
+                if ($user->{$key} === $value) {
+                    $matches[] = $user;
+                }
+            }
+
+            return $matches !== [] ? $matches : [];
         }
 
         // @phpstan-ignore-next-line
-        return [$this->generateUser([$key => $value])];
+        return [ $this->generateUser([$key => $value]) ];
     }
 
     /**
