@@ -123,8 +123,7 @@ final class AuthFake implements AuthInterface
 
     public function fromEmail(string $email): array
     {
-        $user = $this->singleSearchMultipleHit('email', $email);
-        return $user ? [$user] : [];
+        return $this->singleSearchMultipleHit('email', $email);
     }
 
     /**
