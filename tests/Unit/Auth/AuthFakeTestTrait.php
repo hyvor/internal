@@ -133,18 +133,23 @@ trait AuthFakeTestTrait
         $email20 = $email20[0];
         $this->assertSame('20@test.com', $email20->email);
 
-        // with DB
+        // with DB - testing multiple users with same email
         AuthFake::databaseSet([
             ['id' => 1, 'name' => 'John', 'email' => 'john@test.com'],
-            ['id' => 2, 'name' => 'Jane', 'email' => 'jane@test.com']
+            ['id' => 2, 'name' => 'Jane', 'email' => 'jane@test.com'],
+            ['id' => 3, 'name' => 'Johnny', 'email' => 'john@test.com']
         ]);
 
         $email1 = $this->getAuthFake()->fromEmail('john@test.com');
-        $this->assertCount(1, $email1);
-        $email1 = $email1[0];
-
-        $this->assertSame('John', $email1->name);
-        $this->assertSame('john@test.com', $email1->email);
+        $this->assertCount(2, $email1);
+        
+        // Check first user (John)
+        $this->assertSame('John', $email1[0]->name);
+        $this->assertSame('john@test.com', $email1[0]->email);
+        
+        // Check second user (Johnny)
+        $this->assertSame('Johnny', $email1[1]->name);
+        $this->assertSame('john@test.com', $email1[1]->email);
 
         $email3 = $this->getAuthFake()->fromEmail('supun@test.com');
         $this->assertCount(0, $email3);
