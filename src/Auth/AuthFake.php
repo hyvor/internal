@@ -123,8 +123,7 @@ final class AuthFake implements AuthInterface
 
     public function fromEmail(string $email): array
     {
-        $user = $this->singleSearch('email', $email);
-        return $user ? [$user] : [];
+        return $this->singleSearchMultipleHit('email', $email);
     }
 
     /**
@@ -154,6 +153,26 @@ final class AuthFake implements AuthInterface
 
         // @phpstan-ignore-next-line
         return $this->generateUser([$key => $value]);
+    }
+
+    /**
+     * @return AuthUser[]
+     */
+    private function singleSearchMultipleHit(string $key, string|int $value): array
+    {
+        if ($this->usersDatabase !== null) {
+            $matches = [];
+            foreach ($this->usersDatabase as $user) {
+                if ($user->{$key} === $value) {
+                    $matches[] = $user;
+                }
+            }
+
+            return $matches;
+        }
+
+        // @phpstan-ignore-next-line
+        return [ $this->generateUser([$key => $value]) ];
     }
 
     /**
