@@ -168,7 +168,7 @@ final class AuthFake implements AuthInterface
                 }
             }
 
-            return $matches !== [] ? $matches : [];
+            return $matches;
         }
 
         // @phpstan-ignore-next-line
