@@ -79,7 +79,9 @@ class InternalServiceProvider extends ServiceProvider
     {
         $this->app->singleton(MetricService::class, fn() => new MetricService(
             new CollectorRegistry(
-                apcu_enabled() ? new APCng() : new InMemory()
+                function_exists('apcu_enabled') && apcu_enabled() ?
+                    new APCng() :
+                    new InMemory()
             )
         ));
     }

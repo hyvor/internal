@@ -14,9 +14,9 @@ class PostLicense extends License
         public int $emails = 0,
 
         /**
-         * Whether Hyvor Post branding is shown in the emails and the embed.
+         * Whether Hyvor Post branding is allowed to be removed.
          */
-        public bool $noBranding = false,
+        public bool $allowRemoveBranding = false,
 
     ) {
     }

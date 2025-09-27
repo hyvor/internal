@@ -1,3 +1,8 @@
+## 3.1.6 - 2025-09-27
+
+- `BillingFake::enableForSymfony()` added
+- Symfony Bundle now mocks billing when `HYVOR_FAKE` is set to true
+
 ## 3.1.4 - 2025-08-14
 
 - `UserSignedUpEvent` added (OIDC only currently)

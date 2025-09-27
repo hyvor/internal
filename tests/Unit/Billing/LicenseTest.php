@@ -49,7 +49,7 @@ class LicenseTest extends TestCase
     {
         $license = new PostLicense();
         $this->assertEquals(0, $license->emails);
-        $this->assertFalse($license->noBranding);
+        $this->assertFalse($license->allowRemoveBranding);
     }
 
 }

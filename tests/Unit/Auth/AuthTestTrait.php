@@ -105,6 +105,12 @@ trait AuthTestTrait
         );
     }
 
+    public function test_from_ids_empty(): void
+    {
+        $empty = $this->getAuth()->fromIds([]);
+        $this->assertCount(0, $empty);
+    }
+
 
     public function testFromIds(): void
     {

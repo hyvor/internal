@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.4
-FROM php:${PHP_VERSION}-cli
+FROM php:${PHP_VERSION}-cli-alpine
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/

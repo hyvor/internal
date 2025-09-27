@@ -6,6 +6,7 @@ use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Bundle\InternalBundle;
 use Hyvor\Internal\Component\Component;
@@ -61,6 +62,7 @@ class InternalBundleTest extends TestCase
         $containerConfigurator->services()->set(Auth::class, Auth::class);
         $containerConfigurator->services()->set(AuthFake::class, AuthFake::class);
         $containerConfigurator->services()->set(Billing::class, Billing::class);
+        $containerConfigurator->services()->set(BillingFake::class, BillingFake::class);
 
         $containerConfigurator->parameters()->set('kernel.project_dir', '/path/to/project');
 

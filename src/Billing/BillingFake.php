@@ -7,6 +7,7 @@ use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
+use Symfony\Component\DependencyInjection\Container;
 
 class BillingFake implements BillingInterface
 {
@@ -27,6 +28,27 @@ class BillingFake implements BillingInterface
                 $licenses
             );
         });
+    }
+
+    /**
+     * @param License|(callable(int $userId, ?int $blogId, Component $component) : ?License)|null $license
+     * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
+     * @return void
+     */
+    public static function enableForSymfony(
+        Container $container,
+        null|License|callable $license = null,
+        null|LicensesCollection|callable $licenses = null
+    ): void {
+        $internalConfig = $container->get(InternalConfig::class);
+        assert($internalConfig instanceof InternalConfig);
+
+        $fake = new self(
+            $internalConfig,
+            $license,
+            $licenses
+        );
+        $container->set(BillingInterface::class, $fake);
     }
 
     public function __construct(

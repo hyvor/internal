@@ -19,7 +19,7 @@ class PostPlan extends PlanAbstract
                 10,
                 new PostLicense(
                     emails: 25_000,
-                    noBranding: false
+                    allowRemoveBranding: false
                 ),
                 nameReadable: '25k Plan',
             );
@@ -29,7 +29,7 @@ class PostPlan extends PlanAbstract
                 35,
                 new PostLicense(
                     emails: 100_000,
-                    noBranding: true
+                    allowRemoveBranding: true
                 ),
                 nameReadable: '100k Plan',
             );
@@ -39,7 +39,7 @@ class PostPlan extends PlanAbstract
                 90,
                 new PostLicense(
                     emails: 300_000,
-                    noBranding: true
+                    allowRemoveBranding: true
                 ),
                 nameReadable: '300k Plan',
             );
@@ -49,7 +49,7 @@ class PostPlan extends PlanAbstract
                 225,
                 new PostLicense(
                     emails: 1_000_000,
-                    noBranding: true
+                    allowRemoveBranding: true
                 ),
                 nameReadable: '1M Plan',
             );

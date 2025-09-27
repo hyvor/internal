@@ -7,13 +7,17 @@ use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Billing\Billing;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class InternalBundle extends AbstractBundle
 {
@@ -78,11 +82,12 @@ class InternalBundle extends AbstractBundle
 
         // Main Services
         $authMethod = $builder->resolveEnvPlaceholders('%env(AUTH_METHOD)%', true);
-        $authInterface = $container->services()->alias(
+
+        $container->services()->alias(
             AuthInterface::class,
             $authMethod === 'oidc' ? OidcAuth::class : Auth::class
         );
-        $billingInterface = $container->services()->alias(BillingInterface::class, Billing::class);
+        $container->services()->alias(BillingInterface::class, Billing::class);
 
         $isFake = boolval($builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true));
         if ($isFake && $container->env() === 'dev') {
@@ -99,16 +104,30 @@ class InternalBundle extends AbstractBundle
         $user = $fakeConfig->user();
         $usersDatabase = $fakeConfig->usersDatabase();
 
+        // AUTH FAKE
         $container
             ->services()
             ->alias(AuthInterface::class, AuthFake::class);
-
         $container->services()
             ->get(AuthFake::class)
             ->args([
                 $user?->toArray(),
                 $usersDatabase,
             ]);
+
+        // BILLING FAKE
+        $container
+            ->services()
+            ->alias(BillingInterface::class, BillingFake::class);
+        $container
+            ->services()
+            ->set(BillingFakeLicenseProvider::class, BillingFakeLicenseProvider::class)
+            ->args([$class]);
+        $container->services()
+            ->get(BillingFake::class)
+            ->arg('$license', [service(BillingFakeLicenseProvider::class), 'license'])
+            ->arg('$licenses', [service(BillingFakeLicenseProvider::class), 'licenses']);
+
     }
 
 }
