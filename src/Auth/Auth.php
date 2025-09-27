@@ -72,6 +72,8 @@ class Auth implements AuthInterface
      */
     protected function getUsersByField(string $field, iterable $values): array
     {
+        $values = (array) $values;
+
         if (count($values) === 0) {
             return [];
         }
@@ -80,7 +82,7 @@ class Auth implements AuthInterface
             Component::CORE,
             '/auth/users/from/' . $field,
             [
-                $field => (array)$values
+                $field => $values
             ]
         );
 
