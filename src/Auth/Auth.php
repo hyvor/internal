@@ -72,6 +72,10 @@ class Auth implements AuthInterface
      */
     protected function getUsersByField(string $field, iterable $values): array
     {
+        if (count($values) === 0) {
+            return [];
+        }
+
         $response = $this->internalApi->call(
             Component::CORE,
             '/auth/users/from/' . $field,
