@@ -40,8 +40,11 @@ class BillingFake implements BillingInterface
         null|License|callable $license = null,
         null|LicensesCollection|callable $licenses = null
     ): void {
+        $internalConfig = $container->get(InternalConfig::class);
+        assert($internalConfig instanceof InternalConfig);
+
         $fake = new self(
-            $container->get(InternalConfig::class),
+            $internalConfig,
             $license,
             $licenses
         );
