@@ -69,7 +69,7 @@ abstract class AbstractApiExceptionListener
                     ];
                 }
 
-                $data['message'] = 'Validation failed with ' . count($violations) . ' violations(s)';
+                $data['message'] = $violations[0]['message'] ?? 'Validation Failed';
                 $data['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
                 $data['violations'] = $violations;
             }
