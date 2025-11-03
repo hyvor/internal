@@ -1,3 +1,8 @@
+## 3.1.8 - 2025-11-03
+
+- Self-Hosted telemetry support added
+- Hyvor Relay component added
+
 ## 3.1.6 - 2025-09-27
 
 - `BillingFake::enableForSymfony()` added
