@@ -25,11 +25,16 @@ class SymfonyTestCase extends TestCase
     public Container $container;
     public EntityManagerInterface $em;
 
+    protected function getEnv(): string
+    {
+        return 'test';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $kernel = new SymfonyKernel('test', true);
+        $kernel = new SymfonyKernel($this->getEnv(), true);
         $kernel->boot();
         $container = $kernel->getContainer();
         assert($container instanceof Container);

@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal\SelfHosted;
 
-use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\SelfHosted\Provider\TelemetryProviderInterface;
@@ -34,7 +33,7 @@ class SelfHostedTelemetry implements SelfHostedTelemetryInterface
     {
         $component = $this->internalConfig->getComponent();
 
-        assert($component->selfHostable(), "Component {$component->value} is not self-hostable");
+        assert($component->selfHostable(), "Component \"{$component->value}\" is not self-hostable");
         assert($this->env !== 'test', 'Mock SelfHostedTelemetryInterface in tests');
 
         // TODO: relying on instanceUrlResolver is not ideal here
@@ -43,14 +42,15 @@ class SelfHostedTelemetry implements SelfHostedTelemetryInterface
         // also, this disables telemetry on DEV
         $componentUrl = $this->instanceUrlResolver->privateUrlOfCore();
 
-        assert(
-            $this->env !== 'dev' || $componentUrl !== 'https://hyvor.com',
-            'DEV environment should not send telemetry to hyvor.com. Set HYVOR_INSTANCE to a different URL.',
-        );
+        if ($this->env === 'dev' && $componentUrl === 'https://hyvor.com') {
+            throw new \AssertionError(
+                'DEV environment should not send telemetry to hyvor.com. Set HYVOR_PRIVATE_INSTANCE to a different URL.'
+            );
+        }
 
         $url = $componentUrl . '/api/public/self-hosted/telemetry';
 
-        $this->telemetryProvider->record();
+        $this->telemetryProvider->initialize();
 
         $data = [
             'instance_uuid' => $this->telemetryProvider->getInstanceUuid(),

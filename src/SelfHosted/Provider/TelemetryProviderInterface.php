@@ -10,7 +10,7 @@ interface TelemetryProviderInterface
      * This method is called right before getInstanceUuid, getVersion and getPayload.
      * This method should be the only place to perform any data gathering logic.
      */
-    public function record(): void;
+    public function initialize(): void;
 
     /**
      * UUID of the instance (one per deployment).

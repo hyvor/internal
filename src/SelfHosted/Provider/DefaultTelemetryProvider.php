@@ -15,7 +15,7 @@ class DefaultTelemetryProvider implements TelemetryProviderInterface
         );
     }
 
-    public function record(): void
+    public function initialize(): void
     {
         $this->error();
     }
