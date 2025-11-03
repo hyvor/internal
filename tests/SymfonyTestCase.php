@@ -25,11 +25,16 @@ class SymfonyTestCase extends TestCase
     public Container $container;
     public EntityManagerInterface $em;
 
+    protected function getEnv(): string
+    {
+        return 'test';
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $kernel = new SymfonyKernel('test', true);
+        $kernel = new SymfonyKernel($this->getEnv(), true);
         $kernel->boot();
         $container = $kernel->getContainer();
         assert($container instanceof Container);
@@ -44,6 +49,14 @@ class SymfonyTestCase extends TestCase
         /** @var EntityManagerInterface $em */
         $em = $this->container->get('doctrine.orm.default_entity_manager');
         $this->em = $em;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->kernel->shutdown();
+        $this->container->reset();
+        $this->em->clear();
     }
 
     public function createMock(string $originalClassName): MockObject

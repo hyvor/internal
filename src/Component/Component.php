@@ -9,8 +9,10 @@ use Hyvor\Internal\Billing\License\Plan\BlogsPlan;
 use Hyvor\Internal\Billing\License\Plan\CorePlan;
 use Hyvor\Internal\Billing\License\Plan\PlanAbstract;
 use Hyvor\Internal\Billing\License\Plan\PostPlan;
+use Hyvor\Internal\Billing\License\Plan\RelayPlan;
 use Hyvor\Internal\Billing\License\Plan\TalkPlan;
 use Hyvor\Internal\Billing\License\PostLicense;
+use Hyvor\Internal\Billing\License\RelayLicense;
 use Hyvor\Internal\Billing\License\TalkLicense;
 
 enum Component: string
@@ -19,6 +21,7 @@ enum Component: string
     case TALK = 'talk';
     case BLOGS = 'blogs';
     case POST = 'post';
+    case RELAY = 'relay';
 
     public function name(): string
     {
@@ -27,6 +30,7 @@ enum Component: string
             self::TALK => 'Hyvor Talk',
             self::BLOGS => 'Hyvor Blogs',
             self::POST => 'Hyvor Post',
+            self::RELAY => 'Hyvor Relay',
         };
     }
 
@@ -40,6 +44,7 @@ enum Component: string
             self::TALK => TalkLicense::class,
             self::BLOGS => BlogsLicense::class,
             self::POST => PostLicense::class,
+            self::RELAY => RelayLicense::class,
         };
     }
 
@@ -50,9 +55,18 @@ enum Component: string
             self::TALK => TalkPlan::class,
             self::BLOGS => BlogsPlan::class,
             self::POST => PostPlan::class,
+            self::RELAY => RelayPlan::class,
         };
 
         return new $class();
+    }
+
+    public function selfHostable(): bool
+    {
+        return match ($this) {
+            self::RELAY => true,
+            default => false,
+        };
     }
 
 }

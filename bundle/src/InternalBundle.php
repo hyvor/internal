@@ -12,6 +12,8 @@ use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
+use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
+use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -88,6 +90,7 @@ class InternalBundle extends AbstractBundle
             $authMethod === 'oidc' ? OidcAuth::class : Auth::class
         );
         $container->services()->alias(BillingInterface::class, Billing::class);
+        $container->services()->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
 
         $isFake = boolval($builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true));
         if ($isFake && $container->env() === 'dev') {
@@ -127,7 +130,6 @@ class InternalBundle extends AbstractBundle
             ->get(BillingFake::class)
             ->arg('$license', [service(BillingFakeLicenseProvider::class), 'license'])
             ->arg('$licenses', [service(BillingFakeLicenseProvider::class), 'licenses']);
-
     }
 
 }
