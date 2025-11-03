@@ -651,6 +651,19 @@ return static function (MonologConfig $monolog, ContainerConfigurator $container
 
 - Use the `ContextualLogger` for easy message handler logging and when you need to log messages with a repeated context.
 
+### Telemetry (Self-Hosted)
+
+Self-hosted applications can send telemetry data to HYVOR. Make sure to never send any sensitive or personal data. Always send only basic data (version) and metrics.
+
+- Implement `TelemetryProviderInterface` to provide telemetry data.
+- Register the implementation in `services.php`:
+
+```php
+$services->set(TelemetryProviderInterface::class, YourTelemetryProvider::class);
+```
+
+- Use `self-hosted:record-telemetry` command to test telemetry recording locally.
+
 ### Development
 
 #### PHPStorm
