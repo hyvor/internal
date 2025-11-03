@@ -51,6 +51,14 @@ class SymfonyTestCase extends TestCase
         $this->em = $em;
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->kernel->shutdown();
+        $this->container->reset();
+        $this->em->clear();
+    }
+
     public function createMock(string $originalClassName): MockObject
     {
         return parent::createMock($originalClassName);
