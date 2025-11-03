@@ -6,5 +6,5 @@ use Hyvor\Internal\Component\Component;
 
 interface SelfHostedTelemetryInterface
 {
-    public function recordTelemetry();
+    public function recordTelemetry(): void;
 }
