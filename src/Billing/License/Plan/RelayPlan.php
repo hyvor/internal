@@ -9,5 +9,7 @@ class RelayPlan extends PlanAbstract
      */
     protected function config(): void
     {
+        $this->version(1, function () {
+        });
     }
 }
