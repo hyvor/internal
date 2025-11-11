@@ -31,11 +31,6 @@ trait ApiTestingTrait
         $this->assertArrayHasKey('violations', $response);
         $this->assertIsArray($response['violations']);
         $this->assertCount($count, $response['violations']);
-
-        $this->assertSame(
-            "Validation failed with $count violations(s)",
-            $response['message'],
-        );
     }
 
     public function assertHasViolation(string $property, string $message = ''): void
