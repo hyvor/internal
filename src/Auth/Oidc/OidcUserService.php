@@ -139,4 +139,13 @@ class OidcUserService
         return $user;
     }
 
+    public function getTotalUserCount(): int
+    {
+        return (int)$this->em->getRepository(OidcUser::class)
+            ->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }
