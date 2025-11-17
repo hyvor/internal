@@ -34,7 +34,7 @@ final class ResourceFake extends Resource
 
     public static function enableForSymfony(
         Container $container
-    ) {
+    ): void {
         self::$symfonyContainer = $container;
         $container->set(Resource::class, new self());
     }
