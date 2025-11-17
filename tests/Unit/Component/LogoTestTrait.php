@@ -17,10 +17,22 @@ trait LogoTestTrait
         $this->assertStringContainsString('<svg', $svg);
     }
 
+    public function testPath(): void
+    {
+        $path = Logo::path(Component::BLOGS);
+        $this->assertStringEndsWith('assets/logo/blogs.svg', $path);
+
+        $path = Logo::path(Component::BLOGS, true);
+        $this->assertStringEndsWith('assets/logo/blogs.png', $path);
+    }
+
     public function testUrl(): void
     {
         $url = $this->getLogo()->url(Component::BLOGS);
         $this->assertEquals('https://hyvor.com/api/public/logo/blogs.svg', $url);
+
+        $url = $this->getLogo()->url(Component::BLOGS, true);
+        $this->assertEquals('https://hyvor.com/api/public/logo/blogs.png', $url);
     }
 
     public static function allComponents(): mixed
