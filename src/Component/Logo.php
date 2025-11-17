@@ -14,10 +14,14 @@ class Logo
         return __DIR__ . '/../../assets/logo';
     }
 
+    public static function path(Component $component, bool $png = false): string
+    {
+        return self::dir() . "/{$component->value}." . ($png ? 'png' : 'svg');
+    }
+
     public static function svg(Component $component, ?int $size = null): string
     {
-        $path = self::dir() . "/{$component->value}.svg";
-        $svg = (string)file_get_contents($path);
+        $svg = (string)file_get_contents(self::path($component));
 
         if ($size) {
             $svg = (string)preg_replace_callback('/<svg[^>]+/', function ($matches) use ($size) {
@@ -31,10 +35,10 @@ class Logo
         return $svg;
     }
 
-    public function url(Component $component): string
+    public function url(Component $component, bool $png = false): string
     {
         $coreUrl = $this->instanceUrlResolver->publicUrlOfCore();
-        return $coreUrl . "/api/public/logo/{$component->value}.svg";
+        return $coreUrl . "/api/public/logo/{$component->value}." . ($png ? 'png' : 'svg');
     }
 
 }
