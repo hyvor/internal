@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Resource;
 
 use Carbon\Carbon;
-use Hyvor\Internal\InternalApi\InternalApi;
+use Symfony\Component\DependencyInjection\Container;
 
 final class ResourceFake extends Resource
 {
@@ -14,8 +14,15 @@ final class ResourceFake extends Resource
     /** @var array<int> */
     private array $deleted = [];
 
+    private static ?Container $symfonyContainer = null;
+
     public function __construct()
     {
+    }
+
+    public function __destruct()
+    {
+        self::$symfonyContainer = null;
     }
 
     public static function enable(): void
@@ -25,14 +32,19 @@ final class ResourceFake extends Resource
         });
     }
 
+    public static function enableForSymfony(
+        Container $container
+    ): void {
+        self::$symfonyContainer = $container;
+        $container->set(Resource::class, new self());
+    }
+
     public static function assertRegistered(
         int $userId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
-        $resource = app(Resource::class);
-        assert($resource instanceof self);
-
+        $resource = self::getFakeFromContainer();
         $registered = false;
 
         foreach ($resource->registered as $registered) {
@@ -54,8 +66,7 @@ final class ResourceFake extends Resource
 
     public static function assertDeleted(int $resourceId): void
     {
-        $resource = app(Resource::class);
-        assert($resource instanceof self);
+        $resource = self::getFakeFromContainer();
 
         \PHPUnit\Framework\Assert::assertContains(
             $resourceId,
@@ -81,4 +92,15 @@ final class ResourceFake extends Resource
         $this->deleted[] = $resourceId;
     }
 
+    private static function getFakeFromContainer(): self
+    {
+        if (self::$symfonyContainer) {
+            $fake = self::$symfonyContainer->get(Resource::class);
+        } else {
+            $fake = app(Resource::class);
+        }
+
+        assert($fake instanceof self);
+        return $fake;
+    }
 }
