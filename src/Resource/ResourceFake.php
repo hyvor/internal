@@ -14,37 +14,31 @@ final class ResourceFake extends Resource
     /** @var array<int> */
     private array $deleted = [];
 
-    private static ?Container $symfonyContainer = null;
-
-    public function __construct()
+    public function __construct(private ?Container $symfonyContainer = null)
     {
     }
 
-    public function __destruct()
+    public static function enable(): self
     {
-        self::$symfonyContainer = null;
-    }
-
-    public static function enable(): void
-    {
-        app()->singleton(Resource::class, function () {
-            return new self();
-        });
+        $self = new self();
+        app()->singleton(Resource::class, fn() => $self);
+        return $self;
     }
 
     public static function enableForSymfony(
         Container $container
-    ): void {
-        self::$symfonyContainer = $container;
-        $container->set(Resource::class, new self());
+    ): self {
+        $self = new self($container);
+        $container->set(Resource::class, $self);
+        return $self;
     }
 
-    public static function assertRegistered(
+    public function assertRegistered(
         int $userId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
-        $resource = self::getFakeFromContainer();
+        $resource = $this->getFakeFromContainer();
         $registered = false;
 
         foreach ($resource->registered as $registered) {
@@ -64,9 +58,9 @@ final class ResourceFake extends Resource
         );
     }
 
-    public static function assertDeleted(int $resourceId): void
+    public function assertDeleted(int $resourceId): void
     {
-        $resource = self::getFakeFromContainer();
+        $resource = $this->getFakeFromContainer();
 
         \PHPUnit\Framework\Assert::assertContains(
             $resourceId,
@@ -92,10 +86,10 @@ final class ResourceFake extends Resource
         $this->deleted[] = $resourceId;
     }
 
-    private static function getFakeFromContainer(): self
+    private function getFakeFromContainer(): self
     {
-        if (self::$symfonyContainer) {
-            $fake = self::$symfonyContainer->get(Resource::class);
+        if ($this->symfonyContainer) {
+            $fake = $this->symfonyContainer->get(Resource::class);
         } else {
             $fake = app(Resource::class);
         }
