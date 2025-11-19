@@ -14,7 +14,9 @@ final class ResourceFake extends Resource
     /** @var array<int> */
     private array $deleted = [];
 
-    public function __construct(private ?Container $symfonyContainer = null)
+    public function __construct(
+        private ?Container $symfonyContainer = null
+    )
     {
     }
 
