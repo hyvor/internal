@@ -27,6 +27,9 @@ return function (ContainerConfigurator $container): void {
 
     if ($container->env() === 'test') {
         $internalServices->public();
+
+        // Unreferenced service used in tests
+        $services->set(\Hyvor\Internal\Bundle\Mail\Component\Brand::class)->public();
     }
 
 //    $services->load('Hyvor\\Internal\\Auth\\', '../../src/Auth');
