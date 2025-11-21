@@ -3,12 +3,13 @@
 namespace Hyvor\Internal\Resource;
 
 use Carbon\Carbon;
-use Hyvor\Internal\InternalApi\InternalApi;
+use PHPUnit\Framework\Assert;
+use Symfony\Component\DependencyInjection\Container;
 
-final class ResourceFake extends Resource
+final class ResourceFake implements ResourceInterface
 {
 
-    /** @var array<array{userId: int, resourceId: int, at: ?Carbon}> */
+    /** @var array<array{organizationId: int, resourceId: int, at: ?Carbon}> */
     private array $registered = [];
 
     /** @var array<int> */
@@ -18,26 +19,30 @@ final class ResourceFake extends Resource
     {
     }
 
-    public static function enable(): void
+    public static function enable(): self
     {
-        app()->singleton(Resource::class, function () {
-            return new self();
-        });
+        $fake = new self();
+        app()->singleton(Resource::class, fn() => $fake);
+        return $fake;
     }
 
-    public static function assertRegistered(
-        int $userId,
+    public static function enableForSymfony(Container $container): self
+    {
+        $fake = new self();
+        $container->set(ResourceInterface::class, $fake);
+        return $fake;
+    }
+
+    public function assertRegistered(
+        int $organizationId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
-        $resource = app(Resource::class);
-        assert($resource instanceof self);
-
         $registered = false;
 
-        foreach ($resource->registered as $registered) {
+        foreach ($this->registered as $registered) {
             if (
-                $registered['userId'] === $userId &&
+                $registered['organizationId'] === $organizationId &&
                 $registered['resourceId'] === $resourceId &&
                 ($at === null || $registered['at']?->getTimestamp() === $at->getTimestamp())
             ) {
@@ -46,31 +51,28 @@ final class ResourceFake extends Resource
             }
         }
 
-        \PHPUnit\Framework\Assert::assertTrue(
+        Assert::assertTrue(
             $registered,
-            "Resource not registered for user $userId and resource $resourceId" . ($at ? " at $at" : '')
+            "Resource not registered for user $organizationId and resource $resourceId" . ($at ? " at $at" : '')
         );
     }
 
-    public static function assertDeleted(int $resourceId): void
+    public function assertDeleted(int $resourceId): void
     {
-        $resource = app(Resource::class);
-        assert($resource instanceof self);
-
-        \PHPUnit\Framework\Assert::assertContains(
+        Assert::assertContains(
             $resourceId,
-            $resource->deleted,
+            $this->deleted,
             "Resource not deleted: $resourceId"
         );
     }
 
     public function register(
-        int $userId,
+        int $organizationId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
         $this->registered[] = [
-            'userId' => $userId,
+            'organizationId' => $organizationId,
             'resourceId' => $resourceId,
             'at' => $at,
         ];
