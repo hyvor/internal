@@ -65,12 +65,12 @@ class Billing implements BillingInterface
      * @throws LicenseOfCombinationNotFoundException
      */
     public function license(
-        int $userId,
+        int $organizationId,
         ?int $resourceId,
         ?Component $component = null,
     ): ?License {
-        $licenses = $this->licenses([new LicenseOf($userId, $resourceId)], $component);
-        return $licenses->of($userId, $resourceId);
+        $licenses = $this->licenses([new LicenseOf($organizationId, $resourceId)], $component);
+        return $licenses->of($organizationId, $resourceId);
     }
 
     /**
@@ -82,7 +82,7 @@ class Billing implements BillingInterface
         $component ??= $this->internalConfig->getComponent();
 
         /**
-         * @var array{user_id: int, resource_id: ?int, license: ?string}[] $response
+         * @var array{organization_id: int, resource_id: ?int, license: ?string}[] $response
          */
         $response = $this->internalApi->call(
             Component::CORE,
