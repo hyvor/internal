@@ -28,7 +28,7 @@ abstract class UsageAbstract
 
     abstract public function getKey(): string;
 
-    abstract public function usageOfUser(int $userId): int;
+    abstract public function usageOfOrganization(int $organizationId): int;
 
     abstract public function usageOfResource(int $resourceId): int;
 
@@ -49,7 +49,7 @@ abstract class UsageAbstract
      */
     public function hasReached(
         License $license,
-        int $userId,
+        int $organizationId,
         ?int $resourceId = null,
         bool $checkForExceed = false,
     ): bool {
@@ -59,7 +59,7 @@ abstract class UsageAbstract
 
         $usage = $isResource ?
             $this->usageOfResource($resourceId) :
-            $this->usageOfUser($userId);
+            $this->usageOfOrganization($organizationId);
 
         $allowed = $this->getLimit($license);
 
@@ -73,10 +73,10 @@ abstract class UsageAbstract
      */
     public function hasExceeded(
         License $license,
-        int $userId,
+        int $organizationId,
         ?int $resourceId = null,
     ): bool {
-        return $this->hasReached($license, $userId, $resourceId, true);
+        return $this->hasReached($license, $organizationId, $resourceId, true);
     }
 
 }
