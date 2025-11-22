@@ -8,6 +8,7 @@ use Hyvor\Internal\Bundle\Entity\OidcUser;
 
 /**
  * @phpstan-type AuthUserArray array{
+ *  current_organization?: array{id: int, name: string},
  *  id: int,
  *  username: string,
  *  name: string,
@@ -19,6 +20,7 @@ use Hyvor\Internal\Bundle\Entity\OidcUser;
  * }
  *
  * @phpstan-type AuthUserArrayPartial array{
+ * current_organization?: array{id: int, name: string},
  * id?: int,
  * username?: string,
  * name?: string,
@@ -33,6 +35,7 @@ class AuthUser
 {
 
     final public function __construct(
+        public ?AuthCurrentOrganization $current_organization, // only set in AuthUser objects from ->check()
         public int $id,
         public string $username,
         public string $name,
@@ -51,6 +54,10 @@ class AuthUser
     public static function fromArray(array $data): static
     {
         return new static(
+            current_organization: isset($data['current_organization']) ? new AuthCurrentOrganization(
+                id: $data['current_organization']['id'],
+                name: $data['current_organization']['name'],
+            ) : null,
             id: $data['id'],
             username: $data['username'],
             name: $data['name'],
@@ -65,6 +72,10 @@ class AuthUser
     public static function fromOidcUser(OidcUser $oidcUser): static
     {
         return new static(
+            current_organization: new AuthCurrentOrganization(
+                id: 0,
+                name: 'Default',
+            ),
             id: $oidcUser->getId(),
             username: $oidcUser->getSub(),
             name: $oidcUser->getName(),
@@ -84,6 +95,10 @@ class AuthUser
     {
         /** @var AuthUserArray $user */
         $user = [
+            'current_organization' => $this->current_organization ? [
+                'id' => $this->current_organization->id,
+                'name' => $this->current_organization->name,
+            ] : null,
             'id' => $this->id,
             'username' => $this->username,
             'name' => $this->name,
@@ -95,5 +110,15 @@ class AuthUser
         ];
 
         return $user;
+    }
+
+    /**
+     * Only call this to get a non-null organization from an AuthUser returned by ->check()
+     */
+    public function getCurrentOrganization(): AuthCurrentOrganization
+    {
+        $org = $this->current_organization;
+        assert($org instanceof AuthCurrentOrganization);
+        return $org;
     }
 }
