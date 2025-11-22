@@ -8,6 +8,9 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Http\Exceptions\HttpException;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated keep middleware at the product level. Do not use this for new development.
+ */
 class AuthMiddleware
 {
 
@@ -19,8 +22,10 @@ class AuthMiddleware
             throw new HttpException('Unauthorized', 401);
         }
 
+        $vars = get_object_vars($user);
+        $vars['current_organization'] = (array)$user->current_organization;
         // @phpstan-ignore-next-line
-        $accessUser = AccessAuthUser::fromArray(get_object_vars($user));
+        $accessUser = AccessAuthUser::fromArray($vars);
         app()->instance(AccessAuthUser::class, $accessUser);
 
         return $next($request);
