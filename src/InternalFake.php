@@ -47,7 +47,7 @@ class InternalFake
 
     /**
      * Returns a collection of licenses for the given LicenseOf objects.
-     * @@codeCoverageIgnore TODO: add coverage later
+     * @codeCoverageIgnore TODO: add coverage later
      * @param LicenseOf[] $of
      */
     public function licenses(array $of, Component $component): LicensesCollection
@@ -62,6 +62,16 @@ class InternalFake
             ];
         }
         return new LicensesCollection($licenses, $component);
+    }
+
+    /**
+     * If App\InternalFake exists, it returns its instance. Otherwise, it returns an instance of this class.
+     */
+    public static function getInstance(): InternalFake
+    {
+        /** @var class-string<InternalFake> $class */
+        $class = class_exists('App\InternalFake') ? 'App\InternalFake' : InternalFake::class;
+        return new $class;
     }
 
 }

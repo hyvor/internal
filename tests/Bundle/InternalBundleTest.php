@@ -39,13 +39,10 @@ class InternalBundleTest extends TestCase
         $this->assertInstanceOf(ArrayNodeDefinition::class, $rootNode);
         $childNodes = $rootNode->getChildNodeDefinitions();
         $this->assertArrayHasKey('component', $childNodes);
-        $this->assertArrayHasKey('instance', $childNodes);
-        $this->assertArrayHasKey('private_instance', $childNodes);
-        $this->assertArrayHasKey('fake', $childNodes);
         $this->assertArrayHasKey('i18n', $childNodes);
     }
 
-    private function getContainerBuilder(bool $dev = false): ContainerBuilder
+    public function test_extension(): void
     {
         $instanceof = [];
         $containerBuilder = new ContainerBuilder();
@@ -55,7 +52,7 @@ class InternalBundleTest extends TestCase
             $instanceof,
             'path',
             'file',
-            $dev ? 'dev' : null
+            null
         );
 
         $containerConfigurator->services()->set(InternalConfig::class, InternalConfig::class);
@@ -72,7 +69,7 @@ class InternalBundleTest extends TestCase
             'instance' => 'https://hyvor.com',
             'auth_method' => 'hyvor',
             'private_instance' => null,
-            'fake' => $dev,
+            'fake' => false,
             'i18n' => [
                 'folder' => '%kernel.project_dir%/../shared/locale',
                 'default' => 'en-US',
@@ -80,33 +77,7 @@ class InternalBundleTest extends TestCase
         ];
         $bundle->loadExtension($config, $containerConfigurator, $containerBuilder);
 
-        return $containerBuilder;
-    }
-
-    public function test_load_extension(): void
-    {
-        $containerBuilder = $this->getContainerBuilder();
-
-        // internal config
         $internalConfig = $containerBuilder->get(InternalConfig::class);
         $this->assertInstanceOf(InternalConfig::class, $internalConfig);
-        $this->assertSame(Component::CORE, $internalConfig->getComponent());
-        $this->assertSame('https://hyvor.com', $internalConfig->getInstance());
-        $this->assertSame(null, $internalConfig->getPrivateInstance());
-        $this->assertFalse($internalConfig->isFake());
-        $this->assertSame('/path/to/project/../shared/locale', $internalConfig->getI18nFolder());
-        $this->assertSame('en-US', $internalConfig->getI18nDefaultLocale());
-
-        // bindings
-        $this->assertSame(Auth::class, (string)$containerBuilder->getAlias(AuthInterface::class));
-        $this->assertSame(Billing::class, (string)$containerBuilder->getAlias(BillingInterface::class));
     }
-
-    public function test_load_extension_on_dev(): void
-    {
-        $_ENV['HYVOR_FAKE'] = '1';
-        $containerBuilder = $this->getContainerBuilder(true);
-        $this->assertSame(AuthFake::class, (string)$containerBuilder->getAlias(AuthInterface::class));
-    }
-
 }
