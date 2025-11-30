@@ -121,10 +121,6 @@ class OidcController extends AbstractController
             throw new BadRequestHttpException('Invalid nonce in ID Token.');
         }
 
-        if (!$decodedIdToken->email_verified) {
-            throw new BadRequestHttpException('Email not verified. Only verified emails are allowed.');
-        }
-
         $oidcUser = $this->oidcUserService->loginOrSignup($decodedIdToken, $session);
 
         $this->logger->info('OIDC user logged in', [
