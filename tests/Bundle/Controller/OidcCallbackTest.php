@@ -162,7 +162,6 @@ class OidcCallbackTest extends SymfonyTestCase
             "nonce" => "my-nonce",
             "name" => "Jane",
             "email" => "jane@example.com",
-            "email_verified" => true,
         ];
         if ($payload === null) {
             $payload = $defaultPayload;
@@ -349,28 +348,6 @@ class OidcCallbackTest extends SymfonyTestCase
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('Invalid nonce in ID Token.');
-
-        $this->kernel->handle($request, catch: false);
-    }
-
-    public function test_fails_when_email_not_verified(): void
-    {
-        [
-            'privateKeyPem' => $privateKeyPem,
-            'jwks' => $jwks
-        ] = $this->generateKey();
-
-        $idToken = $this->createIdToken($privateKeyPem, payload: ['email_verified' => false], extendPayload: true);
-
-        $wellKnownResponse = $this->wellKnownResponse();
-        $idTokenResponse = new JsonMockResponse(['id_token' => $idToken]);
-        $jwksResponse = new JsonMockResponse($jwks);
-
-        $this->setHttpClientResponse([$wellKnownResponse, $idTokenResponse, $jwksResponse]);
-        $request = $this->createRequest();
-
-        $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('Email not verified. Only verified emails are allowed.');
 
         $this->kernel->handle($request, catch: false);
     }

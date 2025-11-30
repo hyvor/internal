@@ -26,8 +26,6 @@ class OidcDecodedIdTokenDto
     #[Assert\Email]
     public string $email;
 
-    public bool $email_verified = false;
-
     public ?string $picture = null;
     public ?string $website = null;
 
