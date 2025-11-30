@@ -528,7 +528,6 @@ framework:
   session:
     handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
     name: oidc_session_id
-    cookie_samesite: strict
   trusted_proxies: '%env(TRUSTED_PROXIES)%'
 
 when@dev:
