@@ -9,7 +9,11 @@ return function (ContainerConfigurator $container): void {
         ->autoconfigure(true);
 
     // load all files as services
-    $services->load('Hyvor\\Internal\\Bundle\\', '../src');
+    $services
+        ->load('Hyvor\\Internal\\Bundle\\', '../src')
+        ->exclude([
+            '../src/Comms/Message',
+        ]);
 
     $internalServices = $services
         ->load('Hyvor\\Internal\\', '../../src')
