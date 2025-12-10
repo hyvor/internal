@@ -5,3 +5,4 @@ src/InternalFakeExtended.php
 var/
 tmp/
 .phpactor.json
+.php-version
