@@ -9,7 +9,7 @@ use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;

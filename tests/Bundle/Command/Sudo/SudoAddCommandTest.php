@@ -7,7 +7,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Bundle\Command\Sudo\SudoAddCommand;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Sudo\Event\SudoAddedEvent;
 use Hyvor\Internal\Sudo\SudoUserService;
 use Hyvor\Internal\Tests\SymfonyTestCase;
