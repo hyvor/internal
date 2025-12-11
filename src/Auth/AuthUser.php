@@ -111,14 +111,4 @@ class AuthUser
 
         return $user;
     }
-
-    /**
-     * Only call this to get a non-null organization from an AuthUser returned by ->check()
-     */
-    public function getCurrentOrganization(): AuthCurrentOrganization
-    {
-        $org = $this->current_organization;
-        assert($org instanceof AuthCurrentOrganization);
-        return $org;
-    }
 }

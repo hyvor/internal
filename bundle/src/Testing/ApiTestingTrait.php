@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 trait ApiTestingTrait
 {
 
+    use BaseTestingTrait;
+
     /**
      * @return array<string, mixed>
      */
