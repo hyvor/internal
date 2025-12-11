@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Bundle\Testing;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Monolog\Handler\TestHandler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;

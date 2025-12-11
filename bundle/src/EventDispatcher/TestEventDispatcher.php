@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Bundle\Testing;
+namespace Hyvor\Internal\Bundle\EventDispatcher;
 
 use PHPUnit\Framework\Assert;
 use Symfony\Component\DependencyInjection\Container;

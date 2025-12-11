@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Tests\Bundle\Testing;
 
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 
 class TestEventDispatcherTest extends SymfonyTestCase
