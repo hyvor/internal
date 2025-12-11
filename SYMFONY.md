@@ -20,69 +20,6 @@ return [
 ];
 ```
 
-## Authentication
-
-Install Twig Bundles
-
-```bash
-composer require symfony/security-bundle
-```
-
-### Step 1: Setup Firewall and Access Control
-
-```php
-// config/packages/security.php
-<?php
-
-use Hyvor\Internal\Bundle\Security\HyvorAuthenticator;
-use Hyvor\Internal\Bundle\Security\UserRole;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Config\SecurityConfig;
-
-return static function (ContainerBuilder $container, SecurityConfig $security): void {
-
-    $security
-        ->firewall('hyvor_auth')
-        ->stateless(true)
-        ->lazy(true)
-        ->customAuthenticators([HyvorAuthenticator::class]);
-
-    $security
-        ->accessControl()
-        ->path('^/api/console')
-        ->roles(UserRole::HYVOR_USER);
-        
-    # other access control
-
-};
-```
-
-### Step 2: Use general Symfony Operations
-
-```php
-// src/Controller/ConsoleController.php
-use Hyvor\Internal\Bundle\Security\UserRole;
-
-$user = $this->getUser(UserRole::HYVOR_USER);
-$this->denyAccessUnlessGranted(UserRole::HYVOR_USER);
-```
-
-## Exception Listener
-
-It is recommended to have an Exception listener per API.
-
-```php
-// src/Api/Console/ExceptionListener.php
-#[AsEventListener(event: KernelEvents::EXCEPTION)]
-class ExceptionListener extends AbstractApiExceptionListener
-{
-    protected function prefix(): string
-    {
-        return '/api/console';
-    }
-}
-```
-
 ## Mail Templates
 
 Install Twig Bundles

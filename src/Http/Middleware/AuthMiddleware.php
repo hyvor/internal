@@ -23,7 +23,7 @@ class AuthMiddleware
         }
 
         $vars = get_object_vars($user);
-        $vars['current_organization'] = (array)$user->current_organization;
+        $vars['current_organization'] = $user->current_organization ? (array)$user->current_organization : null;
         // @phpstan-ignore-next-line
         $accessUser = AccessAuthUser::fromArray($vars);
         app()->instance(AccessAuthUser::class, $accessUser);

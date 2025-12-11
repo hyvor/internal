@@ -4,21 +4,16 @@ namespace Hyvor\Internal\Bundle\Api;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-/**
- * Make sure to add the following attribute to the class:
- *
- * use Symfony\Component\HttpKernel\KernelEvents;
- * use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
- *
- * #[AsEventListener(event: KernelEvents::EXCEPTION)]
- */
-abstract class AbstractApiExceptionListener
+#[AsEventListener(event: KernelEvents::EXCEPTION)]
+class ApiExceptionListener
 {
 
     public function __construct(
@@ -28,11 +23,10 @@ abstract class AbstractApiExceptionListener
     ) {
     }
 
-    /**
-     * API Prefix
-     * ex: /api/console
-     */
-    abstract protected function prefix(): string;
+    protected function prefix(): string
+    {
+        return '/api';
+    }
 
     public function __invoke(ExceptionEvent $event): void
     {
