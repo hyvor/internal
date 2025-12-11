@@ -20,6 +20,7 @@ return function (ContainerConfigurator $container): void {
         ->load('Hyvor\\Internal\\', '../../src')
         ->exclude([
             '../../src/config.php',
+            '../../src/Auth/AuthCurrentOrganization.php',
             '../../src/Auth/AuthUser.php',
             '../../src/Billing/Dto',
             '../../src/Billing/License',

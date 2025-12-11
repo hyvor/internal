@@ -2,6 +2,7 @@
 
 - Organization support
 - Hyvor\Internal\Laravel\LogFake removed
+- TestEventDispatcher moved
 
 ## 3.1.8 - 2025-11-03
 
