@@ -1,3 +1,8 @@
+## 4.0.0 - Unreleased
+
+- Organization support
+- Hyvor\Internal\Laravel\LogFake removed
+
 ## 3.1.8 - 2025-11-03
 
 - Self-Hosted telemetry support added
