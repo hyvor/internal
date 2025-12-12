@@ -22,7 +22,7 @@ class SudoAuditLog
     private string $action;
 
     /** @var array<string,scalar> $payload */
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: 'json', options: ['jsonb' => true])]
     private array $payload;
 
     #[ORM\Column(type: 'datetime_immutable')]
