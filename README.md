@@ -609,6 +609,17 @@ CREATE TABLE sudo_users (
 );
 ```
 
+```sql
+CREATE TABLE sudo_audit_logs (
+    id BIGINT PRIMARY KEY,
+    user_id BIGINT,
+    action TEXT,
+    payload JSONB,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+```
+
 ## Logging
 
 ```php
