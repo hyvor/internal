@@ -2,10 +2,13 @@
 
 namespace Hyvor\Internal\Sudo;
 
+use Hyvor\Internal\Bundle\Api\SudoAuthorizationListener;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SudoUserService
 {
@@ -15,7 +18,8 @@ class SudoUserService
     public function __construct(
         private SudoUserRepository $sudoUserRepository,
         private EntityManagerInterface $em,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -56,6 +60,20 @@ class SudoUserService
         $this->em->flush();
 
         $this->eventDispatcher->dispatch(new Event\SudoRemovedEvent($user));
+    }
+
+    public function userFromCurrentRequest(): AuthUser {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request === null) {
+            throw new \RuntimeException("Request is null");
+        }
+
+        $user = $request->attributes->get(SudoAuthorizationListener::RESOLVED_USER_ATTRIBUTE_KEY);
+        if (!$user instanceof AuthUser) {
+            throw new \RuntimeException("User is not a instance of AuthUser");
+        }
+
+        return $user;
     }
 
 }
