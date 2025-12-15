@@ -3,9 +3,14 @@
 namespace Hyvor\Internal\Bundle\Comms;
 
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalConfig;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CommsService
@@ -25,6 +30,7 @@ class CommsService
      * @param Component|null $to if null, the message's to() method MUST return exactly one component, which will be used
      * @param Component|null $from the current component will be used if null
      * @return TResponse
+     * @throws CommsApiFailedException
      */
     public function send(
         AbstractEvent $event,
@@ -53,7 +59,6 @@ class CommsService
             throw new \InvalidArgumentException("Message cannot be sent to component {$to->value}");
         }
 
-
         $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
         $url = $componentUrl . '/api/comms/event';
 
@@ -64,16 +69,36 @@ class CommsService
             'event' => serialize($event)
         ];
 
-        $response = $this->httpClient->request(
-            'POST',
-            $url,
-            [
-                'headers' => $headers,
-                'json' => $data,
-            ]
-        );
+        try {
+            $response = $this->httpClient->request(
+                'POST',
+                $url,
+                [
+                    'headers' => $headers,
+                    'json' => $data,
+                ]
+            );
 
-        dd($response->getContent());
+            $output = $response->toArray();
+
+            /** @var TResponse $response */
+            $response = unserialize($output['response']);
+
+            return $response;
+        } catch (TransportExceptionInterface $e) {
+            throw new CommsApiFailedException(
+                'Comms API call to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
+            );
+        } catch (DecodingExceptionInterface $e) {
+            throw new CommsApiFailedException(
+                'Comms API call to ' . $url . ' failed. Decoding error: ' . $e->getMessage(),
+            );
+        } catch (HttpExceptionInterface $e) {
+            throw new CommsApiFailedException(
+                'Comms API call to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
+                ' - ' . substr($response->getContent(false), 0, 250)
+            );
+        }
     }
 
 }
