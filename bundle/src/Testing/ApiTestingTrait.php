@@ -23,6 +23,17 @@ trait ApiTestingTrait
         return $json;
     }
 
+    public function assertFailed(int $code, ?string $message = null): void
+    {
+        $response = self::getClient()->getResponse();
+        $this->assertSame($code, $response->getStatusCode());
+
+        if ($message !== null) {
+            $error = $this->getJson()['message'] ?? '';
+            $this->assertStringContainsString($message, $error);
+        }
+    }
+
     public function assertViolationCount(int $count): void
     {
         $response = self::getClient()->getResponse();

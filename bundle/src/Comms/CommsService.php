@@ -6,7 +6,6 @@ use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
-use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
