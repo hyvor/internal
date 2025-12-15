@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyvor\Internal\Bundle\Comms\Message;
+namespace Hyvor\Internal\Bundle\Comms\Event;
 
 use Hyvor\Internal\Component\Component;
 
-class GetPaginatedGroupUsers implements MessageInterface
+class GetPaginatedGroupUsers implements AbstractEvent
 {
 
     public function from(): array

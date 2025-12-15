@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Bundle\Comms\Message\UserDeleted;
+namespace Hyvor\Internal\Bundle\Comms\Event\UserDeleted;
 
 class UserDeleted
 {
