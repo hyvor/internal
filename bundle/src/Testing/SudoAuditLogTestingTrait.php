@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Bundle\Testing;
 
 use Hyvor\Internal\Bundle\Entity\SudoAuditLog;
+use Hyvor\Internal\Sudo\SudoAuditLogRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 trait SudoAuditLogTestingTrait
@@ -16,9 +17,19 @@ trait SudoAuditLogTestingTrait
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get(EntityManagerInterface::class);
 
-        $logs = $em->getRepository(SudoAuditLog::class)->findBy([
-            'action' => $action,
-        ]);
+        /** @var SudoAuditLogRepository $repo */
+        $repo = $em->getRepository(SudoAuditLog::class);
+
+        $logs = $repo->findLogs(
+            userId: null,
+            action: $action,
+            dateStart: null,
+            dateEnd: null,
+            payloadParam: null,
+            payloadValue: null,
+            limit: null,
+            offset: null
+        );
 
         $found = false;
 

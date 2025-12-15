@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Tests\Unit\Sudo;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Bundle\Api\SudoAuthorizationListener;
 use Hyvor\Internal\Bundle\Entity\SudoAuditLog;
+use Hyvor\Internal\Bundle\Testing\SudoAuditLogTestingTrait;
 use Hyvor\Internal\Sudo\SudoAuditLogService;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[CoversClass(SudoAuditLogService::class)]
 class SudoAuditLogServiceTest extends SymfonyTestCase
 {
+    use SudoAuditLogTestingTrait;
+
     public function test_log_persists_audit_log(): void
     {
         $authUser = $this->createMock(AuthUser::class);
@@ -40,6 +43,8 @@ class SudoAuditLogServiceTest extends SymfonyTestCase
             ["reason" => "expired"],
             null
         );
+
+        $this->assertSudoLogged("cancel_subscription", ["reason" => "expired"]);
 
         $logs = $this->em
             ->getRepository(SudoAuditLog::class)
