@@ -30,12 +30,12 @@ class SudoAuditLogService
             $user = $this->sudoUserService->userFromCurrentRequest();
         }
 
-        $auditLog = new SudoAuditLog();
-        $auditLog->setUserId($user->id);
-        $auditLog->setAction($action);
-        $auditLog->setPayload($payload);
-        $auditLog->setCreatedAt($this->now());
-        $auditLog->setUpdatedAt($this->now());
+        $auditLog = new SudoAuditLog()
+                    ->setUserId($user->id)
+                    ->setAction($action)
+                    ->setPayload($payload)
+                    ->setCreatedAt($this->now())
+                    ->setUpdatedAt($this->now());
 
         $this->em->persist($auditLog);
         $this->em->flush();

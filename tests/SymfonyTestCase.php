@@ -110,6 +110,18 @@ class SymfonyTestCase extends TestCase
         );
         SQL
         );
+        $connection->executeQuery(
+            <<<SQL
+        CREATE TABLE sudo_audit_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id BIGINT REFERENCES sudo_users(id),
+            action TEXT,
+            payload JSONB,
+            created_at TIMESTAMPTZ NOT NULL,
+            updated_at TIMESTAMPTZ NOT NULL
+        );
+        SQL
+        );
     }
 
     /**

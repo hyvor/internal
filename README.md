@@ -611,8 +611,8 @@ CREATE TABLE sudo_users (
 
 ```sql
 CREATE TABLE sudo_audit_logs (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT,
+    id SERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES sudo_users(id),
     action TEXT,
     payload JSONB,
     created_at TIMESTAMPTZ NOT NULL,

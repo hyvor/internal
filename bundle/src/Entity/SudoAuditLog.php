@@ -6,29 +6,29 @@ use Doctrine\ORM\Mapping as ORM;
 use Hyvor\Internal\Sudo\SudoAuditLogRepository;
 
 #[ORM\Entity(repositoryClass: SudoAuditLogRepository::class)]
-#[ORM\Table(name: 'sudo_audit_logs')]
+#[ORM\Table(name: "sudo_audit_logs")]
 class SudoAuditLog
 {
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'bigint')]
+    #[ORM\Column(type: "integer")]
     private int $id;
 
-    #[ORM\Column(type: 'bigint')]
+    #[ORM\Column(type: "bigint")]
     private int $user_id;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: "text")]
     private string $action;
 
     /** @var array<string,scalar> $payload */
-    #[ORM\Column(type: 'json', options: ['jsonb' => true])]
+    #[ORM\Column(type: "json", options: ["jsonb" => true])]
     private array $payload;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: "datetime_immutable")]
     private \DateTimeImmutable $created_at;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: "datetime_immutable")]
     private \DateTimeImmutable $updated_at;
 
     public function getId(): int
