@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class CommsController extends AbstractController
@@ -35,6 +36,12 @@ class CommsController extends AbstractController
         }
 
         $this->ed->dispatch($event);
+
+        $error = $event->getError();
+        if ($error !== null) {
+            throw new HttpException($error['code'], $error['message']);
+        }
+
         $response = $event->getResponse();
 
         return new JsonResponse([
