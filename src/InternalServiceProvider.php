@@ -48,6 +48,7 @@ class InternalServiceProvider extends ServiceProvider
 
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
+            (string)config('internal.comms_key'),
             (string)config('internal.component'),
             'hyvor',
             (string)config('internal.instance'),

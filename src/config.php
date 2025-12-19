@@ -13,6 +13,11 @@ return [
     'component' => 'core',
 
     /**
+     * @see InternalConfig::$commsKey
+     */
+    'comms_key' => env('COMMS_KEY', ''),
+
+    /**
      * This is the domain that the app is running on.
      * Routes are only accessible from this domain.
      * @todo: refactor this into `route.` setting

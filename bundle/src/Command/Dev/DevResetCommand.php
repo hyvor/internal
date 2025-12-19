@@ -26,7 +26,7 @@ class DevResetCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption('seed', null, InputOption::VALUE_NONE, 'Seed the database after resetting it.');
     }
@@ -44,7 +44,7 @@ class DevResetCommand extends Command
 
         $application->run(
             new ArrayInput([
-                'command' => 'doctrine:query:sql',
+                'command' => 'dbal:run-sql',
                 'sql' => "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();",
             ]),
             $output
