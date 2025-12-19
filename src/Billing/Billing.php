@@ -6,12 +6,12 @@ use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Bundle\Comms\CommsEncryption;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalConfig;
-use Hyvor\Internal\Util\Crypt\Encryption;
 
 class Billing implements BillingInterface
 {
@@ -20,7 +20,7 @@ class Billing implements BillingInterface
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
         private InternalApi $internalApi,
-        private Encryption $encryption
+        private CommsEncryption $commsEncryption,
     ) {
     }
 
@@ -29,7 +29,7 @@ class Billing implements BillingInterface
      * @see SubscriptionIntent
      */
     public function subscriptionIntent(
-        int $userId,
+        int $organizationId,
         string $planName,
         bool $isAnnual,
         ?Component $component = null,
@@ -43,14 +43,16 @@ class Billing implements BillingInterface
             $component,
             $plan->version,
             $planName,
-            $userId,
+            $organizationId,
             $plan->monthlyPrice,
             $isAnnual,
         );
 
-        $token = $this->encryption->encrypt($object);
+        $token = $this->commsEncryption->serializeEncrypt($object);
 
-        $baseUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/account/billing/subscription?token=' . $token;
+        $baseUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/account/billing/subscription?token=' . urlencode(
+                $token
+            );
 
         return [
             'token' => $token,
