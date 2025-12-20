@@ -31,7 +31,7 @@ class InternalBundle extends AbstractBundle
          * private_instance: string
          * fake: bool
          */
-        $definition->rootNode() // @phpstan-ignore-line
+        $definition->rootNode()
             ->children()
                 ->scalarNode('component')->defaultValue('core')->end()
                 ->arrayNode('i18n')

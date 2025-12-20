@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 // @codeCoverageIgnoreStart
 
 #[AsCommand(
-    name: 'app:dev:reset',
+    name: 'dev:reset',
     description: 'Resets the database, runs the migrations again, and seeds with --seed.'
 )]
 class DevResetCommand extends Command
@@ -77,7 +77,7 @@ class DevResetCommand extends Command
         if ($input->getOption('seed')) {
             $application->run(
                 new ArrayInput([
-                    'command' => 'app:dev:seed', // seed command must be defined in the application
+                    'command' => 'dev:seed', // seed command must be defined in the application
                 ]),
                 $output
             );

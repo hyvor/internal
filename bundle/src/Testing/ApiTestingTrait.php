@@ -10,7 +10,7 @@ trait ApiTestingTrait
     use BaseTestingTrait;
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
     public function getJson(): array
     {
