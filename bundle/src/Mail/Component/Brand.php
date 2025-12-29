@@ -13,6 +13,11 @@ class Brand
 
     public string $component = 'core';
 
+    public function __construct(
+        private Logo $logo,
+    ) {
+    }
+
     private function getComponent(): Component
     {
         return Component::from($this->component);
@@ -21,8 +26,7 @@ class Brand
     #[ExposeInTemplate]
     public function getImage(): string
     {
-        $svg = Logo::svg($this->getComponent());
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+        return $this->logo->url($this->getComponent(), png: true);
     }
 
     #[ExposeInTemplate]

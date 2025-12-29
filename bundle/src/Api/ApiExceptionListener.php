@@ -63,7 +63,7 @@ class ApiExceptionListener
                     ];
                 }
 
-                $data['message'] = $violations[0]['message'] ?? 'Validation Failed';
+                $data['message'] = isset($violations[0]) ? $violations[0]['property'] . ': ' . $violations[0]['message'] : 'Validation Failed';
                 $data['status'] = Response::HTTP_UNPROCESSABLE_ENTITY;
                 $data['violations'] = $violations;
             }

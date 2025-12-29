@@ -2,19 +2,12 @@
 
 namespace Hyvor\Internal\Bundle;
 
-use Hyvor\Internal\Auth\Auth;
-use Hyvor\Internal\Auth\AuthFake;
+use Hyvor\Internal\Auth\AuthFactory;
 use Hyvor\Internal\Auth\AuthInterface;
-use Hyvor\Internal\Auth\Oidc\OidcAuth;
-use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\BillingFactory;
 use Hyvor\Internal\Billing\BillingInterface;
-use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
-use Hyvor\Internal\InternalFake;
-use Hyvor\Internal\Resource\Resource;
-use Hyvor\Internal\Resource\ResourceFake;
-use Hyvor\Internal\Resource\ResourceInterface;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -41,10 +34,6 @@ class InternalBundle extends AbstractBundle
         $definition->rootNode() // @phpstan-ignore-line
             ->children()
                 ->scalarNode('component')->defaultValue('core')->end()
-                ->scalarNode('auth_method')->defaultValue('%env(AUTH_METHOD)%')->end()
-                ->scalarNode('instance')->defaultValue('%env(HYVOR_INSTANCE)%')->end()
-                ->scalarNode('private_instance')->defaultValue('%env(HYVOR_PRIVATE_INSTANCE)%')->end()
-                ->booleanNode('fake')->defaultValue('%env(HYVOR_FAKE)%')->end()
                 ->arrayNode('i18n')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -56,6 +45,15 @@ class InternalBundle extends AbstractBundle
         // @formatter:on
     }
 
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $container->addCompilerPass(new EventDispatcherCompilerPass());
+        }
+    }
+
     /**
      * @param array<mixed> $config
      */
@@ -64,81 +62,40 @@ class InternalBundle extends AbstractBundle
         // SERVICES
         $container->import('../config/services.php');
 
-        // ENV DEFAULTS
-        $container->parameters()->set('env(APP_SECRET)', '');
-        $container->parameters()->set('env(HYVOR_INSTANCE)', 'https://hyvor.com');
-        $container->parameters()->set('env(HYVOR_PRIVATE_INSTANCE)', null);
-        $container->parameters()->set('env(HYVOR_FAKE)', '0');
-        $container->parameters()->set('env(AUTH_METHOD)', 'hyvor'); // hyvor or openid
+        $container->parameters()
+            ->set('internal.default_auth_method', 'oidc')
+            ->set('internal.default_instance', 'https://hyvor.com')
+            ->set('internal.default_private_instance', null)
+            ->set('internal.default_fake', false);
 
         // InternalConfig class
         $container->services()
             ->get(InternalConfig::class)
             ->args([
                 '%env(APP_SECRET)%',
+                '%env(COMMS_KEY)%',
                 $config['component'],
-                $config['auth_method'],
-                $config['instance'],
-                $config['private_instance'],
-                $config['fake'],
+                '%env(default:internal.default_auth_method:AUTH_METHOD)%',
+                '%env(default:internal.default_instance:HYVOR_INSTANCE)%',
+                '%env(default:internal.default_private_instance:HYVOR_PRIVATE_INSTANCE)%',
+                '%env(bool:default:internal.default_fake:HYVOR_FAKE)%',
                 $config['i18n']['folder'],
                 $config['i18n']['default'],
             ]);
 
-        // Main Services
-        $authMethod = $builder->resolveEnvPlaceholders('%env(AUTH_METHOD)%', true);
+        $container
+            ->services()
+            ->set(AuthInterface::class)
+            ->factory([service(AuthFactory::class), 'create']);
 
-        $container->services()->alias(
-            AuthInterface::class,
-            $authMethod === 'oidc' ? OidcAuth::class : Auth::class
-        );
-        $container->services()->alias(BillingInterface::class, Billing::class);
-        $container->services()->alias(ResourceInterface::class, Resource::class);
+        $container
+            ->services()
+            ->set(BillingInterface::class)
+            ->public() // because this is not used from outside, so tests fail (inlined)
+            ->factory([service(BillingFactory::class), 'create']);
+
+        // other services
         $container->services()->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
-
-        $isFake = boolval($builder->resolveEnvPlaceholders('%env(HYVOR_FAKE)%', true));
-        if ($isFake && $container->env() === 'dev') {
-            $this->setupFake($container);
-        }
-    }
-
-    private function setupFake(ContainerConfigurator $container): void
-    {
-        $class = class_exists('App\InternalFake') ? 'App\InternalFake' : InternalFake::class;
-
-        /** @var class-string<InternalFake> $class */
-        $fakeConfig = new $class;
-        $user = $fakeConfig->user();
-        $usersDatabase = $fakeConfig->usersDatabase();
-
-        // AUTH FAKE
-        $container
-            ->services()
-            ->alias(AuthInterface::class, AuthFake::class);
-        $container->services()
-            ->get(AuthFake::class)
-            ->args([
-                $user?->toArray(),
-                $usersDatabase,
-            ]);
-
-        // BILLING FAKE
-        $container
-            ->services()
-            ->alias(BillingInterface::class, BillingFake::class);
-        $container
-            ->services()
-            ->set(BillingFakeLicenseProvider::class, BillingFakeLicenseProvider::class)
-            ->args([$class]);
-        $container->services()
-            ->get(BillingFake::class)
-            ->arg('$license', [service(BillingFakeLicenseProvider::class), 'license'])
-            ->arg('$licenses', [service(BillingFakeLicenseProvider::class), 'licenses']);
-
-        // RESOURCE FAKE
-        $container
-            ->services()
-            ->alias(ResourceInterface::class, ResourceFake::class);
     }
 
 }

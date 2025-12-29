@@ -15,7 +15,9 @@ final class ResourceFake implements ResourceInterface
     /** @var array<int> */
     private array $deleted = [];
 
-    public function __construct()
+    public function __construct(
+        private ?Container $symfonyContainer = null
+    )
     {
     }
 
@@ -38,6 +40,7 @@ final class ResourceFake implements ResourceInterface
         int $resourceId,
         ?Carbon $at = null
     ): void {
+        $resource = $this->getFakeFromContainer();
         $registered = false;
 
         foreach ($this->registered as $registered) {
@@ -83,4 +86,15 @@ final class ResourceFake implements ResourceInterface
         $this->deleted[] = $resourceId;
     }
 
+    private function getFakeFromContainer(): self
+    {
+        if ($this->symfonyContainer) {
+            $fake = $this->symfonyContainer->get(Resource::class);
+        } else {
+            $fake = app(Resource::class);
+        }
+
+        assert($fake instanceof self);
+        return $fake;
+    }
 }

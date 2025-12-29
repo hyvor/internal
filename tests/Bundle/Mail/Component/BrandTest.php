@@ -4,19 +4,21 @@ namespace Hyvor\Internal\Tests\Bundle\Mail\Component;
 
 use Hyvor\Internal\Bundle\Mail\Component\Brand;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
+use Hyvor\Internal\Tests\SymfonyTestCase;
 
 #[CoversClass(Brand::class)]
-class BrandTest extends TestCase
+class BrandTest extends SymfonyTestCase
 {
 
     public function test_brand(): void
     {
-        $brand = new Brand();
+        $brand = $this->container->get(Brand::class);
+        assert($brand instanceof Brand);
+
         $brand->component = 'blogs';
 
-        $this->assertStringContainsString('data:image/svg+xml;base64', $brand->getImage());
-        $this->assertStringContainsString('Hyvor Blogs', $brand->getName());
+        $this->assertSame('https://hyvor.com/api/public/logo/blogs.png', $brand->getImage());
+        $this->assertSame('Hyvor Blogs', $brand->getName());
     }
 
 }

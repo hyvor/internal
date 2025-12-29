@@ -89,7 +89,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
         $this->assertNotNull($response);
         $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
         $this->assertSame(422, $response->getStatusCode());
-        $this->assertSame('email should contain @', $data['message']);
+        $this->assertSame('subscriber.email: email should contain @', $data['message']);
         $this->assertSame('subscriber.email', $data['violations'][0]['property']);
         $this->assertSame('email should contain @', $data['violations'][0]['message']);
 
