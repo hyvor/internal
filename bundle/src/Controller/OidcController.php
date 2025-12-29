@@ -96,7 +96,7 @@ class OidcController extends AbstractController
         }
 
         try {
-            $keys = JWK::parseKeySet($jwks);
+            $keys = JWK::parseKeySet($jwks, 'RS256');
             $decoded = JWT::decode($idToken, $keys);
         } catch (\Exception $e) {
             $this->logger->error('Failed to parse JWKS: ' . $e->getMessage());
