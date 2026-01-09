@@ -90,13 +90,20 @@ class OidcController extends AbstractController
         try {
             $idToken = $this->oidcApiService->getIdToken($code);
             $jwks = $this->oidcApiService->getJwks();
+
+            $wellKnown = $this->oidcApiService->getWellKnownConfig();
+            $defaultAlg = null;
+
+            if(str_contains($wellKnown->issuer, 'login.microsoftonline.com')) {
+                $defaultAlg = 'RS256';
+            }
         } catch (OidcApiException $e) {
             $this->logger->error('OIDC authentication failed: ' . $e->getMessage());
             throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
         }
 
         try {
-            $keys = JWK::parseKeySet($jwks, 'RS256');
+            $keys = JWK::parseKeySet($jwks, $defaultAlg);
             $decoded = JWT::decode($idToken, $keys);
         } catch (\Exception $e) {
             $this->logger->error('Failed to parse JWKS: ' . $e->getMessage());
