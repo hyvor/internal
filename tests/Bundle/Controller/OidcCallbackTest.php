@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Bundle\Controller;
 
 use Firebase\JWT\JWT;
 use Hyvor\Internal\Auth\Event\UserSignedUpEvent;
+use Hyvor\Internal\Auth\Oidc\JwkHelper;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 #[CoversClass(OidcUserService::class)]
 #[CoversClass(OidcUser::class)]
 #[CoversClass(UserSignedUpEvent::class)]
+#[CoversClass(JwkHelper::class)]
 class OidcCallbackTest extends SymfonyTestCase
 {
 
