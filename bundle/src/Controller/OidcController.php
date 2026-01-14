@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Bundle\Controller;
 use Firebase\JWT\JWT;
 use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
+use Hyvor\Internal\Auth\Oidc\JwkHelper;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
@@ -90,13 +91,14 @@ class OidcController extends AbstractController
         try {
             $idToken = $this->oidcApiService->getIdToken($code);
             $jwks = $this->oidcApiService->getJwks();
+            $wellKnown = $this->oidcApiService->getWellKnownConfig();
         } catch (OidcApiException $e) {
             $this->logger->error('OIDC authentication failed: ' . $e->getMessage());
             throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
         }
 
         try {
-            $keys = JWK::parseKeySet($jwks);
+            $keys = JWK::parseKeySet($jwks, JwkHelper::getDefaultAlg($wellKnown));
             $decoded = JWT::decode($idToken, $keys);
         } catch (\Exception $e) {
             $this->logger->error('Failed to parse JWKS: ' . $e->getMessage());

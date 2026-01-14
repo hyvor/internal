@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Bundle\Controller;
 
 use Firebase\JWT\JWT;
 use Hyvor\Internal\Auth\Event\UserSignedUpEvent;
+use Hyvor\Internal\Auth\Oidc\JwkHelper;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 #[CoversClass(OidcUserService::class)]
 #[CoversClass(OidcUser::class)]
 #[CoversClass(UserSignedUpEvent::class)]
+#[CoversClass(JwkHelper::class)]
 class OidcCallbackTest extends SymfonyTestCase
 {
 
@@ -397,4 +399,34 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->assertSame('https://example.com/website', $user->getWebsiteUrl());
     }
 
+    public function test_microsoft_issuer_uses_rs256_fallback_when_alg_missing_in_jwk(): void
+    {
+        [
+            'privateKeyPem' => $privateKeyPem,
+            'jwks' => $jwks
+        ] = $this->generateKey();
+
+        unset($jwks['keys'][0]['alg']);
+
+        $idToken = $this->createIdToken($privateKeyPem);
+
+        $wellKnownResponse = new JsonMockResponse([
+            'issuer' => 'https://login.microsoftonline.com/common/v2.0',
+            'authorization_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+            'token_endpoint' => 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+            'jwks_uri' => 'https://login.microsoftonline.com/common/discovery/v2.0/keys',
+        ]);
+
+        $idTokenResponse = new JsonMockResponse(['id_token' => $idToken]);
+        $jwksResponse = new JsonMockResponse($jwks);
+
+        $this->setHttpClientResponse([$wellKnownResponse, $idTokenResponse, $jwksResponse]);
+        $this->setTestOidcEnv();
+
+        $request = $this->createRequest();
+        $response = $this->kernel->handle($request, catch: false);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/back', $response->getTargetUrl());
+    }
 }
