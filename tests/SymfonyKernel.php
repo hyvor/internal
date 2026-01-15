@@ -54,7 +54,6 @@ class SymfonyKernel extends Kernel
                 'memory' => true,
             ],
             'orm' => [
-                'auto_generate_proxy_classes' => true,
                 'entity_managers' => [
                     'default' => [
                         'mappings' => [

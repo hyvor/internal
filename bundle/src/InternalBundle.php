@@ -73,7 +73,7 @@ class InternalBundle extends AbstractBundle
             ->get(InternalConfig::class)
             ->args([
                 '%env(APP_SECRET)%',
-                '%env(COMMS_KEY)%',
+                '%env(string:default::COMMS_KEY)%',
                 $config['component'],
                 '%env(default:internal.default_auth_method:AUTH_METHOD)%',
                 '%env(default:internal.default_instance:HYVOR_INSTANCE)%',
