@@ -13,7 +13,7 @@ interface BillingInterface
     /**
      * @throws InternalApiCallFailedException
      */
-    public function license(int $userId, ?int $resourceId, ?Component $component = null): ?License;
+    public function license(int $organizationId, ?int $resourceId, ?Component $component = null): ?License;
 
     /**
      * @param array<LicenseOf> $of

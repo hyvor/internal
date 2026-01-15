@@ -4,7 +4,7 @@ namespace Hyvor\Internal\Tests\Bundle\Command\Sudo;
 
 use Hyvor\Internal\Bundle\Command\Sudo\SudoRemoveCommand;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Sudo\Event\SudoRemovedEvent;
 use Hyvor\Internal\Sudo\SudoUserService;
 use Hyvor\Internal\Tests\SymfonyTestCase;

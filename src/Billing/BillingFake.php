@@ -13,7 +13,7 @@ class BillingFake implements BillingInterface
 {
 
     /**
-     * @param License|(callable(int $userId, ?int $blogId, Component $component) : ?License)|null $license
+     * @param License|(callable(int $organizationId, ?int $blogId, Component $component) : ?License)|null $license
      * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
      * @return void
      */
@@ -31,7 +31,7 @@ class BillingFake implements BillingInterface
     }
 
     /**
-     * @param License|(callable(int $userId, ?int $blogId, Component $component) : ?License)|null $license
+     * @param License|(callable(int $organizationId, ?int $blogId, Component $component) : ?License)|null $license
      * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
      * @return void
      */
@@ -55,7 +55,7 @@ class BillingFake implements BillingInterface
         private InternalConfig $internalConfig,
 
         /**
-         * @param License|(callable(int $userId, ?int $resouceId, Component $component) : ?License)|null $license
+         * @param License|(callable(int $organizationId, ?int $resouceId, Component $component) : ?License)|null $license
          */
         private readonly mixed $license = null,
 
@@ -66,7 +66,7 @@ class BillingFake implements BillingInterface
     ) {
     }
 
-    public function license(int $userId, ?int $resourceId, ?Component $component = null): ?License
+    public function license(int $organizationId, ?int $resourceId, ?Component $component = null): ?License
     {
         $component ??= $this->internalConfig->getComponent();
 
@@ -78,7 +78,7 @@ class BillingFake implements BillingInterface
             return $this->license;
         }
 
-        return ($this->license)($userId, $resourceId, $component);
+        return ($this->license)($organizationId, $resourceId, $component);
     }
 
     /**

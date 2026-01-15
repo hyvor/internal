@@ -7,7 +7,7 @@ use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Component\Component;
 
 /**
- * @phpstan-type LicenseArray array{user_id: int, resource_id: ?int, license: ?string}
+ * @phpstan-type LicenseArray array{organization_id: int, resource_id: ?int, license: ?string}
  */
 readonly class LicensesCollection
 {
@@ -26,10 +26,10 @@ readonly class LicensesCollection
     /**
      * @throws LicenseOfCombinationNotFoundException when the userid resourceid pair is not found
      */
-    public function of(int $userId, ?int $resourceId): ?License
+    public function of(int $organizationId, ?int $resourceId): ?License
     {
         foreach ($this->licenses as $license) {
-            if ($license['user_id'] === $userId && $license['resource_id'] === $resourceId) {
+            if ($license['organization_id'] === $organizationId && $license['resource_id'] === $resourceId) {
                 $licenseClass = $this->component->license();
 
                 $license = $license['license'];
@@ -39,7 +39,7 @@ readonly class LicensesCollection
 
         // @codeCoverageIgnoreStart
         throw new LicenseOfCombinationNotFoundException(
-            "License of userId: $userId and resourceId: $resourceId not found"
+            "License of organizationId: $organizationId and resourceId: $resourceId not found"
         );
         // @codeCoverageIgnoreEnd
     }

@@ -17,6 +17,15 @@ class InternalConfig
         private string $appSecret,
 
         /**
+         * COMMS_KEY env variable, which is used for encrypting communication in the Comms API
+         * between the components
+         * Previously, the app secret was used in the internal API, but to prevent all apps needing the same app secret,
+         * the Comms API uses a separate key
+         * Generated using: openssl rand -base64 32
+         */
+        private string $commsKey,
+
+        /**
          * Component name
          */
         private string $component,
@@ -41,6 +50,11 @@ class InternalConfig
     public function getAppSecret(): string
     {
         return base64_decode($this->appSecret);
+    }
+
+    public function getCommsKey(): string
+    {
+        return base64_decode($this->commsKey);
     }
 
     public function getComponent(): Component

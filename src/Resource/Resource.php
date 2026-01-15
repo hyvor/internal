@@ -4,18 +4,21 @@ namespace Hyvor\Internal\Resource;
 
 use Carbon\Carbon;
 use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\InternalApi\InternalApiMethod;
 
-class Resource
+class Resource implements ResourceInterface
 {
 
     public function __construct(private InternalApi $internalApi)
     {
     }
 
+    /**
+     * @throws InternalApiCallFailedException
+     */
     public function register(
-        int $userId,
+        int $organizationId,
         int $resourceId,
         ?Carbon $at = null
     ): void {
@@ -23,13 +26,16 @@ class Resource
             Component::CORE,
             '/resource/register',
             [
-                'user_id' => $userId,
+                'organization_id' => $organizationId,
                 'resource_id' => $resourceId,
                 'at' => $at?->getTimestamp(),
             ]
         );
     }
 
+    /**
+     * @throws InternalApiCallFailedException
+     */
     public function delete(int $resourceId): void
     {
         $this->internalApi->call(

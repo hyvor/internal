@@ -35,9 +35,9 @@ class SubscriptionIntent
         public string $plan,
 
         /**
-         * User requesting the subscription
+         * Organization requesting the subscription
          */
-        public int $userId,
+        public int $organizationId,
 
         /**
          * Monthly price of the subscription

@@ -6,12 +6,12 @@ use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\Exception\LicenseOfCombinationNotFoundException;
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Bundle\Comms\CommsEncryption;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\InternalConfig;
-use Hyvor\Internal\Util\Crypt\Encryption;
 
 class Billing implements BillingInterface
 {
@@ -20,7 +20,7 @@ class Billing implements BillingInterface
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
         private InternalApi $internalApi,
-        private Encryption $encryption
+        private CommsEncryption $commsEncryption,
     ) {
     }
 
@@ -29,10 +29,11 @@ class Billing implements BillingInterface
      * @see SubscriptionIntent
      */
     public function subscriptionIntent(
-        int $userId,
+        int $organizationId,
         string $planName,
         bool $isAnnual,
         ?Component $component = null,
+        ?float $customMonthlyPrice = null,
     ): array {
         $component ??= $this->internalConfig->getComponent();
 
@@ -43,14 +44,16 @@ class Billing implements BillingInterface
             $component,
             $plan->version,
             $planName,
-            $userId,
-            $plan->monthlyPrice,
+            $organizationId,
+            $customMonthlyPrice ?? $plan->monthlyPrice,
             $isAnnual,
         );
 
-        $token = $this->encryption->encrypt($object);
+        $token = $this->commsEncryption->serializeEncrypt($object);
 
-        $baseUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/account/billing/subscription?token=' . $token;
+        $baseUrl = $this->instanceUrlResolver->publicUrlOfCore() . '/account/billing/subscription?token=' . urlencode(
+                $token
+            );
 
         return [
             'token' => $token,
@@ -65,12 +68,12 @@ class Billing implements BillingInterface
      * @throws LicenseOfCombinationNotFoundException
      */
     public function license(
-        int $userId,
+        int $organizationId,
         ?int $resourceId,
         ?Component $component = null,
     ): ?License {
-        $licenses = $this->licenses([new LicenseOf($userId, $resourceId)], $component);
-        return $licenses->of($userId, $resourceId);
+        $licenses = $this->licenses([new LicenseOf($organizationId, $resourceId)], $component);
+        return $licenses->of($organizationId, $resourceId);
     }
 
     /**
@@ -82,7 +85,7 @@ class Billing implements BillingInterface
         $component ??= $this->internalConfig->getComponent();
 
         /**
-         * @var array{user_id: int, resource_id: ?int, license: ?string}[] $response
+         * @var array{organization_id: int, resource_id: ?int, license: ?string}[] $response
          */
         $response = $this->internalApi->call(
             Component::CORE,

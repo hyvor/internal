@@ -26,7 +26,7 @@ class ExampleStorageUsage extends UsageAbstract
         return 100;
     }
 
-    public function usageOfUser(int $userId): int
+    public function usageOfOrganization(int $userId): int
     {
         return 200;
     }
