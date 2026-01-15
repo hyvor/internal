@@ -198,22 +198,22 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 }
 
 
-class ApiExceptionListener extends ApiExceptionListener
-{
-    protected function prefix(): string
-    {
-        return '/api/console';
-    }
-}
-
-
-// Helpers
-
-namespace App\Enum;
-
-enum TestEnum: string
-{
-    case TEST = 'test';
-    case TEST2 = 'test2';
-    case TEST3 = 'test3';
-}
+//class ApiExceptionListener extends ApiExceptionListener
+//{
+//    protected function prefix(): string
+//    {
+//        return '/api/console';
+//    }
+//}
+//
+//
+//// Helpers
+//
+//namespace App\Enum;
+//
+//enum TestEnum: string
+//{
+//    case TEST = 'test';
+//    case TEST2 = 'test2';
+//    case TEST3 = 'test3';
+//}
