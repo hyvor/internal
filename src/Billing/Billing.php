@@ -32,8 +32,8 @@ class Billing implements BillingInterface
         int $organizationId,
         string $planName,
         bool $isAnnual,
-        ?float $monthlyPrice = null,
         ?Component $component = null,
+        ?float $customMonthlyPrice = null,
     ): array {
         $component ??= $this->internalConfig->getComponent();
 
@@ -45,7 +45,7 @@ class Billing implements BillingInterface
             $plan->version,
             $planName,
             $organizationId,
-            $monthlyPrice ?? $plan->monthlyPrice,
+            $customMonthlyPrice ?? $plan->monthlyPrice,
             $isAnnual,
         );
 
