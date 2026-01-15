@@ -55,4 +55,13 @@ trait BaseTestingTrait
         return $ed;
     }
 
+    /**
+     * simply sets $_ENV for the current test
+     * make sure to set <phpunit backupGlobals="true"> in phpunit.xml to let PHPUnit handle resetting $_ENV later
+     */
+    public function setEnvVar(string $key, string $value): void
+    {
+        $_ENV[$key] = $value;
+    }
+
 }
