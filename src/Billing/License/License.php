@@ -13,15 +13,5 @@ use Hyvor\Internal\Util\Transfer\Serializable;
  */
 abstract class License
 {
-
     use Serializable;
-
-    public ?DerivedFrom $derivedFrom = null;
-
-    public function setDerivedFrom(DerivedFrom $derivedFrom): static
-    {
-        $this->derivedFrom = $derivedFrom;
-        return $this;
-    }
-
 }
