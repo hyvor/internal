@@ -1,7 +1,10 @@
 <?php
 
-namespace Hyvor\Internal\Billing\License\Reflection;
+namespace Hyvor\Internal\Billing\LicenseReflection;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
+#[Exclude]
 readonly class LicenseProperty
 {
 

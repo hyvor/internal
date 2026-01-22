@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Bundle\Comms\Event\OrgMigration;
+namespace Hyvor\Internal\Bundle\Comms\Event\ToCore\OrgMigration;
 
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Hyvor\Internal\Component\Component;

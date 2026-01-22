@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyvor\Internal\Tests\Unit\Billing\License\Reflection;
+namespace Hyvor\Internal\Tests\Unit\Billing\LicenseReflection;
 
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\License;
-use Hyvor\Internal\Billing\License\Reflection\LicensePropertyType;
-use Hyvor\Internal\Billing\License\Reflection\LicenseReflection;
+use Hyvor\Internal\Billing\LicenseReflection\LicensePropertyType;
+use Hyvor\Internal\Billing\LicenseReflection\LicenseReflection;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;

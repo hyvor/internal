@@ -80,5 +80,7 @@ class SymfonyKernel extends Kernel
     {
         $routes->import('../bundle/src/Controller/*.php', 'attribute')
             ->prefix('/api/oidc');
+
+        $routes->import('../bundle/src/Comms/Controller/CommsController.php', 'attribute');
     }
 }

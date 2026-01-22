@@ -12,7 +12,7 @@ return function (ContainerConfigurator $container): void {
     $services
         ->load('Hyvor\\Internal\\Bundle\\', '../src')
         ->exclude([
-            '../src/Comms/Message',
+            '../src/Comms/Event',
             '../src/Testing'
         ]);
 

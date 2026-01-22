@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Billing\License\Reflection;
+namespace Hyvor\Internal\Billing\LicenseReflection;
 
 use Hyvor\Internal\Billing\License\License;
 
@@ -49,7 +49,7 @@ class LicenseReflection
      * @template T of License
      * @param class-string<T> $licenseClass
      * @param array<string, int|bool> $data
-     * @return T
+     * @return License
      */
     public function buildLicenseFromArray(string $licenseClass, array $data, bool $fill = true): License
     {

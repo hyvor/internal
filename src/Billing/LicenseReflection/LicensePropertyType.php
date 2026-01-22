@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Billing\License\Reflection;
+namespace Hyvor\Internal\Billing\LicenseReflection;
 
 enum LicensePropertyType
 {
