@@ -2,10 +2,12 @@
 
 namespace Hyvor\Internal\Bundle\Comms\Controller;
 
+use Hyvor\Internal\Bundle\Comms\Comms;
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -16,23 +18,32 @@ class CommsController extends AbstractController
 
     public function __construct(
         private EventDispatcherInterface $ed,
+        private Comms $comms
     ) {
     }
 
     #[Route('/api/comms/event', methods: 'POST')]
     public function event(
-        #[MapRequestPayload] CommsEventInput $input
+        #[MapRequestPayload] CommsEventInput $input,
+        Request $request
     ): JsonResponse {
-        $eventSerialized = $input->event;
+        $jsonPayload = $request->getContent();
+        $signature = $request->headers->get('x-signature');
+        $expectedSignature = $this->comms->signature($jsonPayload);
 
-        $event = false;
-        try {
-            $event = unserialize($eventSerialized);
-        } catch (\Exception) {
+        if ($signature !== $expectedSignature) {
+            throw new BadRequestHttpException('invalid signature');
         }
 
+        if ($input->at < time() - 300 || $input->at > time() + 300) {
+            throw new BadRequestHttpException('invalid payload: timestamp out of range');
+        }
+
+        $eventSerialized = $input->event;
+        $event = unserialize($eventSerialized);
+
         if (!$event instanceof AbstractEvent) {
-            throw new BadRequestHttpException('Invalid event received');
+            throw new BadRequestHttpException('invalid event received: unable to unserialize');
         }
 
         $this->ed->dispatch($event);

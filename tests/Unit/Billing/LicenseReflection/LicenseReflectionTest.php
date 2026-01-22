@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\Tests\Unit\Billing\License\Reflection;
+namespace Hyvor\Internal\Tests\Unit\Billing\LicenseReflection;
 
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\License;

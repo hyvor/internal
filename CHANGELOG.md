@@ -3,6 +3,9 @@
 - Organization support
 - Hyvor\Internal\Laravel\LogFake removed
 - TestEventDispatcher moved
+- BillingInterface license() and licenses() method signatures changed
+- Comms API
+  - a shared COMMS_KEY env variable is required for component-to-componet communication
 
 ## 3.1.8 - 2025-11-03
 

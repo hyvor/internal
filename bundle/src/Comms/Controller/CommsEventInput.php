@@ -8,6 +8,9 @@ class CommsEventInput
 {
 
     #[Assert\NotBlank]
+    public int $at;
+
+    #[Assert\NotBlank]
     public string $event;
 
 }
