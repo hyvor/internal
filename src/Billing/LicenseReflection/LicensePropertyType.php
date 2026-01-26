@@ -2,10 +2,10 @@
 
 namespace Hyvor\Internal\Billing\LicenseReflection;
 
-enum LicensePropertyType
+enum LicensePropertyType: string
 {
 
-    case BOOL;
-    case INT;
+    case BOOL = 'bool';
+    case INT = 'int';
 
 }

@@ -44,6 +44,7 @@ class LicenseReflectionTest extends SymfonyTestCase
             $this->assertSame('users', $properties[0]->name);
             $this->assertSame(LicensePropertyType::INT, $properties[0]->type);
             $this->assertSame(2, $properties[0]->default);
+            $this->assertSame('Number of blog users (team members) allowed.', $properties[0]->description);
 
             $this->assertSame('analyses', $properties[4]->name);
             $this->assertSame(LicensePropertyType::BOOL, $properties[4]->type);

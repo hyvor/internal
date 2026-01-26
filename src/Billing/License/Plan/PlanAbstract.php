@@ -65,6 +65,14 @@ abstract class PlanAbstract
         $this->versions[$this->currentVersionForConfig] = $currentVersionPlans;
     }
 
+    /**
+     * @return array<int, array<string, Plan<T>>>
+     */
+    public function getAll(): array
+    {
+        return $this->versions;
+    }
+
     public function getCurrentVersion(): int
     {
         return (int)array_key_last($this->versions);

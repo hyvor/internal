@@ -38,11 +38,26 @@ class LicenseReflection
             $licenseProperties[] = new LicenseProperty(
                 $reflectionProperty->getName(),
                 $typeName === 'int' ? LicensePropertyType::INT : LicensePropertyType::BOOL,
-                $defaultValue
+                $defaultValue,
+                $this->cleanDocComment($reflectionProperty->getDocComment())
             );
         }
 
         return $licenseProperties;
+    }
+
+    private function cleanDocComment(false|string $docComment): string
+    {
+        if (!$docComment) {
+            return '';
+        }
+
+        // Remove the opening /**, closing */, and leading asterisks/whitespace
+        $cleaned = preg_replace('#^\s*/\*\*|\s*\*/$|^\s*\*\s?#m', '', $docComment);
+
+        assert(is_string($cleaned));
+
+        return trim($cleaned);
     }
 
     /**

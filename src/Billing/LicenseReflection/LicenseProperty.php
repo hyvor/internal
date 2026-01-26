@@ -12,6 +12,7 @@ readonly class LicenseProperty
         public string $name,
         public LicensePropertyType $type,
         public int|bool $default,
+        public string $description,
     ) {
     }
 
