@@ -2,7 +2,11 @@
 
 namespace Hyvor\Internal\Billing\License;
 
-class CoreLicense extends License
+final class CoreLicense extends License
 {
 
+    public static function trial(): static
+    {
+        return new self();
+    }
 }

@@ -56,7 +56,7 @@ class InternalFake
         $licenseClass = $component->license();
         foreach ($of as $licenseOf) {
             $licenses[] = [
-                'user_id' => $licenseOf->userId,
+                'organization_id' => $licenseOf->organizationId,
                 'resource_id' => $licenseOf->resourceId,
                 'license' => (new $licenseClass)->serialize(),
             ];

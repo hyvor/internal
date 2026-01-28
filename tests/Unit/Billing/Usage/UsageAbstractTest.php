@@ -16,7 +16,7 @@ class UsageAbstractTest extends LaravelTestCase
     {
         $usage = new ExampleStorageUsage();
         $this->assertEquals(100, $usage->usageOfResource(1));
-        $this->assertEquals(200, $usage->usageOfUser(1));
+        $this->assertEquals(200, $usage->usageOfOrganization(1));
 
         // user
         $licenseWithoutDerived = new BlogsLicense(storage: 300);

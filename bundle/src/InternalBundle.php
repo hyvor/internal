@@ -6,6 +6,7 @@ use Hyvor\Internal\Auth\AuthFactory;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingFactory;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
@@ -30,7 +31,7 @@ class InternalBundle extends AbstractBundle
          * private_instance: string
          * fake: bool
          */
-        $definition->rootNode() // @phpstan-ignore-line
+        $definition->rootNode()
             ->children()
                 ->scalarNode('component')->defaultValue('core')->end()
                 ->arrayNode('i18n')
@@ -42,6 +43,15 @@ class InternalBundle extends AbstractBundle
                 ->end()
             ->end();
         // @formatter:on
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $container->addCompilerPass(new EventDispatcherCompilerPass());
+        }
     }
 
     /**
@@ -63,6 +73,7 @@ class InternalBundle extends AbstractBundle
             ->get(InternalConfig::class)
             ->args([
                 '%env(APP_SECRET)%',
+                '%env(string:default::COMMS_KEY)%',
                 $config['component'],
                 '%env(default:internal.default_auth_method:AUTH_METHOD)%',
                 '%env(default:internal.default_instance:HYVOR_INSTANCE)%',

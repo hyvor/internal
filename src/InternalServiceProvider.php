@@ -11,7 +11,6 @@ use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
-use Hyvor\Internal\Resource\ResourceFake;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
@@ -48,6 +47,7 @@ class InternalServiceProvider extends ServiceProvider
 
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
+            (string)config('internal.comms_key'),
             (string)config('internal.component'),
             'hyvor',
             (string)config('internal.instance'),
@@ -121,9 +121,6 @@ class InternalServiceProvider extends ServiceProvider
             ),
             licenses: fn($of, Component $component) => $fakeConfig->licenses($of, $component)
         );
-
-        // fake resource
-        ResourceFake::enable();
     }
 
     /**
