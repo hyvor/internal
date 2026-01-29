@@ -10,8 +10,9 @@ final class LicenseProperty
 
     public string $name = '';
     public string $description = '';
+    public ?string $note = '';
 
-    public LicensePropertyNumberFormatting $numberFormatting;
+    public LicensePropertyNumberFormatting $numberFormatting = LicensePropertyNumberFormatting::DEFAULT;
 
     private function __construct(public string $key, public LicensePropertyType $type)
     {
@@ -26,6 +27,12 @@ final class LicenseProperty
     public function description(string $description): self
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function note(string $note): self
+    {
+        $this->note = $note;
         return $this;
     }
 
@@ -44,6 +51,16 @@ final class LicenseProperty
     public static function bool(string $key): self
     {
         return new self($key, LicensePropertyType::BOOL);
+    }
+
+    public function isInt(): bool
+    {
+        return $this->type === LicensePropertyType::INT;
+    }
+
+    public function isBool(): bool
+    {
+        return $this->type === LicensePropertyType::BOOL;
     }
 
 }

@@ -21,7 +21,13 @@ final class TalkLicense extends License
         return [
             LicenseProperty::int('credits')
                 ->name('Credits')
-                ->description('Number of maximum credits per month'),
+                ->description('Number of maximum credits per month')
+                ->note('Set to -1 for unlimited (if Comments limit is set)'),
+
+            LicenseProperty::int('comments')
+                ->name('Comments')
+                ->description('Number of maximum comments per month')
+                ->note('Only for Enterprise Contracts'),
 
             LicenseProperty::int('storage')
                 ->name('Storage')

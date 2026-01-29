@@ -29,7 +29,7 @@ abstract class License
     abstract public static function trial(): static;
 
     /**
-     * @param array<string, int|bool> $data
+     * @param array<mixed> $data
      */
     public static function fromArray(array $data, bool $fill = true): static
     {
