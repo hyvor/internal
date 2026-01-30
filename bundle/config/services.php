@@ -20,8 +20,8 @@ return function (ContainerConfigurator $container): void {
         ->load('Hyvor\\Internal\\', '../../src')
         ->exclude([
             '../../src/config.php',
-            '../../src/Auth/AuthCurrentOrganization.php',
-            '../../src/Auth/AuthUser.php',
+            '../../src/User/AuthUserOrganization.php',
+            '../../src/User/AuthUser.php',
             '../../src/Billing/Dto',
             '../../src/Billing/License',
             '../../src/Billing/Usage',
@@ -38,7 +38,7 @@ return function (ContainerConfigurator $container): void {
         $services->set(\Hyvor\Internal\Bundle\Mail\Component\Brand::class)->public();
     }
 
-//    $services->load('Hyvor\\Internal\\Auth\\', '../../src/Auth');
+//    $services->load('Hyvor\\Internal\\User\\', '../../src/User');
 //    $services->load('Hyvor\\Internal\\InternalApi\\', '../../src/InternalApi');
 //    $services->load('Hyvor\\Internal\\Util\\', '../../src/Util');
 };

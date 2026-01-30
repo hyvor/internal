@@ -4,7 +4,7 @@ namespace Hyvor\Internal\Billing\License\Resolved;
 
 use Hyvor\Internal\Billing\License\License;
 
-class ResolvedLicense
+class ResolvedLicense implements \JsonSerializable
 {
 
     public function __construct(
@@ -15,4 +15,13 @@ class ResolvedLicense
     ) {
     }
 
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'type' => $this->type->value,
+            'license' => $this->license,
+            'subscription' => $this->subscription,
+            'trial_ends_at' => $this->trialEndsAt?->getTimestamp(),
+        ];
+    }
 }

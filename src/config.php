@@ -43,7 +43,7 @@ return [
     'fake' => env('HYVOR_FAKE', false),
 
     /**
-     * Auth settings
+     * User settings
      */
     'auth' => [
 

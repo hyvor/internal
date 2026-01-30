@@ -83,7 +83,7 @@ class Comms
                 $url,
                 [
                     'headers' => $headers,
-                    'json' => $data,
+                    'body' => $jsonPayload,
                 ]
             );
 
