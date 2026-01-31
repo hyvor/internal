@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
-use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\License\GetLicenses;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
@@ -16,7 +16,7 @@ class Billing implements BillingInterface
     public function __construct(
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
-        private Comms $comms,
+        private CommsInterface $comms,
     ) {
     }
 

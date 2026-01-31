@@ -8,6 +8,8 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
@@ -38,6 +40,7 @@ class InternalServiceProvider extends ServiceProvider
         $this->app->bind(HttpClientInterface::class, fn() => new CurlHttpClient());
         $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
         $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
+        $this->app->singleton(CommsInterface::class, fn() => app(Comms::class));
     }
 
     private function config(): void

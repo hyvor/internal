@@ -8,6 +8,7 @@ use Illuminate\Encryption\Encrypter;
 
 /**
  * Laravel-compatible encryption
+ * @deprecated use Comms API
  */
 class Encryption implements \Illuminate\Contracts\Encryption\Encrypter, StringEncrypter
 {

@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Bundle\Comms\Controller;
 
-use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +18,7 @@ class CommsController extends AbstractController
 
     public function __construct(
         private EventDispatcherInterface $ed,
-        private Comms $comms
+        private CommsInterface $comms
     ) {
     }
 

@@ -4,7 +4,9 @@ namespace Hyvor\Internal\Auth\Dto;
 
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
+#[Exclude]
 class Me {
 
     public function __construct(

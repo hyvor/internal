@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal\Billing\Usage;
 
-use Hyvor\Internal\Billing\License\DerivedFrom;
 use Hyvor\Internal\Billing\License\License;
 
 /**
@@ -30,8 +29,6 @@ abstract class UsageAbstract
 
     abstract public function usageOfOrganization(int $organizationId): int;
 
-    abstract public function usageOfResource(int $resourceId): int;
-
     /**
      * Gets the currently allowed limit
      */
@@ -43,24 +40,15 @@ abstract class UsageAbstract
 
     /**
      * @param T $license
-     * Checks if the usage limit has been reached by the resource or the user
-     * depending on the license derivedFrom
+     * Checks if the usage limit has been reached by the organization
      * Use this to check on an action that could exceed the usage limit
      */
     public function hasReached(
         License $license,
         int $organizationId,
-        ?int $resourceId = null,
         bool $checkForExceed = false,
     ): bool {
-        $isResource = isset($license->derivedFrom) &&
-            $license->derivedFrom === DerivedFrom::CUSTOM_RESOURCE &&
-            $resourceId !== null;
-
-        $usage = $isResource ?
-            $this->usageOfResource($resourceId) :
-            $this->usageOfOrganization($organizationId);
-
+        $usage = $this->usageOfOrganization($organizationId);
         $allowed = $this->getLimit($license);
 
         return $checkForExceed ?
@@ -74,9 +62,8 @@ abstract class UsageAbstract
     public function hasExceeded(
         License $license,
         int $organizationId,
-        ?int $resourceId = null,
     ): bool {
-        return $this->hasReached($license, $organizationId, $resourceId, true);
+        return $this->hasReached($license, $organizationId, true);
     }
 
 }

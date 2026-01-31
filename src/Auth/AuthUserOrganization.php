@@ -2,6 +2,9 @@
 
 namespace Hyvor\Internal\Auth;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
+#[Exclude]
 class AuthUserOrganization
 {
 
