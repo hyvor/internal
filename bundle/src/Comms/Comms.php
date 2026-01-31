@@ -2,12 +2,16 @@
 
 namespace Hyvor\Internal\Bundle\Comms;
 
+use Hyvor\Internal\Bundle\Comms\Async\AsyncMessage;
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -22,6 +26,7 @@ class Comms implements CommsInterface
         private HttpClientInterface $httpClient,
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
+        private MessageBusInterface $bus,
     ) {
     }
 
@@ -42,25 +47,8 @@ class Comms implements CommsInterface
         AbstractEvent $event,
         ?Component $to = null,
     ): object|null {
-        $allowedFrom = $event->from();
-        $allowedTo = $event->to();
 
-        if ($to === null) {
-            if (count($allowedTo) !== 1) {
-                throw new \InvalidArgumentException('event to() must return exactly one component when $to is null');
-            }
-            $to = $allowedTo[0];
-        }
-
-        $from = $this->internalConfig->getComponent();
-
-        if (!empty($allowedFrom) && !in_array($from, $allowedFrom, true)) {
-            throw new \InvalidArgumentException("event is not allowed to be sent from component {$from->value}");
-        }
-
-        if (!empty($allowedTo) && !in_array($to, $allowedTo, true)) {
-            throw new \InvalidArgumentException("event is not allowed to be sent to component {$to->value}");
-        }
+        $to = $this->validateAndGetTo($event, $to);
 
         $componentUrl = $this->instanceUrlResolver->privateUrlOf($to);
         $url = $componentUrl . '/api/comms/event';
@@ -109,6 +97,48 @@ class Comms implements CommsInterface
             );
         }
         // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function sendAsync(AbstractEvent $event, ?Component $to = null, ?string $transport = 'async'): void
+    {
+        $to = $this->validateAndGetTo($event, $to);
+
+        $message = new AsyncMessage(
+            $event,
+            $to
+        );
+
+        $this->bus->dispatch($message, [
+            new TransportNamesStamp($transport)
+        ]);
+    }
+
+    private function validateAndGetTo(AbstractEvent $event, ?Component $to): Component
+    {
+        $allowedFrom = $event->from();
+        $allowedTo = $event->to();
+
+        if ($to === null) {
+            if (count($allowedTo) !== 1) {
+                throw new \InvalidArgumentException('event to() must return exactly one component when $to is null');
+            }
+            $to = $allowedTo[0];
+        }
+
+        $from = $this->internalConfig->getComponent();
+
+        if (!empty($allowedFrom) && !in_array($from, $allowedFrom, true)) {
+            throw new \InvalidArgumentException("event is not allowed to be sent from component {$from->value}");
+        }
+
+        if (!empty($allowedTo) && !in_array($to, $allowedTo, true)) {
+            throw new \InvalidArgumentException("event is not allowed to be sent to component {$to->value}");
+        }
+
+        return $to;
     }
 
 }
