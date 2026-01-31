@@ -49,7 +49,7 @@ class InternalServiceProvider extends ServiceProvider
             str_replace('base64:', '', (string)config('app.key')),
             (string)config('internal.comms_key'),
             (string)config('internal.component'),
-            'hyvor',
+            (string)config('internal.deployment'),
             (string)config('internal.instance'),
             $privateInstance,
             (bool)config('internal.fake'),

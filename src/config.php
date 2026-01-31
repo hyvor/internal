@@ -18,6 +18,11 @@ return [
     'comms_key' => env('COMMS_KEY', ''),
 
     /**
+     * @see InternalConfig::$deployment
+     */
+    'deployment' => env('DEPLOYMENT', 'on-prem'),
+
+    /**
      * This is the domain that the app is running on.
      * Routes are only accessible from this domain.
      * @todo: refactor this into `route.` setting

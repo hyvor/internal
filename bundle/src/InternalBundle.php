@@ -63,7 +63,7 @@ class InternalBundle extends AbstractBundle
         $container->import('../config/services.php');
 
         $container->parameters()
-            ->set('internal.default_auth_method', 'oidc')
+            ->set('internal.default_deployment', 'on-prem')
             ->set('internal.default_instance', 'https://hyvor.com')
             ->set('internal.default_private_instance', null)
             ->set('internal.default_fake', false);
@@ -75,7 +75,7 @@ class InternalBundle extends AbstractBundle
                 '%env(APP_SECRET)%',
                 '%env(string:default::COMMS_KEY)%',
                 $config['component'],
-                '%env(default:internal.default_auth_method:AUTH_METHOD)%',
+                '%env(default:internal.default_deployment:DEPLOYMENT)%',
                 '%env(default:internal.default_instance:HYVOR_INSTANCE)%',
                 '%env(default:internal.default_private_instance:HYVOR_PRIVATE_INSTANCE)%',
                 '%env(bool:default:internal.default_fake:HYVOR_FAKE)%',
