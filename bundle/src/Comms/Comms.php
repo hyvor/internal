@@ -13,7 +13,7 @@ use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class Comms
+class Comms implements CommsInterface
 {
 
     use ClockAwareTrait;
@@ -83,7 +83,8 @@ class Comms
                 $url,
                 [
                     'headers' => $headers,
-                    'json' => $data,
+                    'body' => $jsonPayload,
+                    'timeout' => 5,
                 ]
             );
 

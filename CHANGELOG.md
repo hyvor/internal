@@ -7,6 +7,15 @@
 - Comms API
   - a shared COMMS_KEY env variable is required for component-to-componet communication
 - ResourceInterface and resource registering in the core is removed
+- New Comms events
+  - ToCore\License\GetLicense
+  - ToCore\OrgMigration\InitOrg
+  - ToCore\OrgMigration\EnsureMembers
+  - ToCore\User\GetMe
+- AuthInterface now has me() method instead of check()
+- AuthMethod removed. Deployment added.
+- CommsInterface instead of using Comms directly
+- UsageAbstract removed
 
 ## 3.1.8 - 2025-11-03
 

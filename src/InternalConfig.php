@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal;
 
-use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
 
 class InternalConfig
@@ -29,7 +28,12 @@ class InternalConfig
          * Component name
          */
         private string $component,
-        private string $authMethod,
+
+        /**
+         * 'cloud' or 'on-prem'
+         * env: DEPLOYMENT
+         */
+        private string $deployment,
         private string $instance,
         private ?string $privateInstance,
         private bool $fake,
@@ -62,9 +66,9 @@ class InternalConfig
         return Component::from($this->component);
     }
 
-    public function getAuthMethod(): AuthMethod
+    public function getDeployment(): Deployment
     {
-        return AuthMethod::from($this->authMethod);
+        return Deployment::from($this->deployment);
     }
 
     public function getInstance(): string
