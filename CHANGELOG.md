@@ -15,6 +15,7 @@
 - AuthInterface now has me() method instead of check()
 - AuthMethod removed. Deployment added.
 - CommsInterface instead of using Comms directly
+- UsageAbstract removed
 
 ## 3.1.8 - 2025-11-03
 
