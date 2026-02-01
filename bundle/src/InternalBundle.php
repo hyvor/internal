@@ -8,6 +8,7 @@ use Hyvor\Internal\Billing\BillingFactory;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Bundle\Comms\Comms;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
@@ -96,9 +97,15 @@ class InternalBundle extends AbstractBundle
             ->public() // because this is not used from outside, so tests fail (inlined)
             ->factory([service(BillingFactory::class), 'create']);
 
-        $container
-            ->services()
-            ->alias(CommsInterface::class, Comms::class);
+        if ($container->env() === 'test') {
+            $container
+                ->services()
+                ->alias(CommsInterface::class, MockComms::class);
+        } else {
+            $container
+                ->services()
+                ->alias(CommsInterface::class, Comms::class);
+        }
 
         // other services
         $container->services()->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);

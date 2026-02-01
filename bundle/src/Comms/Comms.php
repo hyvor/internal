@@ -102,7 +102,7 @@ class Comms implements CommsInterface
     /**
      * @throws ExceptionInterface
      */
-    public function sendAsync(AbstractEvent $event, ?Component $to = null, ?string $transport = 'async'): void
+    public function sendAsync(AbstractEvent $event, ?Component $to = null, string $transport = 'async'): void
     {
         $to = $this->validateAndGetTo($event, $to);
 
@@ -116,7 +116,7 @@ class Comms implements CommsInterface
         ]);
     }
 
-    private function validateAndGetTo(AbstractEvent $event, ?Component $to): Component
+    public function validateAndGetTo(AbstractEvent $event, ?Component $to): Component
     {
         $allowedFrom = $event->from();
         $allowedTo = $event->to();
