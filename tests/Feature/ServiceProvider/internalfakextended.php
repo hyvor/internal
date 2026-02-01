@@ -15,9 +15,11 @@ class InternalFakeExtended extends InternalFake
         return null;
     }
 
-    public function license(int $userId, ?int $resourceId, Component $component): ?License
+    public function license(int $userId, Component $component): ?License
     {
-        return new BlogsLicense(users: 3);
+        $license = BlogsLicense::trial();
+        $license->users = 3;
+        return $license;
     }
 
 }

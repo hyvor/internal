@@ -86,8 +86,7 @@ final class AuthFake implements AuthInterface
 
     public function me(string|Request $request): ?Me
     {
-        return null; // TODO
-        return $this->user ?: false;
+        return $this->user ? new Me($this->user, null) : null;
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string

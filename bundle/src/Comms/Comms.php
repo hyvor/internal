@@ -116,7 +116,7 @@ class Comms implements CommsInterface
         ]);
     }
 
-    public function validateAndGetTo(AbstractEvent $event, ?Component $to): Component
+    protected function validateAndGetTo(AbstractEvent $event, ?Component $to): Component
     {
         $allowedFrom = $event->from();
         $allowedTo = $event->to();

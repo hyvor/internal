@@ -82,7 +82,6 @@ class LicenseTest extends TestCase
     {
 
         $license = BlogsLicense::fromArray(
-            // @phpstan-ignore-next-line
             [
                 'users' => 1000,
 

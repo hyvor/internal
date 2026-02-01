@@ -33,7 +33,6 @@ class SudoRemoveCommandTest extends SymfonyTestCase
 
     public function test_removes_sudo_user_successfully(): void
     {
-        $eventDispatcher = TestEventDispatcher::enable($this->container);
         $sudoUser = $this->createSudoUser(userId: 42, em: $this->em);
 
         $command = $this->getCommandTester('sudo:remove');
@@ -49,7 +48,7 @@ class SudoRemoveCommandTest extends SymfonyTestCase
         $sudoUsers = $this->em->getRepository(SudoUser::class)->findAll();
         $this->assertCount(0, $sudoUsers);
 
-        $event = $eventDispatcher->getFirstEvent(SudoRemovedEvent::class);
+        $event = $this->getEd()->getFirstEvent(SudoRemovedEvent::class);
         $this->assertSame(42, $event->getSudoUser()->getUserId());
     }
 

@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Bundle\Testing;
 
 use Hyvor\Internal\Bundle\Testing\ApiTestingTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 class ApiTestingTraitTest extends TestCase
 {
@@ -11,6 +12,8 @@ class ApiTestingTraitTest extends TestCase
 
     private static string $json;
     private static int $status;
+
+    public Container $container;
 
     /**
      * @param array<mixed> $json

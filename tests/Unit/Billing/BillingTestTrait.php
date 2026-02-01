@@ -3,7 +3,6 @@
 namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
@@ -24,11 +23,16 @@ trait BillingTestTrait
         $billing = $this->getBilling();
         $intent = $billing->subscriptionIntent(1, 'starter', true, Component::BLOGS);
 
-        $token = $intent['token'];
 
-        $this->assertEquals("https://hyvor.com/account/billing/subscription?token=$token", $intent['urlNew']);
-        $this->assertEquals(
-            "https://hyvor.com/account/billing/subscription?token=$token&change=1",
+        $this->assertStringContainsString(
+            "https://hyvor.com/account/billing/subscription?intent=", $intent['urlNew']
+        );
+        $this->assertStringContainsString(
+            "https://hyvor.com/account/billing/subscription?intent=",
+            $intent['urlChange']
+        );
+        $this->assertStringContainsString(
+            "&change=1",
             $intent['urlChange']
         );
     }
@@ -39,13 +43,13 @@ trait BillingTestTrait
             [
                 'user_id' => 1,
                 'resource_id' => 10,
-                'license' => new BlogsLicense()->serialize()
+                'license' => BlogsLicense::trial()->serialize()
             ]
         ]);
         $this->setHttpResponse($mockResponse);
 
         $billing = $this->getBilling();
-        $license = $billing->license(1, 10, Component::BLOGS);
+        $license = $billing->license(1, Component::BLOGS);
 
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(2, $license->users);
@@ -68,7 +72,7 @@ trait BillingTestTrait
             [
                 'user_id' => 1,
                 'resource_id' => null,
-                'license' => new BlogsLicense()->serialize()
+                'license' => BlogsLicense::trial()->serialize()
             ],
             [
                 'user_id' => 2,
@@ -79,18 +83,14 @@ trait BillingTestTrait
         $this->setHttpResponse($mockResponse);
 
         $billing = $this->getBilling();
-        $licenses = $billing->licenses([
-            new LicenseOf(1, null),
-            new LicenseOf(2, null),
-        ], Component::BLOGS);
+        $licenses = $billing->licenses([1, 2], Component::BLOGS);
 
-        $this->assertCount(2, $licenses->all());
+        $this->assertCount(2, $licenses);
 
-        $user1License = $licenses->of(1, null);
+        $user1License = $licenses[1];
         $this->assertInstanceOf(BlogsLicense::class, $user1License);
 
-        $user2License = $licenses->of(2, null);
-        $this->assertNull($user2License);
+        $user2License = $licenses[2];
 
         // HTTP Request
         $data = $this->getInternalApi()->dataFromMockResponse($mockResponse);

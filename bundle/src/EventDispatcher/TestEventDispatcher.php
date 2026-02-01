@@ -90,19 +90,4 @@ class TestEventDispatcher extends EventDispatcher
         );
     }
 
-    /**
-     * @param false|string[] $mockEvents false to not mock any events or an array of event names to mock.
-     *                                   Listeners of those events will not be called when the event is dispatched.
-     *                                   Useful to prevent side effects.
-     */
-    public static function enable(Container $container, false|array $mockEvents = false): self
-    {
-        $dispatcher = new self($mockEvents);
-        $container->set(
-            EventDispatcherInterface::class,
-            $dispatcher
-        );
-        return $dispatcher;
-    }
-
 }

@@ -42,7 +42,7 @@ trait AuthTestTrait
 
     public function testCheckWhenNoCookieSet(): void
     {
-        $this->assertFalse($this->getAuth()->check($this->requestWithCookie('')));
+        $this->assertFalse($this->getAuth()->me($this->requestWithCookie('')));
     }
 
     public function testCheckWhenCookieIsSet(): void
@@ -57,7 +57,7 @@ trait AuthTestTrait
         ]);
         $this->setResponseFactory($response);
 
-        $user = $this->getAuth()->check($this->requestWithCookie('test-cookie'));
+        $user = $this->getAuth()->me($this->requestWithCookie('test-cookie'));
 
         $this->assertInstanceOf(AuthUser::class, $user);
         $this->assertEquals(1, $user->id);
@@ -80,7 +80,7 @@ trait AuthTestTrait
             'user' => null
         ]);
         $this->setResponseFactory($response);
-        $this->assertFalse($this->getAuth()->check($this->requestWithCookie('test')));
+        $this->assertFalse($this->getAuth()->me($this->requestWithCookie('test')));
     }
 
     public function test_auth_url(): void

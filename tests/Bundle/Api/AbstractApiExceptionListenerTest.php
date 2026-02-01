@@ -196,3 +196,15 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
     }
 
 }
+
+
+// Helpers
+
+namespace App\Enum;
+
+enum TestEnum: string
+{
+    case TEST = 'test';
+    case TEST2 = 'test2';
+    case TEST3 = 'test3';
+}

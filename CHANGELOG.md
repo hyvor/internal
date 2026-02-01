@@ -3,6 +3,7 @@
 - Organization support
 - Hyvor\Internal\Laravel\LogFake removed
 - TestEventDispatcher moved
+  - ::enable() is removed, and no longer needed. Test env automatically sets event_dispatcher to TestEventDispatcher
 - BillingInterface license() and licenses() method signatures changed
 - Comms API
   - a shared COMMS_KEY env variable is required for component-to-componet communication
@@ -16,6 +17,8 @@
 - AuthMethod removed. Deployment added.
 - CommsInterface instead of using Comms directly
 - UsageAbstract removed
+- AuthMiddleware removed in Laravel
+- Laravel built-in auth routes removed (/api/auth/check, /api/auth/login, etc.)
 
 ## 3.1.8 - 2025-11-03
 

@@ -83,7 +83,9 @@ abstract class PlanAbstract
      */
     public function getCurrentPlans(): array
     {
-        return $this->versions[array_key_last($this->versions)];
+        $version = array_key_last($this->versions);
+        assert(is_int($version));
+        return $this->versions[$version];
     }
 
     /**

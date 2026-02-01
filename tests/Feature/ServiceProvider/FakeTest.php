@@ -47,7 +47,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(BillingInterface::class));
-        $license = $app->get(BillingInterface::class)->license(1, null, Component::BLOGS);
+        $license = $app->get(BillingInterface::class)->license(1,  Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(2, $license->users);
     }
@@ -95,7 +95,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, Component::BLOGS);
+        $license = $app->get(Billing::class)->license(1, Component::BLOGS);
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertEquals(3, $license->users);
     }

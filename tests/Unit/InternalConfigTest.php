@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Tests\Unit;
 
 use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Deployment;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 
@@ -14,8 +15,9 @@ class InternalConfigTest extends SymfonyTestCase
     {
         $internalConfig = new InternalConfig(
             appSecret: 'c2VjcmV0',
+            commsKey: base64_encode('commskey'),
             component: 'core',
-            authMethod: 'hyvor',
+            deployment: 'cloud',
             instance: 'https://hyvor.com',
             privateInstance: 'https://hyvor.internal',
             fake: false,
@@ -25,6 +27,7 @@ class InternalConfigTest extends SymfonyTestCase
 
         $this->assertSame('c2VjcmV0', $internalConfig->getAppSecretRaw());
         $this->assertSame('secret', $internalConfig->getAppSecret());
+        $this->assertSame('commskey', $internalConfig->getCommsKey());
         $this->assertSame(Component::CORE, $internalConfig->getComponent());
         $this->assertSame('https://hyvor.com', $internalConfig->getInstance());
         $this->assertSame('https://hyvor.internal', $internalConfig->getPrivateInstance());
@@ -32,15 +35,16 @@ class InternalConfigTest extends SymfonyTestCase
         $this->assertFalse($internalConfig->isFake());
         $this->assertSame('i18n', $internalConfig->getI18nFolder());
         $this->assertSame('en', $internalConfig->getI18nDefaultLocale());
-        $this->assertSame(AuthMethod::HYVOR, $internalConfig->getAuthMethod());
+        $this->assertSame(Deployment::CLOUD, $internalConfig->getDeployment());
     }
 
     public function test_internal_config_i18n_realpath(): void
     {
         $internalConfig = new InternalConfig(
             appSecret: 'c2VjcmV0',
+            commsKey: 'commskey',
             component: 'core',
-            authMethod: 'hyvor',
+            deployment: 'cloud',
             instance: 'https://hyvor.com',
             privateInstance: 'https://hyvor.internal',
             fake: false,

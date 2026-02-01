@@ -6,9 +6,7 @@ use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Hyvor\Internal\Component\Component;
 use PHPUnit\Framework\Assert;
 
-class MockComms implements CommsInterface {
-
-    public function __construct(private Comms $comms) {}
+class MockComms extends Comms {
 
     /**
      * @var array{event: AbstractEvent, to: Component, async: bool}[]
@@ -20,14 +18,9 @@ class MockComms implements CommsInterface {
      */
     private array $responses = [];
 
-    public function signature(string $content): string
-    {
-        throw new \RuntimeException('not implemented');
-    }
-
     public function send(AbstractEvent $event, ?Component $to = null,): object|null
     {
-        $to = $this->comms->validateAndGetTo($event, $to);
+        $to = $this->validateAndGetTo($event, $to);
 
         $this->sent[] = [
             'event' => $event,
@@ -47,7 +40,7 @@ class MockComms implements CommsInterface {
 
     public function sendAsync(AbstractEvent $event, ?Component $to = null, string $transport = 'async'): void
     {
-        $to = $this->comms->validateAndGetTo($event, $to);
+        $to = $this->validateAndGetTo($event, $to);
 
         $this->sent[] = [
             'event' => $event,

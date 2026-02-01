@@ -36,9 +36,9 @@ class SudoAuthorizationListener
         }
 
         $request = $event->getRequest();
-        $user = $this->auth->check($request);
+        $me = $this->auth->me($request);
 
-        if ($user === false) {
+        if (!$me) {
             throw new DataCarryingHttpException(
                 403,
                 [
@@ -48,6 +48,7 @@ class SudoAuthorizationListener
             );
         }
 
+        $user = $me->getUser();
         $sudoUser = $this->sudoUserService->get($user->id);
 
         if ($sudoUser === null) {
