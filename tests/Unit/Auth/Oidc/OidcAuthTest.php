@@ -34,7 +34,7 @@ class OidcAuthTest extends SymfonyTestCase
         $oidc = $this->getOidcAuth();
         $requestNotLoggedIn = Request::create('/');
         $requestNotLoggedIn->setSession($this->createMock(SessionInterface::class));
-        $this->assertFalse($oidc->me($requestNotLoggedIn));
+        $this->assertNull($oidc->me($requestNotLoggedIn));
     }
 
     public function test_check_has_session_but_wrong_user_id(): void
@@ -49,7 +49,7 @@ class OidcAuthTest extends SymfonyTestCase
         $requestNotLoggedIn = Request::create('/');
         $requestNotLoggedIn->setSession($session);
 
-        $this->assertFalse($oidc->me($requestNotLoggedIn));
+        $this->assertNull($oidc->me($requestNotLoggedIn));
     }
 
     public function test_check_logged_in(): void
@@ -68,9 +68,10 @@ class OidcAuthTest extends SymfonyTestCase
         $requestNotLoggedIn = Request::create('/');
         $requestNotLoggedIn->setSession($session);
 
-        $user = $oidc->me($requestNotLoggedIn);
-        $this->assertInstanceOf(AuthUser::class, $user);
+        $me = $oidc->me($requestNotLoggedIn);
+        $this->assertNotNull($me);
 
+        $user = $me->getUser();
         $this->assertSame($oidcUser->getId(), $user->id);
         $this->assertSame($oidcUser->getEmail(), $user->email);
         $this->assertSame($oidcUser->getName(), $user->name);

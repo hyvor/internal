@@ -5,6 +5,7 @@
 - TestEventDispatcher moved
   - ::enable() is removed, and no longer needed. Test env automatically sets event_dispatcher to TestEventDispatcher
 - BillingInterface license() and licenses() method signatures changed
+- BillingFake $license argument removed. license() calls licenses() now. Setting licenses for all called organizations is required now
 - Comms API
   - a shared COMMS_KEY env variable is required for component-to-componet communication
 - ResourceInterface and resource registering in the core is removed

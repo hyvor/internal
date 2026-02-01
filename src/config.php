@@ -47,27 +47,6 @@ return [
      */
     'fake' => env('HYVOR_FAKE', false),
 
-    /**
-     * User settings
-     */
-    'auth' => [
-
-        /**
-         * Whether to add auth routes
-         * /api/auth/check - get the current user
-         * /api/auth/login - login redirect
-         * /api/auth/signup - signup redirect
-         */
-        'routes' => true,
-
-        /**
-         * If routes is true, set the domain restriction
-         * By default, added to all domains
-         */
-        'routes_domain' => '{any}',
-
-    ],
-
     'i18n' => [
 
         /**

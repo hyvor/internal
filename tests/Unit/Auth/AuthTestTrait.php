@@ -4,12 +4,14 @@ namespace Hyvor\Internal\Tests\Unit\Auth;
 
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMeResponse;
+use Hyvor\Internal\Bundle\Comms\MockComms;
+use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Illuminate\Support\Collection;
-use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 trait AuthTestTrait
 {
@@ -42,45 +44,50 @@ trait AuthTestTrait
 
     public function testCheckWhenNoCookieSet(): void
     {
-        $this->assertFalse($this->getAuth()->me($this->requestWithCookie('')));
+        $this->assertNull($this->getAuth()->me($this->requestWithCookie('')));
     }
+
+    abstract function setComms(MockComms $comms): void;
 
     public function testCheckWhenCookieIsSet(): void
     {
-        $response = new JsonMockResponse([
-            'user' => [
+        /** @var MockComms $mockComms */
+        $mockComms = $this->getContainer()->get(MockComms::class);
+        $mockComms->addResponse(GetMe::class, new GetMeResponse(
+            user: AuthUser::fromArray([
                 'id' => 1,
                 'name' => 'test',
                 'username' => 'test',
                 'email' => 'test@test.com'
-            ]
-        ]);
-        $this->setResponseFactory($response);
+            ])
+        ));
+        $this->setComms($mockComms);
 
-        $user = $this->getAuth()->me($this->requestWithCookie('test-cookie'));
+        $me = $this->getAuth()->me($this->requestWithCookie('test-cookie'));
 
+        $this->assertInstanceOf(Me::class, $me);
+
+        $user = $me->getUser();
         $this->assertInstanceOf(AuthUser::class, $user);
         $this->assertEquals(1, $user->id);
         $this->assertEquals('test', $user->name);
         $this->assertEquals('test', $user->username);
         $this->assertEquals('test@test.com', $user->email);
 
-        $this->assertSame(
-            'https://hyvor.internal/api/internal/auth/check',
-            $response->getRequestUrl()
-        );
-
-        $data = $this->getInternalApi()->dataFromMockResponse($response);
-        $this->assertEquals('test-cookie', $data['cookie']);
+        $mockComms->assertSent(GetMe::class, Component::CORE,
+            eventValidator: fn ($me) => $this->assertSame('test-cookie', $me->getCookie()));
     }
 
     public function testReturnsFalseWhenUserIsNull(): void
     {
-        $response = new JsonMockResponse([
-            'user' => null
-        ]);
-        $this->setResponseFactory($response);
-        $this->assertFalse($this->getAuth()->me($this->requestWithCookie('test')));
+
+        /** @var MockComms $mockComms */
+        $mockComms = $this->getContainer()->get(MockComms::class);
+        $mockComms->addResponse(GetMe::class, new GetMeResponse(
+            user: null
+        ));
+        $this->setComms($mockComms);
+        $this->assertNull($this->getAuth()->me($this->requestWithCookie('test')));
     }
 
     public function test_auth_url(): void

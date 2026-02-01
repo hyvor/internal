@@ -74,10 +74,6 @@ class InternalServiceProvider extends ServiceProvider
 
     private function routes(): void
     {
-        // auth routes
-        if (config('internal.auth.routes')) {
-            $this->loadRoutesFrom(__DIR__ . '/routes/auth.php');
-        }
         // testing routes
         if (App::environment('testing')) {
             $this->loadRoutesFrom(__DIR__ . '/routes/testing.php');
