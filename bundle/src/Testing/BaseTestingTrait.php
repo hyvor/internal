@@ -3,6 +3,8 @@
 namespace Hyvor\Internal\Bundle\Testing;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Monolog\Handler\TestHandler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -53,6 +55,13 @@ trait BaseTestingTrait
         $ed = $this->getService(EventDispatcherInterface::class);
         assert($ed instanceof TestEventDispatcher);
         return $ed;
+    }
+
+    public function getComms(): MockComms
+    {
+        $comms = $this->getService(CommsInterface::class);
+        $this->assertInstanceOf(MockComms::class, $comms);
+        return $comms;
     }
 
     /**

@@ -19,6 +19,8 @@ use Prometheus\CollectorRegistry;
 use Prometheus\Storage\APCng;
 use Prometheus\Storage\InMemory;
 use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class InternalServiceProvider extends ServiceProvider
@@ -41,6 +43,15 @@ class InternalServiceProvider extends ServiceProvider
         $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
         $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
         $this->app->singleton(CommsInterface::class, fn() => app(Comms::class));
+
+        $this->app->bind(MessageBusInterface::class, function () {
+            return new class implements MessageBusInterface {
+                public function dispatch(object $message, array $stamps = []): Envelope
+                {
+                    throw new \RuntimeException('sendAsync() is not supported in Laravel');
+                }
+            };
+        });
     }
 
     private function config(): void

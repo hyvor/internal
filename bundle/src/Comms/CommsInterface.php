@@ -23,4 +23,6 @@ interface CommsInterface {
         ?Component $to = null,
     ): object|null;
 
+    public function sendAsync(AbstractEvent $event, ?Component $to = null, string $transport = 'async'): void;
+
 }
