@@ -124,12 +124,7 @@ class InternalServiceProvider extends ServiceProvider
 
         // fake billing
         BillingFake::enable(
-            license: fn(int $userId, ?int $resourceId, Component $component) => $fakeConfig->license(
-                $userId,
-                $resourceId,
-                $component
-            ),
-            licenses: fn($of, Component $component) => $fakeConfig->licenses($of, $component)
+            licenses: fn(array $organizationIds, Component $component) => $fakeConfig->licenses($organizationIds, $component)
         );
     }
 

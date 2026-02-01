@@ -11,9 +11,9 @@ class BillingFakeSymfonyTest extends SymfonyTestCase
 
     use BillingFakeTestTrait;
 
-    protected function enable(array|callable|null $licenses = null): void
+    protected function enable(array|callable $licenses): void
     {
-        BillingFake::enableForSymfony($this->container, $license, $licenses);
+        BillingFake::enableForSymfony($this->container, $licenses);
     }
 
 }

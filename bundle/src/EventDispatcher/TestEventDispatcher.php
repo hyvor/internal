@@ -24,6 +24,14 @@ class TestEventDispatcher extends EventDispatcher
         parent::__construct();
     }
 
+    /**
+     * @param false|string[] $mockEvents
+     */
+    public function setMockEvents(false|array $mockEvents): void
+    {
+        $this->mockEvents = $mockEvents;
+    }
+
     public function dispatch(object $event, ?string $eventName = null): object
     {
         $eventName ??= $event::class;

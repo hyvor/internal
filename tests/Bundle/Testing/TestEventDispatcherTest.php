@@ -10,7 +10,7 @@ class TestEventDispatcherTest extends SymfonyTestCase
 
     public function test_dispatcher(): void
     {
-        $testDispatcher = TestEventDispatcher::enable($this->container);
+        $testDispatcher = $this->getEd();
         $testDispatcher->dispatch(new TestEvent('test', 10), 'TestEvent');
 
         $dispatchedEvents = $testDispatcher->getDispatchedEvents();
@@ -27,7 +27,8 @@ class TestEventDispatcherTest extends SymfonyTestCase
 
     public function test_mocks(): void
     {
-        $testDispatcher = TestEventDispatcher::enable($this->container, [TestDangerousEvent::class]);
+        $testDispatcher = $this->getEd();
+        $testDispatcher->setMockEvents([TestDangerousEvent::class]);
 
         $testDispatcher->addListener(TestDangerousEvent::class, function (TestDangerousEvent $event) {
             // this is not called because TestDangerousEvent is mocked

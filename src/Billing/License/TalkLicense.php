@@ -9,6 +9,7 @@ final class TalkLicense extends License
 
     public function __construct(
         public int $credits,
+        public int $comments,
         public int $storage, // 100MB
         public bool $sso,
         public bool $noBranding,
@@ -52,6 +53,7 @@ final class TalkLicense extends License
     {
         return new self(
             credits: 1_000,
+            comments: -1,
             storage: 100_000_000,
             sso: true,
             noBranding: false,

@@ -4,7 +4,6 @@ namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\CoreLicense;
-use Hyvor\Internal\Billing\License\DerivedFrom;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Billing\License\PostLicense;
 use Hyvor\Internal\Billing\License\Property\LicensePropertyType;
@@ -73,7 +72,8 @@ class LicenseTest extends TestCase
 
         $this->assertSame(
             count($declaredProperties),
-            count($propertyReflections)
+            count($propertyReflections),
+            'all declared properties must exist in class: ' . $licenseClass
         );
     }
 

@@ -15,7 +15,7 @@ trait BillingFakeTestTrait
     /**
      * @param array<int, ResolvedLicense>|callable $licenses
      */
-    protected abstract function enable(array|callable $licenses = []): void;
+    protected abstract function enable(array|callable $licenses): void;
 
     public function testEnableAndLicense(): void
     {

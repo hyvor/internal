@@ -39,14 +39,14 @@ class InternalFake
     /**
      * Returns a default (trial) license of the component
      */
-    public function license(int $userId, Component $component): ?License
+    public function license(int $organizationId, Component $component): ?License
     {
         $licenseClass = $component->license();
         return $licenseClass::trial(); // trial defaults
     }
 
     /**
-     * Returns a collection of licenses for the given LicenseOf objects.
+     * sets a trial license for all organizations
      * @param int[] $organizationIds
      * @return array<int, ResolvedLicense>
      */
@@ -55,7 +55,10 @@ class InternalFake
         $licenses = [];
         $licenseClass = $component->license();
         foreach ($organizationIds as $organizationId) {
-            $licenses[$organizationId] = new ResolvedLicense(ResolvedLicenseType::TRIAL, $licenseClass::trial());
+            $licenses[$organizationId] = new ResolvedLicense(
+                ResolvedLicenseType::TRIAL,
+                $licenseClass::trial()
+            );
         }
         return $licenses;
     }
