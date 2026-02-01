@@ -18,7 +18,7 @@ class AuthFactory
 
     public function create(): AuthInterface
     {
-        if ($this->internalConfig->getAuthMethod() === AuthMethod::HYVOR) {
+        if ($this->internalConfig->getDeployment()->isCloud()) {
             if ($this->internalConfig->isFake()) {
                 $fake = InternalFake::getInstance();
                 return new AuthFake($fake->user(), $fake->usersDatabase());

@@ -68,6 +68,7 @@ class InternalApi
                     'json' => [
                         'message' => $message,
                     ],
+                    'timeout' => 5,
                 ]
             );
 

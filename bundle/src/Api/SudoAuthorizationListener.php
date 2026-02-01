@@ -6,6 +6,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Sudo\SudoUserService;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -22,9 +23,15 @@ class SudoAuthorizationListener
     ) {
     }
 
+    // can be extended
+    protected function getPath(): string
+    {
+        return '/api/sudo';
+    }
+
     public function __invoke(ControllerEvent $event): void
     {
-        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/sudo')) {
+        if (!str_starts_with($event->getRequest()->getPathInfo(), $this->getPath())) {
             return;
         }
 

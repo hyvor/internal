@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Bundle\Entity\OidcUser;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
  * @phpstan-type AuthUserArray array{
@@ -29,6 +30,7 @@ use Hyvor\Internal\Bundle\Entity\OidcUser;
  * website_url?: string,
  * }
  */
+#[Exclude]
 class AuthUser
 {
 

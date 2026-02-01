@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 // @codeCoverageIgnoreStart
 
 #[AsCommand(
-    name: 'app:dev:reset',
+    name: 'dev:reset',
     description: 'Resets the database, runs the migrations again, and seeds with --seed.'
 )]
 class DevResetCommand extends Command
@@ -26,7 +26,7 @@ class DevResetCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption('seed', null, InputOption::VALUE_NONE, 'Seed the database after resetting it.');
     }
@@ -44,7 +44,7 @@ class DevResetCommand extends Command
 
         $application->run(
             new ArrayInput([
-                'command' => 'doctrine:query:sql',
+                'command' => 'dbal:run-sql',
                 'sql' => "SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();",
             ]),
             $output
@@ -77,7 +77,7 @@ class DevResetCommand extends Command
         if ($input->getOption('seed')) {
             $application->run(
                 new ArrayInput([
-                    'command' => 'app:dev:seed', // seed command must be defined in the application
+                    'command' => 'dev:seed', // seed command must be defined in the application
                 ]),
                 $output
             );

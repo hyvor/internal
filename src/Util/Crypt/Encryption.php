@@ -3,18 +3,70 @@
 namespace Hyvor\Internal\Util\Crypt;
 
 use Hyvor\Internal\InternalConfig;
+use Illuminate\Contracts\Encryption\StringEncrypter;
 use Illuminate\Encryption\Encrypter;
 
 /**
  * Laravel-compatible encryption
+ * @deprecated use Comms API
  */
-class Encryption extends Encrypter
+class Encryption implements \Illuminate\Contracts\Encryption\Encrypter, StringEncrypter
 {
 
+    private ?Encrypter $laravelEncrypter = null;
+
     public function __construct(
-        InternalConfig $config
+        private InternalConfig $config
     ) {
-        parent::__construct($config->getAppSecret(), 'AES-256-CBC');
+    }
+
+    private function getEncrypter(): Encrypter
+    {
+        if (!$this->laravelEncrypter) {
+            $this->laravelEncrypter = new Encrypter($this->getKey(), 'AES-256-CBC');
+        }
+        return $this->laravelEncrypter;
+    }
+
+    public function encryptString(#[\SensitiveParameter] $value)
+    {
+        return $this->getEncrypter()->encryptString($value);
+    }
+
+    public function decryptString($payload)
+    {
+        return $this->getEncrypter()->decryptString($payload);
+    }
+
+    public function encrypt(#[\SensitiveParameter] $value, $serialize = true)
+    {
+        return $this->getEncrypter()->encrypt($value, $serialize);
+    }
+
+    public function decrypt($payload, $unserialize = true)
+    {
+        return $this->getEncrypter()->decrypt($payload, $unserialize);
+    }
+
+    public function getKey()
+    {
+        return $this->config->getAppSecret();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAllKeys()
+    {
+        return [$this->getKey()];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPreviousKeys()
+    {
+        return [];
     }
 
     /**

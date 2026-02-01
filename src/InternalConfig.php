@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal;
 
-use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
 
 class InternalConfig
@@ -17,10 +16,24 @@ class InternalConfig
         private string $appSecret,
 
         /**
+         * COMMS_KEY env variable, which is used for encrypting communication in the Comms API
+         * between the components
+         * Previously, the app secret was used in the internal API, but to prevent all apps needing the same app secret,
+         * the Comms API uses a separate key
+         * Generated using: openssl rand -base64 32
+         */
+        private string $commsKey,
+
+        /**
          * Component name
          */
         private string $component,
-        private string $authMethod,
+
+        /**
+         * 'cloud' or 'on-prem'
+         * env: DEPLOYMENT
+         */
+        private string $deployment,
         private string $instance,
         private ?string $privateInstance,
         private bool $fake,
@@ -43,14 +56,19 @@ class InternalConfig
         return base64_decode($this->appSecret);
     }
 
+    public function getCommsKey(): string
+    {
+        return base64_decode($this->commsKey);
+    }
+
     public function getComponent(): Component
     {
         return Component::from($this->component);
     }
 
-    public function getAuthMethod(): AuthMethod
+    public function getDeployment(): Deployment
     {
-        return AuthMethod::from($this->authMethod);
+        return Deployment::from($this->deployment);
     }
 
     public function getInstance(): string

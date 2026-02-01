@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Auth;
 
 use Faker\Factory;
+use Hyvor\Internal\Auth\Dto\Me;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -83,8 +84,9 @@ final class AuthFake implements AuthInterface
         $container->set(AuthInterface::class, $fake);
     }
 
-    public function check(string|Request $request): false|AuthUser
+    public function me(string|Request $request): ?Me
     {
+        return null; // TODO
         return $this->user ?: false;
     }
 

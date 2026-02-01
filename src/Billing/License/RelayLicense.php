@@ -2,7 +2,12 @@
 
 namespace Hyvor\Internal\Billing\License;
 
-class RelayLicense extends License
+final class RelayLicense extends License
 {
+
+    public static function trial(): static
+    {
+        return new self();
+    }
 
 }
