@@ -4,10 +4,9 @@ namespace Hyvor\Internal\Tests\Bundle\Testing;
 
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\BrowserKit\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @extends AbstractBrowser<Request, Response>
+ * @extends AbstractBrowser<object, object>
  */
 class TestBrowser extends AbstractBrowser
 {

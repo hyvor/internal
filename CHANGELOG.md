@@ -20,6 +20,7 @@
 - UsageAbstract removed
 - AuthMiddleware removed in Laravel
 - Laravel built-in auth routes removed (/api/auth/check, /api/auth/login, etc.)
+- assertFailed() on ApiTestingTrait is deprecated
 
 ## 3.1.8 - 2025-11-03
 
