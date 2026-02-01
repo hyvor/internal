@@ -6,6 +6,10 @@ use Hyvor\Internal\Auth\AuthFactory;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingFactory;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\MockComms;
+use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
@@ -30,7 +34,7 @@ class InternalBundle extends AbstractBundle
          * private_instance: string
          * fake: bool
          */
-        $definition->rootNode() // @phpstan-ignore-line
+        $definition->rootNode()
             ->children()
                 ->scalarNode('component')->defaultValue('core')->end()
                 ->arrayNode('i18n')
@@ -44,6 +48,15 @@ class InternalBundle extends AbstractBundle
         // @formatter:on
     }
 
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $container->addCompilerPass(new EventDispatcherCompilerPass());
+        }
+    }
+
     /**
      * @param array<mixed> $config
      */
@@ -53,18 +66,21 @@ class InternalBundle extends AbstractBundle
         $container->import('../config/services.php');
 
         $container->parameters()
-            ->set('internal.default_auth_method', 'oidc')
+            ->set('internal.default_deployment', 'on-prem')
             ->set('internal.default_instance', 'https://hyvor.com')
             ->set('internal.default_private_instance', null)
             ->set('internal.default_fake', false);
 
+        $services = $container->services();
+
         // InternalConfig class
-        $container->services()
+        $services
             ->get(InternalConfig::class)
             ->args([
                 '%env(APP_SECRET)%',
+                '%env(string:default::COMMS_KEY)%',
                 $config['component'],
-                '%env(default:internal.default_auth_method:AUTH_METHOD)%',
+                '%env(default:internal.default_deployment:DEPLOYMENT)%',
                 '%env(default:internal.default_instance:HYVOR_INSTANCE)%',
                 '%env(default:internal.default_private_instance:HYVOR_PRIVATE_INSTANCE)%',
                 '%env(bool:default:internal.default_fake:HYVOR_FAKE)%',
@@ -72,19 +88,23 @@ class InternalBundle extends AbstractBundle
                 $config['i18n']['default'],
             ]);
 
-        $container
-            ->services()
+        $services
             ->set(AuthInterface::class)
             ->factory([service(AuthFactory::class), 'create']);
 
-        $container
-            ->services()
+        $services
             ->set(BillingInterface::class)
             ->public() // because this is not used from outside, so tests fail (inlined)
             ->factory([service(BillingFactory::class), 'create']);
 
+        if ($container->env() === 'test') {
+            $services->alias(CommsInterface::class, MockComms::class);
+        } else {
+            $services->alias(CommsInterface::class, Comms::class);
+        }
+
         // other services
-        $container->services()->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
+        $services->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
     }
 
 }

@@ -10,7 +10,7 @@ use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -182,8 +182,6 @@ class OidcCallbackTest extends SymfonyTestCase
 
     public function test_gets_id_token_and_signs_up(): void
     {
-        $eventDispatcher = TestEventDispatcher::enable($this->container);
-
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
@@ -229,7 +227,7 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->assertSame('test_client_id', $parsedBody['client_id']);
         $this->assertSame('test_client_secret', $parsedBody['client_secret']);
 
-        $event = $eventDispatcher->getFirstEvent(UserSignedUpEvent::class);
+        $event = $this->getEd()->getFirstEvent(UserSignedUpEvent::class);
         $this->assertSame('user123', $event->getUser()->oidc_sub);
     }
 

@@ -8,16 +8,19 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
+use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Internationalization\I18n;
 use Hyvor\Internal\Metric\MetricService;
-use Hyvor\Internal\Resource\ResourceFake;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Prometheus\CollectorRegistry;
 use Prometheus\Storage\APCng;
 use Prometheus\Storage\InMemory;
 use Symfony\Component\HttpClient\CurlHttpClient;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class InternalServiceProvider extends ServiceProvider
@@ -39,6 +42,16 @@ class InternalServiceProvider extends ServiceProvider
         $this->app->bind(HttpClientInterface::class, fn() => new CurlHttpClient());
         $this->app->singleton(AuthInterface::class, fn() => app(Auth::class));
         $this->app->singleton(BillingInterface::class, fn() => app(Billing::class));
+        $this->app->singleton(CommsInterface::class, fn() => app(Comms::class));
+
+        $this->app->bind(MessageBusInterface::class, function () {
+            return new class implements MessageBusInterface {
+                public function dispatch(object $message, array $stamps = []): Envelope
+                {
+                    throw new \RuntimeException('sendAsync() is not supported in Laravel');
+                }
+            };
+        });
     }
 
     private function config(): void
@@ -48,8 +61,9 @@ class InternalServiceProvider extends ServiceProvider
 
         $this->app->singleton(InternalConfig::class, fn() => new InternalConfig(
             str_replace('base64:', '', (string)config('app.key')),
+            (string)config('internal.comms_key'),
             (string)config('internal.component'),
-            'hyvor',
+            (string)config('internal.deployment'),
             (string)config('internal.instance'),
             $privateInstance,
             (bool)config('internal.fake'),
@@ -60,10 +74,6 @@ class InternalServiceProvider extends ServiceProvider
 
     private function routes(): void
     {
-        // auth routes
-        if (config('internal.auth.routes')) {
-            $this->loadRoutesFrom(__DIR__ . '/routes/auth.php');
-        }
         // testing routes
         if (App::environment('testing')) {
             $this->loadRoutesFrom(__DIR__ . '/routes/testing.php');
@@ -114,16 +124,8 @@ class InternalServiceProvider extends ServiceProvider
 
         // fake billing
         BillingFake::enable(
-            license: fn(int $userId, ?int $resourceId, Component $component) => $fakeConfig->license(
-                $userId,
-                $resourceId,
-                $component
-            ),
-            licenses: fn($of, Component $component) => $fakeConfig->licenses($of, $component)
+            licenses: fn(array $organizationIds, Component $component) => $fakeConfig->licenses($organizationIds, $component)
         );
-
-        // fake resource
-        ResourceFake::enable();
     }
 
     /**

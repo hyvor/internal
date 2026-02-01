@@ -1,3 +1,27 @@
+## 4.0.0 - Unreleased
+
+- Organization support
+- Hyvor\Internal\Laravel\LogFake removed
+- TestEventDispatcher moved
+  - ::enable() is removed, and no longer needed. Test env automatically sets event_dispatcher to TestEventDispatcher
+- BillingInterface license() and licenses() method signatures changed
+- BillingFake $license argument removed. license() calls licenses() now. Setting licenses for all called organizations is required now
+- Comms API
+  - a shared COMMS_KEY env variable is required for component-to-componet communication
+- ResourceInterface and resource registering in the core is removed
+- New Comms events
+  - ToCore\License\GetLicense
+  - ToCore\OrgMigration\InitOrg
+  - ToCore\OrgMigration\EnsureMembers
+  - ToCore\User\GetMe
+- AuthInterface now has me() method instead of check()
+- AuthMethod removed. Deployment added.
+- CommsInterface instead of using Comms directly
+- UsageAbstract removed
+- AuthMiddleware removed in Laravel
+- Laravel built-in auth routes removed (/api/auth/check, /api/auth/login, etc.)
+- assertFailed() on ApiTestingTrait is deprecated
+
 ## 3.1.8 - 2025-11-03
 
 - Self-Hosted telemetry support added

@@ -2,37 +2,56 @@
 
 namespace Hyvor\Internal\Billing\License;
 
-class BlogsLicense extends License
+use Hyvor\Internal\Billing\License\Property\LicenseProperty;
+
+final class BlogsLicense extends License
 {
 
     public function __construct(
-
-        /**
-         * Number of blog users (team members) allowed.
-         */
-        public int $users = 2,
-
-        /**
-         * Storage in bytes. Used when storing media files.
-         */
-        public int $storage = 1_000_000_000,
-
-        /**
-         * GPT Tokens per month.
-         */
-        public int $aiTokens = 1000,
-
-        /**
-         * DeepL characters per month in thousands.
-         */
-        public int $autoTranslationsChars = 1000,
-
-        /**
-         * Link and SEO analyses.
-         */
-        public bool $analyses = true, // SEO and link analysis
+        public int $users,
+        public int $storage,
+        public int $aiTokens,
+        public int $autoTranslationsChars,
+        public bool $analyses,
     )
     {
+    }
+
+    public static function properties(): array
+    {
+        return [
+            LicenseProperty::int('users')
+                ->name('Users')
+                ->description('Number of blog users (team members) allowed.'),
+
+            LicenseProperty::int('storage')
+                ->name('Storage')
+                ->description('Maximum storage for uploaded media files in blogs')
+                ->bytes(),
+
+            LicenseProperty::int('aiTokens')
+                ->name('AI Tokens')
+                ->description('Number of AI tokens per month for content generation'),
+
+            LicenseProperty::int('autoTranslationsChars')
+                ->name('Auto Translation Characters')
+                ->description('Number of characters for automatic translations per month'),
+
+            LicenseProperty::bool('analyses')
+                ->name('Link and SEO Analyses')
+                ->description('Enable link and SEO analyses for blog posts'),
+        ];
+    }
+
+    public static function trial(): static
+    {
+        return new self(
+            users: 2,
+            storage: 1_000_000_000, // 1GB
+            aiTokens: 1_000,
+            autoTranslationsChars: 1000,
+            analyses: true
+        );
     }
 
 }

@@ -3,35 +3,29 @@
 namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\Billing;
-use Hyvor\Internal\Billing\Dto\LicenseOf;
-use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\SubscriptionIntent;
+use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use Symfony\Component\HttpClient\MockHttpClient;
-use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(Billing::class)]
 #[CoversClass(SubscriptionIntent::class)]
-#[CoversClass(LicensesCollection::class)]
-#[CoversClass(LicenseOf::class)]
 class BillingSymfonyTest extends SymfonyTestCase
 {
 
     use BillingTestTrait;
+
+    function setComms(MockComms $comms): void
+    {
+        return; // already set
+    }
 
     protected function getBilling(): Billing
     {
         $billing = $this->container->get(Billing::class);
         assert($billing instanceof Billing);
         return $billing;
-    }
-
-    protected function setHttpResponse(MockResponse $response): void
-    {
-        $this->setHttpClientResponse($response);
     }
 
     protected function getInternalApi(): InternalApi

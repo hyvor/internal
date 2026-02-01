@@ -2,9 +2,12 @@
 
 namespace Hyvor\Internal\Auth;
 
+use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
+use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
-use Hyvor\Internal\InternalApi\Exceptions\InternalApiCallFailedException;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,32 +22,30 @@ class Auth implements AuthInterface
     public function __construct(
         private InternalApi $internalApi,
         private InstanceUrlResolver $instanceUrlResolver,
+        private CommsInterface $comms,
     ) {
     }
 
     /**
-     * @throws InternalApiCallFailedException
+     * @throws CommsApiFailedException
      */
-    public function check(Request $request): false|AuthUser
+    public function me(Request $request): ?Me
     {
         $cookie = $request->cookies->get(self::HYVOR_SESSION_COOKIE_NAME);
 
         if (!$cookie) {
-            return false;
+            return null;
         }
 
-        $response = $this->internalApi->call(
-            Component::CORE,
-            '/auth/check',
-            [
-                'cookie' => $cookie
-            ]
-        );
+        $response = $this->comms->send(new GetMe($cookie));
 
-        /** @var null|AuthUserArray $user */
-        $user = $response['user'];
+        $user = $response->getUser();
 
-        return is_array($user) ? AuthUser::fromArray($user) : false;
+        if (!$user) {
+            return null;
+        }
+
+        return new Me($user, $response->getOrganization());
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string

@@ -3,13 +3,13 @@
 namespace Hyvor\Internal\Sudo;
 
 use Hyvor\Internal\Bundle\Entity\SudoUser;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<SudoUser>
+ * @extends PersistentObjectFactory<SudoUser>
  * @codeCoverageIgnore
  */
-final class SudoUserFactory extends PersistentProxyObjectFactory
+final class SudoUserFactory extends PersistentObjectFactory
 {
     public function __construct()
     {

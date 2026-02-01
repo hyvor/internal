@@ -13,6 +13,16 @@ return [
     'component' => 'core',
 
     /**
+     * @see InternalConfig::$commsKey
+     */
+    'comms_key' => env('COMMS_KEY', ''),
+
+    /**
+     * @see InternalConfig::$deployment
+     */
+    'deployment' => env('DEPLOYMENT', 'on-prem'),
+
+    /**
      * This is the domain that the app is running on.
      * Routes are only accessible from this domain.
      * @todo: refactor this into `route.` setting
@@ -36,27 +46,6 @@ return [
      * Only possible in the local environment
      */
     'fake' => env('HYVOR_FAKE', false),
-
-    /**
-     * Auth settings
-     */
-    'auth' => [
-
-        /**
-         * Whether to add auth routes
-         * /api/auth/check - get the current user
-         * /api/auth/login - login redirect
-         * /api/auth/signup - signup redirect
-         */
-        'routes' => true,
-
-        /**
-         * If routes is true, set the domain restriction
-         * By default, added to all domains
-         */
-        'routes_domain' => '{any}',
-
-    ],
 
     'i18n' => [
 

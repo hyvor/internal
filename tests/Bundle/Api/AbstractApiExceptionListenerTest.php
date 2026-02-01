@@ -2,7 +2,7 @@
 
 namespace Hyvor\Internal\Tests\Bundle\Api;
 
-use Hyvor\Internal\Bundle\Api\AbstractApiExceptionListener;
+use Hyvor\Internal\Bundle\Api\ApiExceptionListener;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,7 +15,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-#[CoversClass(AbstractApiExceptionListener::class)]
+#[CoversClass(ApiExceptionListener::class)]
 #[CoversClass(DataCarryingHttpException::class)]
 class AbstractApiExceptionListenerTest extends SymfonyTestCase
 {
@@ -195,15 +195,6 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
         $this->assertSame(['foo' => 'bar'], $data['data']);
     }
 
-}
-
-
-class ApiExceptionListener extends AbstractApiExceptionListener
-{
-    protected function prefix(): string
-    {
-        return '/api/console';
-    }
 }
 
 

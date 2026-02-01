@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="src">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+        <testsuite name="types">
+            <directory suffix="Test.php">./types/tests</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">./bundle/src</directory>
+        </include>
+        <exclude>
+            <directory>./bundle/src/Comms/Event</directory>
+        </exclude>
+    </source>
+    <php>
+        <env name="APP_KEY" value="base64:1irAcKPAtLigPMX/ZDlz7D8CidOIPdgqpaCYUU2EIoU="/>
+        <env name="APP_SECRET" value="1irAcKPAtLigPMX/ZDlz7D8CidOIPdgqpaCYUU2EIoU="/>
+        <env name="APP_DEBUG" value="true"/>
+        <env name="APP_ENV" value="testing"/>
+        <env name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.internal"/>
+    </php>
+</phpunit>

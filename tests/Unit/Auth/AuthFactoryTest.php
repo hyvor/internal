@@ -14,7 +14,7 @@ class AuthFactoryTest extends SymfonyTestCase
     public function test_create_hyvor_fake(): void
     {
         $_ENV['HYVOR_FAKE'] = '1';
-        $_ENV['AUTH_METHOD'] = 'hyvor';
+        $_ENV['DEPLOYMENT'] = 'cloud';
 
         /** @var AuthFactory $factory */
         $factory = $this->container->get(AuthFactory::class);
@@ -23,12 +23,12 @@ class AuthFactoryTest extends SymfonyTestCase
         $this->assertInstanceOf(AuthFake::class, $auth);
 
         unset($_ENV['HYVOR_FAKE']);
-        unset($_ENV['AUTH_METHOD']);
+        unset($_ENV['DEPLOYMENT']);
     }
 
     public function test_create_hyvor(): void
     {
-        $_ENV['AUTH_METHOD'] = 'hyvor';
+        $_ENV['DEPLOYMENT'] = 'cloud';
 
         /** @var AuthFactory $factory */
         $factory = $this->container->get(AuthFactory::class);
@@ -36,12 +36,12 @@ class AuthFactoryTest extends SymfonyTestCase
 
         $this->assertInstanceOf(Auth::class, $auth);
 
-        unset($_ENV['AUTH_METHOD']);
+        unset($_ENV['DEPLOYMENT']);
     }
 
     public function test_create_oidc(): void
     {
-        $_ENV['AUTH_METHOD'] = 'oidc';
+        $_ENV['DEPLOYMENT'] = 'on-prem';
 
         /** @var AuthFactory $factory */
         $factory = $this->container->get(AuthFactory::class);
@@ -49,7 +49,7 @@ class AuthFactoryTest extends SymfonyTestCase
 
         $this->assertInstanceOf(OidcAuth::class, $auth);
 
-        unset($_ENV['AUTH_METHOD']);
+        unset($_ENV['DEPLOYMENT']);
     }
 
 }

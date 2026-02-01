@@ -7,7 +7,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Bundle\Command\Sudo\SudoAddCommand;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
-use Hyvor\Internal\Bundle\Testing\TestEventDispatcher;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Sudo\Event\SudoAddedEvent;
 use Hyvor\Internal\Sudo\SudoUserService;
 use Hyvor\Internal\Tests\SymfonyTestCase;
@@ -72,7 +72,6 @@ class SudoAddCommandTest extends SymfonyTestCase
 
     public function test_adds_user_when_one_user_found(): void
     {
-        $eventDispatcher = TestEventDispatcher::enable($this->container);
         AuthFake::enableForSymfony($this->container, usersDatabase: [
             ['id' => 1, 'email' => 'supun@hyvor.com', 'name' => 'Supun'],
         ]);
@@ -92,7 +91,7 @@ class SudoAddCommandTest extends SymfonyTestCase
         $this->assertInstanceOf(\DateTimeImmutable::class, $sudoUsers[0]->getCreatedAt());
         $this->assertInstanceOf(\DateTimeImmutable::class, $sudoUsers[0]->getUpdatedAt());
 
-        $event = $eventDispatcher->getFirstEvent(SudoAddedEvent::class);
+        $event = $this->getEd()->getFirstEvent(SudoAddedEvent::class);
         $this->assertSame(1, $event->getSudoUser()->getUserId());
     }
 

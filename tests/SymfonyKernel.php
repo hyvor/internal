@@ -54,7 +54,6 @@ class SymfonyKernel extends Kernel
                 'memory' => true,
             ],
             'orm' => [
-                'auto_generate_proxy_classes' => true,
                 'entity_managers' => [
                     'default' => [
                         'mappings' => [
@@ -81,5 +80,7 @@ class SymfonyKernel extends Kernel
     {
         $routes->import('../bundle/src/Controller/*.php', 'attribute')
             ->prefix('/api/oidc');
+
+        $routes->import('../bundle/src/Comms/Controller/CommsController.php', 'attribute');
     }
 }

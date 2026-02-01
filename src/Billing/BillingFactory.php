@@ -22,7 +22,6 @@ class BillingFactory
             $fakeLicenseProvider = new BillingFakeLicenseProvider(get_class($fake));
             return new BillingFake(
                 $this->internalConfig,
-                [$fakeLicenseProvider, 'license'],
                 [$fakeLicenseProvider, 'licenses']
             );
         }

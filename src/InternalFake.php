@@ -3,9 +3,9 @@
 namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
-use Hyvor\Internal\Billing\Dto\LicenseOf;
-use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Component\Component;
 
 /**
@@ -39,29 +39,28 @@ class InternalFake
     /**
      * Returns a default (trial) license of the component
      */
-    public function license(int $userId, ?int $resourceId, Component $component): ?License
+    public function license(int $organizationId, Component $component): ?License
     {
         $licenseClass = $component->license();
-        return new $licenseClass; // trial defaults
+        return $licenseClass::trial(); // trial defaults
     }
 
     /**
-     * Returns a collection of licenses for the given LicenseOf objects.
-     * @codeCoverageIgnore TODO: add coverage later
-     * @param LicenseOf[] $of
+     * sets a trial license for all organizations
+     * @param int[] $organizationIds
+     * @return array<int, ResolvedLicense>
      */
-    public function licenses(array $of, Component $component): LicensesCollection
+    public function licenses(array $organizationIds, Component $component): array
     {
         $licenses = [];
         $licenseClass = $component->license();
-        foreach ($of as $licenseOf) {
-            $licenses[] = [
-                'user_id' => $licenseOf->userId,
-                'resource_id' => $licenseOf->resourceId,
-                'license' => (new $licenseClass)->serialize(),
-            ];
+        foreach ($organizationIds as $organizationId) {
+            $licenses[$organizationId] = new ResolvedLicense(
+                ResolvedLicenseType::TRIAL,
+                $licenseClass::trial()
+            );
         }
-        return new LicensesCollection($licenses, $component);
+        return $licenses;
     }
 
     /**

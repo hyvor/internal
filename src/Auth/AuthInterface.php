@@ -2,12 +2,13 @@
 
 namespace Hyvor\Internal\Auth;
 
+use Hyvor\Internal\Auth\Dto\Me;
 use Symfony\Component\HttpFoundation\Request;
 
 interface AuthInterface
 {
 
-    public function check(Request $request): false|AuthUser;
+    public function me(Request $request): ?Me;
 
     /**
      * Redirect to a login, signup, or logout page of the core

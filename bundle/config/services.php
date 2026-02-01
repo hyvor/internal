@@ -1,5 +1,6 @@
 <?php
 
+use Hyvor\Internal\Bundle\Comms\Comms;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return function (ContainerConfigurator $container): void {
@@ -9,13 +10,19 @@ return function (ContainerConfigurator $container): void {
         ->autoconfigure(true);
 
     // load all files as services
-    $services->load('Hyvor\\Internal\\Bundle\\', '../src');
+    $services
+        ->load('Hyvor\\Internal\\Bundle\\', '../src')
+        ->exclude([
+            '../src/Comms/Event',
+            '../src/Testing'
+        ]);
 
     $internalServices = $services
         ->load('Hyvor\\Internal\\', '../../src')
         ->exclude([
             '../../src/config.php',
-            '../../src/Auth/AuthUser.php',
+            '../../src/User/AuthUserOrganization.php',
+            '../../src/User/AuthUser.php',
             '../../src/Billing/Dto',
             '../../src/Billing/License',
             '../../src/Billing/Usage',
@@ -30,9 +37,10 @@ return function (ContainerConfigurator $container): void {
 
         // Unreferenced service used in tests
         $services->set(\Hyvor\Internal\Bundle\Mail\Component\Brand::class)->public();
+        $services->set(Comms::class)->public();
     }
 
-//    $services->load('Hyvor\\Internal\\Auth\\', '../../src/Auth');
+//    $services->load('Hyvor\\Internal\\User\\', '../../src/User');
 //    $services->load('Hyvor\\Internal\\InternalApi\\', '../../src/InternalApi');
 //    $services->load('Hyvor\\Internal\\Util\\', '../../src/Util');
 };

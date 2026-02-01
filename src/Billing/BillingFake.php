@@ -2,9 +2,7 @@
 
 namespace Hyvor\Internal\Billing;
 
-use Hyvor\Internal\Billing\Dto\LicenseOf;
-use Hyvor\Internal\Billing\Dto\LicensesCollection;
-use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\DependencyInjection\Container;
@@ -13,39 +11,31 @@ class BillingFake implements BillingInterface
 {
 
     /**
-     * @param License|(callable(int $userId, ?int $blogId, Component $component) : ?License)|null $license
-     * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
+     * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>) $licenses
      * @return void
      */
-    public static function enable(
-        null|License|callable $license = null,
-        null|LicensesCollection|callable $licenses = null
-    ): void {
-        app()->singleton(Billing::class, function () use ($license, $licenses) {
+    public static function enable(array|callable $licenses): void {
+        app()->singleton(Billing::class, function () use ($licenses) {
             return new BillingFake(
                 app(InternalConfig::class),
-                $license,
                 $licenses
             );
         });
     }
 
     /**
-     * @param License|(callable(int $userId, ?int $blogId, Component $component) : ?License)|null $license
-     * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
+     * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>) $licenses
      * @return void
      */
     public static function enableForSymfony(
         Container $container,
-        null|License|callable $license = null,
-        null|LicensesCollection|callable $licenses = null
+        array|callable $licenses
     ): void {
         $internalConfig = $container->get(InternalConfig::class);
         assert($internalConfig instanceof InternalConfig);
 
         $fake = new self(
             $internalConfig,
-            $license,
             $licenses
         );
         $container->set(BillingInterface::class, $fake);
@@ -55,36 +45,28 @@ class BillingFake implements BillingInterface
         private InternalConfig $internalConfig,
 
         /**
-         * @param License|(callable(int $userId, ?int $resouceId, Component $component) : ?License)|null $license
-         */
-        private readonly mixed $license = null,
-
-        /**
-         * @param LicensesCollection|(callable(LicenseOf[] $of, Component $component) : LicensesCollection)|null $licenses
+         * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>)|null $licenses
          */
         private readonly mixed $licenses = null
     ) {
     }
 
-    public function license(int $userId, ?int $resourceId, ?Component $component = null): ?License
+    public function license(int $organizationId, ?Component $component = null): ResolvedLicense
     {
-        $component ??= $this->internalConfig->getComponent();
+        $license = $this->licenses([$organizationId], $component)[$organizationId] ?? null;
 
-        if ($this->license === null) {
-            return null;
+        if (!$license) {
+            throw new \Exception("No license found for organization ID {$organizationId} in BillingFake");
         }
 
-        if ($this->license instanceof License) {
-            return $this->license;
-        }
-
-        return ($this->license)($userId, $resourceId, $component);
+        return $license;
     }
 
     /**
-     * @param array<LicenseOf> $of
+     * @param int[] $organizationIds
+     * @return array<int, ResolvedLicense>
      */
-    public function licenses(array $of, ?Component $component = null): LicensesCollection
+    public function licenses(array $organizationIds, ?Component $component = null): array
     {
         $component ??= $this->internalConfig->getComponent();
 
@@ -94,11 +76,11 @@ class BillingFake implements BillingInterface
             // @codeCoverageIgnoreEnd
         }
 
-        if ($this->licenses instanceof LicensesCollection) {
+        if (is_array($this->licenses)) {
             return $this->licenses;
         }
 
-        return ($this->licenses)($of, $component);
+        return ($this->licenses)($organizationIds, $component);
     }
 
 }

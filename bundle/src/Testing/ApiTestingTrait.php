@@ -2,17 +2,22 @@
 
 namespace Hyvor\Internal\Bundle\Testing;
 
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ApiTestingTrait
 {
 
+    use BaseTestingTrait;
+
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
     public function getJson(): array
     {
-        $response = self::getClient()->getResponse();
+        /** @var AbstractBrowser<object, \Symfony\Component\BrowserKit\Response> $client */
+        $client = self::getClient();
+        $response = $client->getResponse();
         $content = $response->getContent();
         $this->assertNotFalse($content);
         $this->assertJson($content);
@@ -21,9 +26,32 @@ trait ApiTestingTrait
         return $json;
     }
 
+    /**
+     * @deprecated use assertResponseFailed
+     */
+    public function assertFailed(int $code, ?string $message = null): void
+    {
+        $this->assertResponseFailed($code, $message);
+    }
+
+    public function assertResponseFailed(int $code, ?string $message = null): void
+    {
+        /** @var AbstractBrowser<object, \Symfony\Component\BrowserKit\Response> $client */
+        $client = self::getClient();
+        $response = $client->getResponse();
+        $this->assertSame($code, $response->getStatusCode());
+
+        if ($message !== null) {
+            $error = $this->getJson()['message'] ?? '';
+            $this->assertStringContainsString($message, $error);
+        }
+    }
+
     public function assertViolationCount(int $count): void
     {
-        $response = self::getClient()->getResponse();
+        /** @var AbstractBrowser<object, \Symfony\Component\BrowserKit\Response> $client */
+        $client = self::getClient();
+        $response = $client->getResponse();
         $this->assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
 
         $response = $this->getJson();
@@ -35,7 +63,9 @@ trait ApiTestingTrait
 
     public function assertHasViolation(string $property, string $message = ''): void
     {
-        $response = self::getClient()->getResponse();
+        /** @var AbstractBrowser<object, \Symfony\Component\BrowserKit\Response> $client */
+        $client = self::getClient();
+        $response = $client->getResponse();
         $this->assertSame(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
 
         $response = $this->getJson();

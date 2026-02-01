@@ -4,83 +4,71 @@ namespace Hyvor\Internal\Tests\Unit\Billing;
 
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
-use Hyvor\Internal\Billing\Dto\LicenseOf;
-use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use PHPUnit\Framework\Attributes\TestWith;
 
 trait BillingFakeTestTrait
 {
 
-    protected abstract function enable(
-        ?BlogsLicense $license = null,
-        LicensesCollection|callable|null $licenses = null
-    ): void;
+    /**
+     * @param array<int, ResolvedLicense>|callable $licenses
+     */
+    protected abstract function enable(array|callable $licenses): void;
 
     public function testEnableAndLicense(): void
     {
-        $this->enable(license: new BlogsLicense);
+        $this->enable(licenses: [1 => new ResolvedLicense(ResolvedLicenseType::TRIAL, BlogsLicense::trial())]);
         $fake = $this->getContainer()->get(BillingInterface::class);
         $this->assertInstanceOf(BillingFake::class, $fake);
-        $this->assertInstanceOf(BlogsLicense::class, $fake->license(1, 1));
+
+        $license = $fake->license(1);
+        $this->assertInstanceOf(BlogsLicense::class, $license->license);
     }
 
     public function testEnableAndLicenseNull(): void
     {
-        $this->enable(null);
+        $this->enable(licenses: [1 => new ResolvedLicense(ResolvedLicenseType::NONE)]);
         $fake = $this->getContainer()->get(BillingInterface::class);
         $this->assertInstanceOf(BillingFake::class, $fake);
-        $this->assertNull($fake->license(1, 1));
+
+        $license = $fake->license(1);
+        $this->assertNull($license->license);
     }
 
     #[TestWith([true])]
     #[TestWith([false])]
     public function test_enable_and_licenses(bool $callback): void
     {
-        $license1 = new BlogsLicense;
-        $license2 = new BlogsLicense(users: 5);
+        $license1 = BlogsLicense::trial();
+        $license2 = BlogsLicense::trial();
+        $license2->users = 5;
 
-        $collection = new LicensesCollection([
-            [
-                'user_id' => 1,
-                'resource_id' => 1,
-                'license' => $license1->serialize()
-            ],
-            [
-                'user_id' => 2,
-                'resource_id' => 2,
-                'license' => $license2->serialize()
-            ],
-            [
-                'user_id' => 3,
-                'resource_id' => null,
-                'license' => null
-            ]
-        ], Component::BLOGS);
+        $data = [
+            1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license1),
+            2 => new ResolvedLicense(ResolvedLicenseType::ENTERPRISE_CONTRACT, $license2),
+            3 => new ResolvedLicense(ResolvedLicenseType::NONE)
+        ];
 
-        $this->enable(licenses: $callback ? fn() => $collection : $collection);
+        $this->enable(licenses: $callback ? fn() => $data : $data);
         $fake = $this->getContainer()->get(BillingInterface::class);
         $this->assertInstanceOf(BillingFake::class, $fake);
 
-        $allLicenses = $fake->licenses([
-            new LicenseOf(1, 1),
-            new LicenseOf(2, 2),
-            new LicenseOf(3, null)
-        ]);
+        $allLicenses = $fake->licenses([1, 2, 3]);
 
-        $this->assertCount(3, $allLicenses->all());
+        $this->assertCount(3, $allLicenses);
 
-        $license1 = $allLicenses->of(1, 1);
-        $this->assertInstanceOf(BlogsLicense::class, $license1);
-        $this->assertEquals(2, $license1->users);
+        $license1 = $allLicenses[1];
+        $this->assertInstanceOf(BlogsLicense::class, $license1->license);
+        $this->assertEquals(2, $license1->license->users);
 
-        $license2 = $allLicenses->of(2, 2);
-        $this->assertInstanceOf(BlogsLicense::class, $license2);
-        $this->assertEquals(5, $license2->users);
+        $license2 = $allLicenses[2];
+        $this->assertInstanceOf(BlogsLicense::class, $license2->license);
+        $this->assertEquals(5, $license2->license->users);
 
-        $license3 = $allLicenses->of(3, null);
-        $this->assertNull($license3);
+        $license3 = $allLicenses[3];
+        $this->assertNull($license3->license);
     }
 
 }

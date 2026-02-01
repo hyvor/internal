@@ -4,7 +4,8 @@ namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Component\Component;
 
 class InternalFakeExtended extends InternalFake
@@ -15,9 +16,13 @@ class InternalFakeExtended extends InternalFake
         return null;
     }
 
-    public function license(int $userId, ?int $resourceId, Component $component): ?License
+    public function licenses(array $organizationIds, Component $component): array
     {
-        return new BlogsLicense(users: 3);
+        $license = BlogsLicense::trial();
+        $license->users = 3;
+        return [
+            1 => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)
+        ];
     }
 
 }

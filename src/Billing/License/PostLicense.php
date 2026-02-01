@@ -2,23 +2,37 @@
 
 namespace Hyvor\Internal\Billing\License;
 
-class PostLicense extends License
+use Hyvor\Internal\Billing\License\Property\LicenseProperty;
+
+final class PostLicense extends License
 {
 
     public function __construct(
-
-        /**
-         * Number of emails per month.
-         * No emails allowed in the trial, need to upgrade to send the real emails (test emails can be sent)
-         */
-        public int $emails = 0,
-
-        /**
-         * Whether Hyvor Post branding is allowed to be removed.
-         */
-        public bool $allowRemoveBranding = false,
+        public int $emails, // 0 = email sending not allowed
+        public bool $allowRemoveBranding,
 
     ) {
+    }
+
+    public static function properties(): array
+    {
+        return [
+            LicenseProperty::int('emails')
+                ->name('Emails')
+                ->description('Number of emails allowed to be sent per month'),
+
+            LicenseProperty::bool('allowRemoveBranding')
+                ->name('Disable Branding')
+                ->description('Disable Hyvor Post branding on emails'),
+        ];
+    }
+
+    public static function trial(): static
+    {
+        return new self(
+            emails: 0,
+            allowRemoveBranding: false
+        );
     }
 
 }
