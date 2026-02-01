@@ -17,6 +17,9 @@
             <directory suffix=".php">./src</directory>
             <directory suffix=".php">./bundle/src</directory>
         </include>
+        <exclude>
+            <directory>./bundle/src/Comms/Event</directory>
+        </exclude>
     </source>
     <php>
         <env name="APP_KEY" value="base64:1irAcKPAtLigPMX/ZDlz7D8CidOIPdgqpaCYUU2EIoU="/>
