@@ -1,5 +1,6 @@
 <?php
 
+use Hyvor\Internal\Bundle\Comms\Comms;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return function (ContainerConfigurator $container): void {
@@ -36,6 +37,7 @@ return function (ContainerConfigurator $container): void {
 
         // Unreferenced service used in tests
         $services->set(\Hyvor\Internal\Bundle\Mail\Component\Brand::class)->public();
+        $services->set(Comms::class)->public();
     }
 
 //    $services->load('Hyvor\\Internal\\User\\', '../../src/User');

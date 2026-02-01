@@ -54,6 +54,7 @@ class TalkPlan extends PlanAbstract
     {
         $license = new TalkLicense(
             credits: $credits,
+            comments: -1,
             storage: $this->getStorageBytesFromCredits($credits),
             sso: false,
             noBranding: false,
@@ -78,6 +79,7 @@ class TalkPlan extends PlanAbstract
     {
         $license = new TalkLicense(
             credits: $credits,
+            comments: -1,
             storage: $this->getStorageBytesFromCredits($credits),
             sso: true,
             noBranding: true,

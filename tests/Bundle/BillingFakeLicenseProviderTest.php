@@ -2,7 +2,6 @@
 
 namespace Bundle;
 
-use Hyvor\Internal\Billing\Dto\LicenseOf;
 use Hyvor\Internal\Bundle\BillingFakeLicenseProvider;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalFake;
@@ -15,11 +14,11 @@ class BillingFakeLicenseProviderTest extends TestCase
     {
 
         $fake = new BillingFakeLicenseProvider(InternalFake::class);
-        $license = $fake->license(1, null, Component::BLOGS);
+        $license = $fake->license(1, Component::BLOGS);
         $this->assertNotNull($license);
 
-        $licenses = $fake->licenses([new LicenseOf(1)], Component::BLOGS);
-        $this->assertCount(1, $licenses->all());
+        $licenses = $fake->licenses([1], Component::BLOGS);
+        $this->assertCount(1, $licenses);
 
     }
 

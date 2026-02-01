@@ -4,6 +4,8 @@ namespace Hyvor\Internal\Tests\Bundle\Testing;
 
 use Hyvor\Internal\Bundle\Testing\ApiTestingTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\BrowserKit\AbstractBrowser;
+use Symfony\Component\DependencyInjection\Container;
 
 class ApiTestingTraitTest extends TestCase
 {
@@ -11,6 +13,8 @@ class ApiTestingTraitTest extends TestCase
 
     private static string $json;
     private static int $status;
+
+    public Container $container;
 
     /**
      * @param array<mixed> $json
@@ -21,7 +25,10 @@ class ApiTestingTraitTest extends TestCase
         self::$status = $status;
     }
 
-    public static function getClient(): TestBrowser
+    /**
+     * @return AbstractBrowser<object, object>
+     */
+    public static function getClient(): AbstractBrowser
     {
         $browser = new TestBrowser();
         $browser->setJson(self::$json, self::$status);

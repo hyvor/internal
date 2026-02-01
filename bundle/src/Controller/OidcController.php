@@ -8,6 +8,7 @@ use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
+use Hyvor\Internal\Bundle\Comms\Comms;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

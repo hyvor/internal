@@ -2,9 +2,8 @@
 
 namespace Hyvor\Internal\Bundle;
 
-use Hyvor\Internal\Billing\Dto\LicenseOf;
-use Hyvor\Internal\Billing\Dto\LicensesCollection;
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalFake;
 
@@ -21,17 +20,18 @@ class BillingFakeLicenseProvider
         $this->internalFake = new $internalFakeClass();
     }
 
-    public function license(int $userId, ?int $blogId, Component $component): ?License
+    public function license(int $userId, Component $component): ?License
     {
-        return $this->internalFake->license($userId, $blogId, $component);
+        return $this->internalFake->license($userId, $component);
     }
 
     /**
-     * @param LicenseOf[] $of
+     * @param int[] $organizationIds
+     * @return array<int, ResolvedLicense>
      */
-    public function licenses(array $of, Component $component): LicensesCollection
+    public function licenses(array $organizationIds, Component $component): array
     {
-        return $this->internalFake->licenses($of, $component);
+        return $this->internalFake->licenses($organizationIds, $component);
     }
 
 }

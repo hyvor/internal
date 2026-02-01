@@ -108,10 +108,12 @@ class ApiExceptionListener
             '/App\\\\[A-Za-z0-9_\\\\]+/',
             function ($matches) {
                 $class = $matches[0];
-                // it should definitely be an enum
-                assert(enum_exists($class));
-                $values = array_column($class::cases(), 'value');
-                return implode('|', $values);
+                if (enum_exists($class)) {
+                    $values = array_column($class::cases(), 'value');
+                    return implode('|', $values);
+                } else {
+                    return $class;
+                }
             },
             $message
         );

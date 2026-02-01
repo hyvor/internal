@@ -47,9 +47,9 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(BillingInterface::class));
-        $license = $app->get(BillingInterface::class)->license(1, null, Component::BLOGS);
-        $this->assertInstanceOf(BlogsLicense::class, $license);
-        $this->assertEquals(2, $license->users);
+        $license = $app->get(BillingInterface::class)->license(1,  Component::BLOGS);
+        $this->assertInstanceOf(BlogsLicense::class, $license->license);
+        $this->assertEquals(2, $license->license->users);
     }
 
     public function testDoesNotFakeIfNotEnabled(): void
@@ -81,7 +81,7 @@ class FakeTest extends \Orchestra\Testbench\TestCase
         config(['internal.fake' => true]);
 
         // adds the extended class
-        include 'internalfakextended.php';
+        include __DIR__ . '/internalfakextended.php';
 
         $app = $this->app;
         assert($app !== null);
@@ -95,9 +95,9 @@ class FakeTest extends \Orchestra\Testbench\TestCase
 
         // billing
         $this->assertTrue($app->bound(Billing::class));
-        $license = $app->get(Billing::class)->license(1, null, Component::BLOGS);
-        $this->assertInstanceOf(BlogsLicense::class, $license);
-        $this->assertEquals(3, $license->users);
+        $license = $app->get(Billing::class)->license(1, Component::BLOGS);
+        $this->assertInstanceOf(BlogsLicense::class, $license->license);
+        $this->assertEquals(3, $license->license->users);
     }
 
 }

@@ -71,8 +71,10 @@ class InternalBundle extends AbstractBundle
             ->set('internal.default_private_instance', null)
             ->set('internal.default_fake', false);
 
+        $services = $container->services();
+
         // InternalConfig class
-        $container->services()
+        $services
             ->get(InternalConfig::class)
             ->args([
                 '%env(APP_SECRET)%',
@@ -86,29 +88,23 @@ class InternalBundle extends AbstractBundle
                 $config['i18n']['default'],
             ]);
 
-        $container
-            ->services()
+        $services
             ->set(AuthInterface::class)
             ->factory([service(AuthFactory::class), 'create']);
 
-        $container
-            ->services()
+        $services
             ->set(BillingInterface::class)
             ->public() // because this is not used from outside, so tests fail (inlined)
             ->factory([service(BillingFactory::class), 'create']);
 
         if ($container->env() === 'test') {
-            $container
-                ->services()
-                ->alias(CommsInterface::class, MockComms::class);
+            $services->alias(CommsInterface::class, MockComms::class);
         } else {
-            $container
-                ->services()
-                ->alias(CommsInterface::class, Comms::class);
+            $services->alias(CommsInterface::class, Comms::class);
         }
 
         // other services
-        $container->services()->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
+        $services->alias(SelfHostedTelemetryInterface::class, SelfHostedTelemetry::class);
     }
 
 }

@@ -8,7 +8,7 @@ final class PostLicense extends License
 {
 
     public function __construct(
-        public int $emails = 0, // 0 = email sending not allowed
+        public int $emails, // 0 = email sending not allowed
         public bool $allowRemoveBranding,
 
     ) {

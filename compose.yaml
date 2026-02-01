@@ -13,6 +13,6 @@ services:
       - ./types:/app/types
       - ./composer.json:/app/composer.json
       - ./composer.lock:/app/composer.lock
-      - ./phpunit.xml:/app/phpunit.xml
-      - ./phpstan.neon:/app/phpstan.neon
+      - ./phpunit.dist.xml:/app/phpunit.dist.xml
+      - ./phpstan.dist.neon:/app/phpstan.dist.neon
       - ./extension.neon:/app/extension.neon

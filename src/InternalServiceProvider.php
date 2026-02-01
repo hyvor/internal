@@ -74,10 +74,6 @@ class InternalServiceProvider extends ServiceProvider
 
     private function routes(): void
     {
-        // auth routes
-        if (config('internal.auth.routes')) {
-            $this->loadRoutesFrom(__DIR__ . '/routes/auth.php');
-        }
         // testing routes
         if (App::environment('testing')) {
             $this->loadRoutesFrom(__DIR__ . '/routes/testing.php');
@@ -128,12 +124,7 @@ class InternalServiceProvider extends ServiceProvider
 
         // fake billing
         BillingFake::enable(
-            license: fn(int $userId, ?int $resourceId, Component $component) => $fakeConfig->license(
-                $userId,
-                $resourceId,
-                $component
-            ),
-            licenses: fn($of, Component $component) => $fakeConfig->licenses($of, $component)
+            licenses: fn(array $organizationIds, Component $component) => $fakeConfig->licenses($organizationIds, $component)
         );
     }
 

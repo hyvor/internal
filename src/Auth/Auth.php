@@ -3,7 +3,7 @@
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Auth\Dto\Me;
-use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
@@ -22,7 +22,7 @@ class Auth implements AuthInterface
     public function __construct(
         private InternalApi $internalApi,
         private InstanceUrlResolver $instanceUrlResolver,
-        private Comms $comms,
+        private CommsInterface $comms,
     ) {
     }
 

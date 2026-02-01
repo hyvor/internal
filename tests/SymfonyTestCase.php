@@ -5,11 +5,13 @@ namespace Hyvor\Internal\Tests;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -119,6 +121,13 @@ class SymfonyTestCase extends TestCase
     {
         $client = new MockHttpClient($response);
         $this->container->set(HttpClientInterface::class, $client);
+    }
+
+    public function getEd(): TestEventDispatcher
+    {
+        $ed = $this->getContainer()->get(EventDispatcherInterface::class);
+        assert($ed instanceof TestEventDispatcher);
+        return $ed;
     }
 
 }

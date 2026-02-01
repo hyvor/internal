@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Auth\Oidc;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Auth\Dto\Me;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,7 +20,6 @@ class OidcAuth implements AuthInterface
     ) {
     }
 
-    // TODO: organization
     public function me(Request $request): ?Me
     {
         $session = $request->getSession();
@@ -31,7 +31,11 @@ class OidcAuth implements AuthInterface
 
         return new Me(
             AuthUser::fromOidcUser($oidcUser),
-            null, // TODO
+            new AuthUserOrganization(
+                0,
+                'Default',
+                'admin'
+            ),
         );
     }
 

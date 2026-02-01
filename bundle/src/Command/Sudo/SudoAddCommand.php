@@ -47,6 +47,7 @@ class SudoAddCommand extends Command
         if (count($usersWithThatEmail) === 1) {
             $user = $usersWithThatEmail[0];
         } else {
+            /** @var array<\Stringable> $answers */
             $answers = array_map(fn($u) => $this->userRow($u), $usersWithThatEmail);
             $helper = new QuestionHelper();
             $question = new ChoiceQuestion(
@@ -84,7 +85,7 @@ class SudoAddCommand extends Command
 
     private function userRow(AuthUser $user): object
     {
-        return new readonly class($user) {
+        return new readonly class($user) implements \Stringable {
 
             public function __construct(public AuthUser $user)
             {
