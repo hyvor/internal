@@ -1,4 +1,4 @@
-## 4.0.0 - Unreleased
+## 4.0.0 - 2026-02-01
 
 - Organization support
 - Hyvor\Internal\Laravel\LogFake removed
