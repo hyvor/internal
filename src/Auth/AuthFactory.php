@@ -21,7 +21,7 @@ class AuthFactory
         if ($this->internalConfig->getDeployment()->isCloud()) {
             if ($this->internalConfig->isFake()) {
                 $fake = InternalFake::getInstance();
-                return new AuthFake($fake->user(), $fake->usersDatabase());
+                return new AuthFake($fake->user(), $fake->organization(), $fake->usersDatabase());
             }
             return $this->hyvorAuth;
         }

@@ -120,7 +120,7 @@ class InternalServiceProvider extends ServiceProvider
         // fake auth
         $user = $fakeConfig->user();
         $usersDatabase = $fakeConfig->usersDatabase();
-        AuthFake::enable($user, $usersDatabase);
+        AuthFake::enable($user, $fakeConfig->organization(), $usersDatabase);
 
         // fake billing
         BillingFake::enable(

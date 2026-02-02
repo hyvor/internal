@@ -3,6 +3,7 @@
 namespace Hyvor\Internal;
 
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
@@ -26,6 +27,15 @@ class InternalFake
             'email' => 'alex@hyvor.com',
             'picture_url' => 'https://picsum.photos/100/100',
         ]);
+    }
+
+    public function organization(): ?AuthUserOrganization
+    {
+        return new AuthUserOrganization(
+            id: 1,
+            name: 'HYVOR',
+            role: 'admin'
+        );
     }
 
     /**
