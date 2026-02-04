@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 final class AuthFake implements AuthInterface
 {
 
+    private ?AuthUserOrganization $organization;
+
     /**
      * If $usersDatabase is set, users will be searched (in fromX() methods) from this collection
      * Results will only be returned if the search is matched
@@ -34,12 +36,14 @@ final class AuthFake implements AuthInterface
      */
     public function __construct(
         null|AuthUser|array $user = null,
+        null|AuthUserOrganization $organization = null,
         ?iterable $usersDatabase = null
     ) {
         if (is_array($user)) {
             $user = self::generateUser($user);
         }
         $this->user = $user;
+        $this->organization = $organization;
         $this->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
     }
 
@@ -55,9 +59,10 @@ final class AuthFake implements AuthInterface
      */
     public static function enable(
         null|AuthUser|array $user = null,
+        null|AuthUserOrganization $organization = null,
         ?iterable $usersDatabase = null
     ): void {
-        $fake = new self($user, $usersDatabase);
+        $fake = new self($user, $organization, $usersDatabase);
         app()->singleton(
             AuthInterface::class,
             fn() => $fake
@@ -72,6 +77,7 @@ final class AuthFake implements AuthInterface
     public static function enableForSymfony(
         Container $container,
         null|AuthUser|array $user = null,
+        null|AuthUserOrganization $organization = null,
         ?iterable $usersDatabase = null
     ): void {
         $fake = new self();
@@ -79,6 +85,7 @@ final class AuthFake implements AuthInterface
             $user = self::generateUser($user);
         }
         $fake->user = $user;
+        $fake->organization = $organization;
         $fake->usersDatabase = $usersDatabase !== null ? self::getAuthUsersFromPartial($usersDatabase) : null;
         self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
@@ -86,7 +93,7 @@ final class AuthFake implements AuthInterface
 
     public function me(string|Request $request): ?Me
     {
-        return $this->user ? new Me($this->user, null) : null;
+        return $this->user ? new Me($this->user, $this->organization) : null;
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string

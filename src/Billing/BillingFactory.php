@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal\Billing;
 
-use Hyvor\Internal\Bundle\BillingFakeLicenseProvider;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\InternalFake;
 
@@ -19,10 +18,9 @@ class BillingFactory
     {
         if ($this->internalConfig->isFake()) {
             $fake = InternalFake::getInstance();
-            $fakeLicenseProvider = new BillingFakeLicenseProvider(get_class($fake));
             return new BillingFake(
                 $this->internalConfig,
-                [$fakeLicenseProvider, 'licenses']
+                fn ($organizationIds, $component) => $fake->licenses($organizationIds, $component),
             );
         }
         return $this->billing;
