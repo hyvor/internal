@@ -66,6 +66,18 @@ class MockComms extends Comms {
     }
 
     /**
+     * @param class-string<AbstractEvent> $eventClass
+     * @return array{event: AbstractEvent, to: Component, async: bool}[]
+     */
+    public function getSentsByEventClass(string $eventClass): array
+    {
+        return array_values(array_filter(
+            $this->sent,
+            fn(array $item) => $item['event'] instanceof $eventClass
+        ));
+    }
+
+    /**
      * @template T of AbstractEvent
      * @param class-string<T> $class
      * @param null|(callable(T): void) $eventValidator
