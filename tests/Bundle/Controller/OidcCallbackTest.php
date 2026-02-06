@@ -8,6 +8,7 @@ use Hyvor\Internal\Auth\Oidc\JwkHelper;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
+use Hyvor\Internal\Auth\Oidc\Testing\OidcTestingUtils;
 use Hyvor\Internal\Bundle\Controller\OidcController;
 use Hyvor\Internal\Bundle\Entity\OidcUser;
 use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
@@ -70,50 +71,6 @@ class OidcCallbackTest extends SymfonyTestCase
         $this->kernel->handle($request, catch: false);
     }
 
-    /**
-     * @return array{privateKeyPem: string, publicKeyPem: string, rsa: array<string, mixed>, jwks: array<string, mixed>}
-     */
-    private function generateKey(): array
-    {
-        $config = [
-            "private_key_bits" => 2048,
-            "private_key_type" => \OPENSSL_KEYTYPE_RSA,
-        ];
-        $res = openssl_pkey_new($config);
-        assert($res !== false);
-        openssl_pkey_export($res, $privateKeyPem);
-        $keyDetails = openssl_pkey_get_details($res);
-        assert($keyDetails !== false);
-        $publicKeyPem = $keyDetails['key'];
-        $rsa = $keyDetails['rsa'];
-
-        $jwks = [
-            "keys" => [
-                [
-                    "kty" => "RSA",
-                    "use" => "sig",
-                    "kid" => "example-key-id-1", // match with the JWT header
-                    "alg" => "RS256",
-                    "n" => $this->base64urlEncode($rsa['n']),
-                    "e" => $this->base64urlEncode($rsa['e']),
-                ]
-            ]
-        ];
-
-        return [
-            'privateKeyPem' => $privateKeyPem,
-            'publicKeyPem' => $publicKeyPem,
-            'rsa' => $rsa,
-            'jwks' => $jwks,
-        ];
-    }
-
-    private function base64urlEncode(mixed $data): string
-    {
-        assert(is_string($data));
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
-    }
-
     private function wellKnownResponse(): JsonMockResponse
     {
         return new JsonMockResponse([
@@ -171,13 +128,7 @@ class OidcCallbackTest extends SymfonyTestCase
             $payload = $extendPayload ? array_merge($defaultPayload, $payload) : $payload;
         }
 
-        $headers = [
-            'kid' => 'example-key-id-1',
-            'alg' => 'RS256',
-            'typ' => 'JWT',
-        ];
-
-        return JWT::encode($payload, $privateKeyPem, 'RS256', null, $headers);
+        return OidcTestingUtils::createIdToken($privateKeyPem,  $payload);
     }
 
     public function test_gets_id_token_and_signs_up(): void
@@ -185,7 +136,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         $jwt = $this->createIdToken($privateKeyPem);
 
@@ -291,7 +242,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         $idToken = $this->createIdToken($privateKeyPem, payload: ['iss' => 1]);
 
@@ -303,7 +254,7 @@ class OidcCallbackTest extends SymfonyTestCase
         $request = $this->createRequest();
 
         $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('Invalid ID Token: The type of the "iss" attribute for class');
+        $this->expectExceptionMessage('Unable to authenticate unable to decode ID token: The type of the "iss" attribute');
 
         $this->kernel->handle($request, catch: false);
     }
@@ -313,7 +264,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         $idToken = $this->createIdToken($privateKeyPem, payload: ['email' => 'wrong'], extendPayload: true);
 
@@ -325,7 +276,7 @@ class OidcCallbackTest extends SymfonyTestCase
         $request = $this->createRequest();
 
         $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('ID token validation failed: [email] This value is not a valid email address.');
+        $this->expectExceptionMessage('This value is not a valid email address.');
 
         $this->kernel->handle($request, catch: false);
     }
@@ -335,7 +286,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         $idToken = $this->createIdToken($privateKeyPem, payload: ['nonce' => 'wrong'], extendPayload: true);
 
@@ -357,7 +308,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         $idToken = $this->createIdToken(
             $privateKeyPem,
@@ -402,7 +353,7 @@ class OidcCallbackTest extends SymfonyTestCase
         [
             'privateKeyPem' => $privateKeyPem,
             'jwks' => $jwks
-        ] = $this->generateKey();
+        ] = OidcTestingUtils::generateKey();
 
         unset($jwks['keys'][0]['alg']);
 

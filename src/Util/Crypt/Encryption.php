@@ -8,7 +8,6 @@ use Illuminate\Encryption\Encrypter;
 
 /**
  * Laravel-compatible encryption
- * @deprecated use Comms API
  */
 class Encryption implements \Illuminate\Contracts\Encryption\Encrypter, StringEncrypter
 {
@@ -38,11 +37,17 @@ class Encryption implements \Illuminate\Contracts\Encryption\Encrypter, StringEn
         return $this->getEncrypter()->decryptString($payload);
     }
 
+    /**
+     * @deprecated this method serializes an input, which causes many troubles. Use encryptString() instead
+     */
     public function encrypt(#[\SensitiveParameter] $value, $serialize = true)
     {
         return $this->getEncrypter()->encrypt($value, $serialize);
     }
 
+    /**
+     * @deprecated prefer decryptString() instead
+     */
     public function decrypt($payload, $unserialize = true)
     {
         return $this->getEncrypter()->decrypt($payload, $unserialize);
@@ -77,6 +82,7 @@ class Encryption implements \Illuminate\Contracts\Encryption\Encrypter, StringEn
      * @param class-string<T> $to
      * @return T
      * @throws DecryptException
+     * @deprecated
      */
     public function decryptTo(string $value, string $to)
     {

@@ -2,8 +2,14 @@
 
 namespace Hyvor\Internal\Auth\Oidc;
 
+use Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
+use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Auth\Oidc\Dto\OidcWellKnownConfigDto;
 use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
@@ -19,6 +25,8 @@ class OidcApiService
         private OidcConfig $oidcConfig,
         private HttpClientInterface $httpClient,
         private CacheInterface $cache,
+        private DenormalizerInterface $denormalizer,
+        private ValidatorInterface $validator,
     ) {
     }
 
@@ -32,6 +40,38 @@ class OidcApiService
             $item->expiresAfter(24 * 60 * 60); // Cache for 24 hours
             return $this->fetchWellKnownConfig();
         });
+    }
+
+    /**
+     * @throws OidcApiException
+     */
+    public function getDecodedIdToken(string $code, string $redirectUri): OidcDecodedIdTokenDto
+    {
+        $idToken = $this->getIdToken($code, $redirectUri);
+        $jwks = $this->getJwks();
+        $wellKnown = $this->getWellKnownConfig();
+
+        try {
+            $keys = JWK::parseKeySet($jwks, JwkHelper::getDefaultAlg($wellKnown));
+            $decoded = JWT::decode($idToken, $keys);
+        } catch (\Exception $e) {
+            throw new OidcApiException('Invalid JWKS: ' . $e->getMessage());
+        }
+
+        try {
+            $decoded->raw_token = $idToken;
+            /** @var OidcDecodedIdTokenDto $decodedIdToken */
+            $decodedIdToken = $this->denormalizer->denormalize($decoded, OidcDecodedIdTokenDto::class);
+        } catch (\Throwable $e) {
+            throw new OidcApiException('unable to decode ID token: ' . $e->getMessage());
+        }
+
+        $errors = $this->validator->validate($decodedIdToken);
+        if (count($errors) > 0) {
+            throw new OidcApiException((string) $errors);
+        }
+
+        return $decodedIdToken;
     }
 
     /**
@@ -76,7 +116,7 @@ class OidcApiService
      * ID Token is a JWT that contains information about the user.
      * @throws OidcApiException
      */
-    public function getIdToken(string $code): string
+    private function getIdToken(string $code, string $redirectUri): string
     {
         $wellKnownConfig = $this->getWellKnownConfig();
         $tokenEndpoint = $wellKnownConfig->tokenEndpoint;
@@ -89,7 +129,7 @@ class OidcApiService
                 'body' => [
                     'grant_type' => 'authorization_code',
                     'code' => $code,
-                    'redirect_uri' => $this->oidcConfig->getCallbackUrl(),
+                    'redirect_uri' => $redirectUri,
                     'client_id' => $this->oidcConfig->getClientId(),
                     'client_secret' => $this->oidcConfig->getClientSecret(),
                 ],
@@ -110,7 +150,7 @@ class OidcApiService
      * @return array<mixed>
      * @throws OidcApiException
      */
-    public function getJwks(): array
+    private function getJwks(): array
     {
         $jwsUri = $this->getWellKnownConfig()->jwksUri;
 
