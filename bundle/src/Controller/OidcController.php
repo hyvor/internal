@@ -90,34 +90,10 @@ class OidcController extends AbstractController
         }
 
         try {
-            $idToken = $this->oidcApiService->getIdToken($code);
-            $jwks = $this->oidcApiService->getJwks();
-            $wellKnown = $this->oidcApiService->getWellKnownConfig();
+            $decodedIdToken = $this->oidcApiService->getDecodedIdToken($code);
         } catch (OidcApiException $e) {
             $this->logger->error('OIDC authentication failed: ' . $e->getMessage());
             throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
-        }
-
-        try {
-            $keys = JWK::parseKeySet($jwks, JwkHelper::getDefaultAlg($wellKnown));
-            $decoded = JWT::decode($idToken, $keys);
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to parse JWKS: ' . $e->getMessage());
-            throw new BadRequestHttpException('Invalid JWKS: ' . $e->getMessage());
-        }
-
-        try {
-            $decoded->raw_token = $idToken;
-            /** @var OidcDecodedIdTokenDto $decodedIdToken */
-            $decodedIdToken = $this->denormalizer->denormalize($decoded, OidcDecodedIdTokenDto::class);
-        } catch (\Throwable $e) {
-            $this->logger->error('Failed to decode ID Token: ' . $e->getMessage());
-            throw new BadRequestHttpException('Invalid ID Token: ' . $e->getMessage());
-        }
-
-        $errors = $this->validator->validate($decodedIdToken);
-        if (count($errors) > 0) {
-            throw new BadRequestHttpException($this->validationErrorsToString($errors));
         }
 
         if ($decodedIdToken->nonce !== $sessionNonce) {
