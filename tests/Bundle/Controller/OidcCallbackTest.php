@@ -254,7 +254,7 @@ class OidcCallbackTest extends SymfonyTestCase
         $request = $this->createRequest();
 
         $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('Invalid ID Token: The type of the "iss" attribute for class');
+        $this->expectExceptionMessage('Unable to authenticate unable to decode ID token: The type of the "iss" attribute');
 
         $this->kernel->handle($request, catch: false);
     }
@@ -276,7 +276,7 @@ class OidcCallbackTest extends SymfonyTestCase
         $request = $this->createRequest();
 
         $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage('ID token validation failed: [email] This value is not a valid email address.');
+        $this->expectExceptionMessage('This value is not a valid email address.');
 
         $this->kernel->handle($request, catch: false);
     }

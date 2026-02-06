@@ -34,8 +34,6 @@ class OidcController extends AbstractController
         private OidcApiService $oidcApiService,
         private OidcUserService $oidcUserService,
         private LoggerInterface $logger,
-        private DenormalizerInterface $denormalizer,
-        private ValidatorInterface $validator,
     ) {
     }
 
@@ -90,7 +88,7 @@ class OidcController extends AbstractController
         }
 
         try {
-            $decodedIdToken = $this->oidcApiService->getDecodedIdToken($code);
+            $decodedIdToken = $this->oidcApiService->getDecodedIdToken($code, $this->oidcConfig->getCallbackUrl($request));
         } catch (OidcApiException $e) {
             $this->logger->error('OIDC authentication failed: ' . $e->getMessage());
             throw new BadRequestHttpException('Unable to authenticate ' . $e->getMessage());
@@ -108,15 +106,6 @@ class OidcController extends AbstractController
         ]);
 
         return new RedirectResponse($sessionRedirect);
-    }
-
-    private function validationErrorsToString(ConstraintViolationListInterface $errors): string
-    {
-        $return = 'ID token validation failed: ';
-        foreach ($errors as $error) {
-            $return .= '[' . $error->getPropertyPath() . '] ' . $error->getMessage();
-        }
-        return $return;
     }
 
     #[Route('/logout', methods: 'GET')]

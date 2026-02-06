@@ -25,7 +25,6 @@ class OidcApiService
         private OidcConfig $oidcConfig,
         private HttpClientInterface $httpClient,
         private CacheInterface $cache,
-        private LoggerInterface $logger,
         private DenormalizerInterface $denormalizer,
         private ValidatorInterface $validator,
     ) {
