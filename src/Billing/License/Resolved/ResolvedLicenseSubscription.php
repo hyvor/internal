@@ -6,6 +6,7 @@ class ResolvedLicenseSubscription implements \JsonSerializable
 {
 
     public function __construct(
+        public int $id,
         public string $status,
         public float $monthlyPrice,
         public bool $isAnnual,
@@ -19,6 +20,7 @@ class ResolvedLicenseSubscription implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
+            'id' => $this->id,
             'status' => $this->status,
             'monthly_price' => $this->monthlyPrice,
             'is_annual' => $this->isAnnual,

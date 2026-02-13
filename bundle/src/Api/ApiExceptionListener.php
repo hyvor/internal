@@ -102,6 +102,8 @@ class ApiExceptionListener
 
     private function hideEnum(string $message): string
     {
+        // TODO: new versions of Symfony does not include the enum name in the error
+
         // This value should be of type App\Enum\SubscriberStatus
         // This value should be of type subscribed|unsubscribed|pending.
         $message = preg_replace_callback(
