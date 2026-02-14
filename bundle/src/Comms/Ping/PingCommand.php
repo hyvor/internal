@@ -64,7 +64,9 @@ class PingCommand
             try {
                 $this->comms->send(new PingEvent(), $c);
                 $success = true;
-            } catch (CommsApiFailedException $e) {}
+            } catch (CommsApiFailedException $e) {
+                $output->writeln('<error>Error pinging ' . $c->value . ': ' . $e->getMessage() . '</error>');
+            }
 
             $end = microtime(true);
             $latency = round(($end - $start) * 1000);
