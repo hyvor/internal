@@ -27,8 +27,7 @@ class Comms implements CommsInterface
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
         private MessageBusInterface $bus,
-    ) {
-    }
+    ) {}
 
     public function signature(string $content): string
     {
@@ -72,7 +71,7 @@ class Comms implements CommsInterface
                 [
                     'headers' => $headers,
                     'body' => $jsonPayload,
-                    'timeout' => 5,
+                    'timeout' => 15,
                 ]
             );
 
@@ -93,7 +92,7 @@ class Comms implements CommsInterface
         } catch (HttpExceptionInterface $e) {
             throw new CommsApiFailedException(
                 'comms event to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
-                ' - ' . substr($response->getContent(false), 0, 250)
+                    ' - ' . substr($response->getContent(false), 0, 250)
             );
         }
         // @codeCoverageIgnoreEnd
@@ -140,5 +139,4 @@ class Comms implements CommsInterface
 
         return $to;
     }
-
 }
