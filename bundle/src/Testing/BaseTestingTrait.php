@@ -77,6 +77,7 @@ trait BaseTestingTrait
 
     public function getCommandTester(string $command): CommandTester
     {
+        assert(self::$kernel !== null);
         $application = new Application(self::$kernel);
         $command = $application->find($command);
         return new CommandTester($command);
