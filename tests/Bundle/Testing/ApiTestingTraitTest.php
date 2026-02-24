@@ -6,6 +6,7 @@ use Hyvor\Internal\Bundle\Testing\ApiTestingTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class ApiTestingTraitTest extends TestCase
 {
@@ -15,6 +16,7 @@ class ApiTestingTraitTest extends TestCase
     private static int $status;
 
     public Container $container;
+    public static ?KernelInterface $kernel = null;
 
     /**
      * @param array<mixed> $json
