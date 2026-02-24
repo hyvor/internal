@@ -7,10 +7,12 @@ use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Monolog\Handler\TestHandler;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Messenger\Test\InteractsWithMessenger;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 trait BaseTestingTrait
 {
@@ -71,6 +73,13 @@ trait BaseTestingTrait
     public function setEnvVar(string $key, string $value): void
     {
         $_ENV[$key] = $value;
+    }
+
+    public function getCommandTester(string $command): CommandTester
+    {
+        $application = new Application(self::$kernel);
+        $command = $application->find($command);
+        return new CommandTester($command);
     }
 
 }
