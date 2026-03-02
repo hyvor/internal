@@ -175,10 +175,16 @@ class ParentEntity
     #[ORM\Column]
     public string $name;
 
-    /** @param \App\Entity\ChildEntity[] $children */
+    /**
+     * @var Collection<int, ChildEntity>
+     */
     #[ORM\OneToMany(targetEntity: ChildEntity::class, mappedBy: 'parent')]
     public Collection $children;
 
+    /**
+     * @param string $name
+     * @param ChildEntity[] $children
+     */
     public function __construct(string $name, array $children)
     {
         $this->name = $name;
