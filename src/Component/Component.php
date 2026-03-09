@@ -4,9 +4,11 @@ namespace Hyvor\Internal\Component;
 
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\CoreLicense;
+use Hyvor\Internal\Billing\License\FortGuardLicense;
 use Hyvor\Internal\Billing\License\License;
 use Hyvor\Internal\Billing\License\Plan\BlogsPlan;
 use Hyvor\Internal\Billing\License\Plan\CorePlan;
+use Hyvor\Internal\Billing\License\Plan\FortGuardPlan;
 use Hyvor\Internal\Billing\License\Plan\PlanAbstract;
 use Hyvor\Internal\Billing\License\Plan\PostPlan;
 use Hyvor\Internal\Billing\License\Plan\RelayPlan;
@@ -22,6 +24,7 @@ enum Component: string
     case BLOGS = 'blogs';
     case POST = 'post';
     case RELAY = 'relay';
+    case FORTGUARD = 'fortguard';
 
     public function name(): string
     {
@@ -31,6 +34,7 @@ enum Component: string
             self::BLOGS => 'Hyvor Blogs',
             self::POST => 'Hyvor Post',
             self::RELAY => 'Hyvor Relay',
+            self::FORTGUARD => 'Hyvor FortGuard',
         };
     }
 
@@ -45,6 +49,7 @@ enum Component: string
             self::BLOGS => BlogsLicense::class,
             self::POST => PostLicense::class,
             self::RELAY => RelayLicense::class,
+            self::FORTGUARD => FortGuardLicense::class,
         };
     }
 
@@ -56,6 +61,7 @@ enum Component: string
             self::BLOGS => BlogsPlan::class,
             self::POST => PostPlan::class,
             self::RELAY => RelayPlan::class,
+            self::FORTGUARD => FortGuardPlan::class,
         };
 
         return new $class();
