@@ -12,6 +12,7 @@ interface AuthInterface
     public function me(Request $request): ?Me;
 
     /**
+     * @param int[] $organizationIds
      * @return Organization[]
      */
     public function organizations(array $organizationIds): array;

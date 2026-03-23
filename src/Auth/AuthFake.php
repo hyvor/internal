@@ -98,6 +98,7 @@ final class AuthFake implements AuthInterface
     }
 
     /**
+     * @param int[] $organizationIds
      * @return Organization[]
      */
     public function organizations(array $organizationIds): array
