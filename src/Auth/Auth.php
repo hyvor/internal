@@ -58,6 +58,10 @@ class Auth implements AuthInterface
     {
         $response = $this->comms->send(new GetOrganizations($organizationIds));
 
+        if ($response->getOrganization() === null) {
+            return [];
+        }
+
         return $response->getOrganizations();
     }
 
