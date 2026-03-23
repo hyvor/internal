@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization;
 
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
+use Hyvor\Internal\Component\Component;
 
 class GetOrganizations extends AbstractEvent
 {

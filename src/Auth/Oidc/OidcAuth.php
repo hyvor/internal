@@ -7,6 +7,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -39,9 +40,16 @@ class OidcAuth implements AuthInterface
         );
     }
 
+    /**
+     * @return Organization[]
+     */
     public function organizations(array $organizationIds): array
     {
-        return [];
+        return [new Organization(
+            id: 0,
+            name: 'Default',
+            members_count: 1,
+        )];
     }
 
     public function authUrl(string $page, string|Request|null $redirect = null): string

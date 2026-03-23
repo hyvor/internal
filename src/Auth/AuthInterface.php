@@ -10,6 +10,10 @@ interface AuthInterface
 {
 
     public function me(Request $request): ?Me;
+
+    /**
+     * @return Organization[]
+     */
     public function organizations(array $organizationIds): array;
 
     /**

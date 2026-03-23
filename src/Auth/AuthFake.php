@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Auth;
 
 use Faker\Factory;
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -96,9 +97,16 @@ final class AuthFake implements AuthInterface
         return $this->user ? new Me($this->user, $this->organization) : null;
     }
 
+    /**
+     * @return Organization[]
+     */
     public function organizations(array $organizationIds): array
     {
-        return $this->organization ? [$this->organization] : [];
+        return $this->organization ? [new Organization(
+            id: $this->organization->id,
+            name: $this->organization->name,
+            members_count: 1,
+        )] : [];
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string
