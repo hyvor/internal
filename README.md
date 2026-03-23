@@ -605,8 +605,22 @@ First, add the migration:
 CREATE TABLE sudo_users (
   user_id BIGINT PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL
+  updated_at TIMESTAMPTZ NOT NULL,
+  role TEXT NOT NULL DEFAULT 'sudo'
 );
+```
+
+If the product supports multiple sudo roles, add the following to `config/internal.php`:
+
+```php
+return App::config([
+    'internal' => [
+        'sudo' => [
+            // always include 'sudo' as the first role
+            'roles' => ['sudo', 'support', 'billing'],
+        ]
+    ],
+]);
 ```
 
 ## Logging

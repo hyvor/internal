@@ -43,6 +43,12 @@ class InternalConfig
          */
         private string $i18nFolder,
         private ?string $i18nDefaultLocale,
+
+        /**
+         * @var string[]
+         * Sudo
+         */
+        private array $sudoRoles = ['sudo'],
     ) {
     }
 
@@ -105,6 +111,14 @@ class InternalConfig
     public function getI18nDefaultLocale(): string
     {
         return $this->i18nDefaultLocale ?? 'en-US';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSudoRoles(): array
+    {
+        return $this->sudoRoles;
     }
 
 }

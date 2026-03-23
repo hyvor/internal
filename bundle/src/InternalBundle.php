@@ -44,6 +44,14 @@ class InternalBundle extends AbstractBundle
                         ->scalarNode('default')->defaultValue('en-US')->end()
                     ->end()
                 ->end()
+                ->arrayNode('sudo')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('roles')
+                            ->defaultValue(['sudo'])
+                            ->scalarPrototype()
+                            ->end()
+                    ->end()
             ->end();
         // @formatter:on
     }
@@ -86,6 +94,7 @@ class InternalBundle extends AbstractBundle
                 '%env(bool:default:internal.default_fake:HYVOR_FAKE)%',
                 $config['i18n']['folder'],
                 $config['i18n']['default'],
+                (array) $config['sudo']['roles'],
             ]);
 
         $services
