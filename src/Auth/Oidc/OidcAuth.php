@@ -39,6 +39,11 @@ class OidcAuth implements AuthInterface
         );
     }
 
+    public function organizations(array $organizationIds): array
+    {
+        return [];
+    }
+
     public function authUrl(string $page, string|Request|null $redirect = null): string
     {
         $redirect = Auth::resolveRedirect($redirect);

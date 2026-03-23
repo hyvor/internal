@@ -96,6 +96,11 @@ final class AuthFake implements AuthInterface
         return $this->user ? new Me($this->user, $this->organization) : null;
     }
 
+    public function organizations(array $organizationIds): array
+    {
+        return $this->organization ? [$this->organization] : [];
+    }
+
     public function authUrl(string $page, null|string|Request $redirect = null): string
     {
         $redirect = Auth::resolveRedirect($redirect);

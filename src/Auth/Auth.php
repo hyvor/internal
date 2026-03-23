@@ -48,6 +48,13 @@ class Auth implements AuthInterface
         return new Me($user, $response->getOrganization());
     }
 
+    public function organizations(array $organizationIds): array
+    {
+        $response = $this->comms->send(new GetOrganizations($organizationIds));
+
+        return $response->getOrganizations();
+    }
+
     public function authUrl(string $page, null|string|Request $redirect = null): string
     {
         $redirect = self::resolveRedirect($redirect);

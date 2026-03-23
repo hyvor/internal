@@ -7,6 +7,8 @@ use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\Dto\Me;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMeResponse;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\GetOrganizations;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\GetOrganizationsResponse;
 use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
@@ -76,15 +78,20 @@ trait AuthTestTrait
 
         $mockComms->assertSent(GetMe::class, Component::CORE,
             eventValidator: fn ($me) => $this->assertSame('test-cookie', $me->getCookie()));
+
+        $mockComms->assertSent(GetOrganizations::class, Component::CORE,
+            eventValidator: fn ($organizations) => $this->assertEquals([1], $organizations->getOrganizationIds()));
     }
 
     public function testReturnsFalseWhenUserIsNull(): void
     {
-
         /** @var MockComms $mockComms */
         $mockComms = $this->getContainer()->get(MockComms::class);
         $mockComms->addResponse(GetMe::class, new GetMeResponse(
             user: null
+        ));
+        $mockComms->addResponse(GetOrganizations::class, new GetOrganizationsResponse(
+            organizations: []
         ));
         $this->setComms($mockComms);
         $this->assertNull($this->getAuth()->me($this->requestWithCookie('test')));

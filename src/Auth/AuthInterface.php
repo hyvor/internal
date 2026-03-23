@@ -3,12 +3,14 @@
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Symfony\Component\HttpFoundation\Request;
 
 interface AuthInterface
 {
 
     public function me(Request $request): ?Me;
+    public function organizations(array $organizationIds): array;
 
     /**
      * Redirect to a login, signup, or logout page of the core
