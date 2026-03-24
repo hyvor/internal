@@ -52,13 +52,17 @@ class Auth implements AuthInterface
 
     /**
      * @param int[] $organizationIds
-     * @return Organization[]
+     * @return array<int, Organization> Indexed by organization ID.
      */
     public function organizations(array $organizationIds): array
     {
         $response = $this->comms->send(new GetOrganizations($organizationIds));
 
-        return $response->getOrganizations();
+        $indexed = [];
+        foreach ($response->getOrganizations() as $org) {
+            $indexed[$org->getId()] = $org;
+        }
+        return $indexed;
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string

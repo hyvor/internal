@@ -13,7 +13,7 @@ interface AuthInterface
 
     /**
      * @param int[] $organizationIds
-     * @return Organization[]
+     * @return array<int, Organization> Indexed by organization ID.
      */
     public function organizations(array $organizationIds): array;
 

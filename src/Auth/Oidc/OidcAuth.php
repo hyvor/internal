@@ -42,15 +42,16 @@ class OidcAuth implements AuthInterface
 
     /**
      * @param int[] $organizationIds
-     * @return Organization[]
+     * @return array<int, Organization> Indexed by organization ID.
      */
     public function organizations(array $organizationIds): array
     {
-        return [new Organization(
+        $org = new Organization(
             id: 0,
             name: 'Default',
             members_count: 1,
-        )];
+        );
+        return [$org->getId() => $org];
     }
 
     public function authUrl(string $page, string|Request|null $redirect = null): string

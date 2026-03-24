@@ -99,15 +99,23 @@ final class AuthFake implements AuthInterface
 
     /**
      * @param int[] $organizationIds
-     * @return Organization[]
+     * @return array<int, Organization> Indexed by organization ID.
      */
     public function organizations(array $organizationIds): array
     {
-        return $this->organization ? [new Organization(
-            id: $this->organization->id,
-            name: $this->organization->name,
-            members_count: 1,
-        )] : [];
+        $org = $this->organization
+            ? new Organization(
+                id: $this->organization->id,
+                name: $this->organization->name,
+                members_count: 1,
+            )
+            : new Organization(
+                id: 0,
+                name: 'Default',
+                members_count: 1,
+            );
+
+        return [$org->getId() => $org];
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string
