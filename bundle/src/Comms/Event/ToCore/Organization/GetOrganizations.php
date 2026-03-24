@@ -5,6 +5,9 @@ namespace Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization;
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
 use Hyvor\Internal\Component\Component;
 
+/**
+ * @extends AbstractEvent<GetOrganizationsResponse>
+ */
 class GetOrganizations extends AbstractEvent
 {
     public function __construct(

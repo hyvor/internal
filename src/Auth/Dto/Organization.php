@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Auth\Dto;
 
 use Hyvor\Internal\Auth\AuthUser;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
  * @phpstan-type BillingAddress array{
@@ -13,6 +14,7 @@ use Hyvor\Internal\Auth\AuthUser;
  *         country: string,
  *     }
  */
+#[Exclude]
 class Organization {
     public function __construct(
         public int $id,
@@ -29,4 +31,13 @@ class Organization {
      * @var BillingAddress|null
      */
     public ?array $billing_address;
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            id: $data['id'],
+            name: $data['name'],
+            members_count: $data['members_count'],
+        );
+    }
 }
