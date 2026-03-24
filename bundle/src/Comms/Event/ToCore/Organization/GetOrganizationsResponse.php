@@ -8,7 +8,7 @@ readonly class GetOrganizationsResponse
 {
     public function __construct(
         /** @var Organization[] $organizations */
-        public array $organizations,
+        private array $organizations,
     ) {}
 
     /**

@@ -393,14 +393,14 @@ trait AuthTestTrait
         $this->assertCount(2, $organizations);
 
         $this->assertInstanceOf(Organization::class, $organizations[0]);
-        $this->assertEquals(1, $organizations[0]->id);
-        $this->assertEquals('Org One', $organizations[0]->name);
-        $this->assertEquals(5, $organizations[0]->members_count);
+        $this->assertEquals(1, $organizations[0]->getId());
+        $this->assertEquals('Org One', $organizations[0]->getName());
+        $this->assertEquals(5, $organizations[0]->getMembersCount());
 
         $this->assertInstanceOf(Organization::class, $organizations[1]);
-        $this->assertEquals(2, $organizations[1]->id);
-        $this->assertEquals('Org Two', $organizations[1]->name);
-        $this->assertEquals(10, $organizations[1]->members_count);
+        $this->assertEquals(2, $organizations[1]->getId());
+        $this->assertEquals('Org Two', $organizations[1]->getName());
+        $this->assertEquals(10, $organizations[1]->getMembersCount());
 
         $mockComms->assertSent(GetOrganizations::class, Component::CORE,
             eventValidator: fn (GetOrganizations $event) => $this->assertSame([1, 2], $event->getOrganizationIds()));
