@@ -3,6 +3,8 @@
 namespace Hyvor\Internal;
 
 use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Sudo\SudoPermissionInterface;
+use Hyvor\Internal\Sudo\SudoRoleInterface;
 
 class InternalConfig
 {
@@ -45,10 +47,14 @@ class InternalConfig
         private ?string $i18nDefaultLocale,
 
         /**
-         * @var string[]
-         * Sudo
+         * @var class-string<\BackedEnum & SudoPermissionInterface>
          */
-        private array $sudoRoles = ['sudo'],
+        private string $sudoPermissionEnum,
+
+        /**
+         * @var class-string<\BackedEnum & SudoRoleInterface>
+         */
+        private string $sudoRoleEnum,
     ) {
     }
 
@@ -114,11 +120,19 @@ class InternalConfig
     }
 
     /**
-     * @return string[]
+     * @return class-string<\BackedEnum & SudoPermissionInterface>
      */
-    public function getSudoRoles(): array
+    public function getSudoPermissionEnum(): string
     {
-        return $this->sudoRoles;
+        return $this->sudoPermissionEnum;
+    }
+
+    /**
+     * @return class-string<\BackedEnum & SudoRoleInterface>
+     */
+    public function getSudoRoleEnum(): string
+    {
+        return $this->sudoRoleEnum;
     }
 
 }

@@ -610,17 +610,70 @@ CREATE TABLE sudo_users (
 );
 ```
 
-If the product supports multiple sudo roles, add the following to `config/internal.php`:
+Then, define the available sudo permissions in an enum:
+
+```php
+namespace App\Service\Sudo;
+
+use Hyvor\Internal\Sudo\SudoPermissionInterface;
+
+enum SudoPermission: string implements SudoPermissionInterface
+{
+    case ACCESS_SUDO = 'access_sudo';
+    case VIEW_USER = 'view_user';
+    case DELETE_USER = 'delete_user';
+    // etc...
+}
+```
+
+Then, configure the available roles and their permissions:
+
+```php
+namespace App\Service\Sudo;
+
+use Hyvor\Internal\Sudo\SudoRoleInterface;
+
+enum SudoRole: string implements SudoRoleInterface
+{
+    // first role must always be sudo, who has access to everything
+    case SUDO = 'sudo';
+    case SUPPORT = 'support';
+    case BILLING = 'billing';
+    
+    /**
+    * @return SudoPermission[]
+    */
+    public function getPermissions(): array
+    {
+        return match ($this) {
+            self::SUDO => SudoPermission::cases(), // all
+            self::SUPPORT => [SudoPermission::ACCESS_SUDO, SudoPermission::VIEW_USER],
+            self::BILLING => [SudoPermission::ACCESS_SUDO]
+        };
+    }
+}
+```
+
+Then, set the enums in the config (`config/packages/internal.php`):
 
 ```php
 return App::config([
     'internal' => [
         'sudo' => [
-            // always include 'sudo' as the first role
-            'roles' => ['sudo', 'support', 'billing'],
+            'permission_enum' => SudoPermission::class,
+            'role_enum' => SudoRole::class,
         ]
     ],
 ]);
+```
+
+Finally, use attributes to set the required permission for each sudo route:
+
+```php
+#[Route('/init')]
+#[SudoPermissionRequired(SudoPermission::ACCESS_SUDO)]
+public function initSudo(): JsonResponse
+{}
 ```
 
 ## Logging

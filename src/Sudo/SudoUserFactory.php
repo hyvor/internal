@@ -30,6 +30,7 @@ final class SudoUserFactory extends PersistentObjectFactory
             'user_id' => rand(),
             'created_at' => new \DateTimeImmutable(),
             'updated_at' => new \DateTimeImmutable(),
+            'role' => 'sudo'
         ];
     }
 
