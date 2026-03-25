@@ -103,6 +103,7 @@ final class AuthFake implements AuthInterface
      */
     public function organizations(array $organizationIds): array
     {
+    
         $org = $this->organization
             ? new Organization(
                 id: $this->organization->id,
@@ -114,7 +115,16 @@ final class AuthFake implements AuthInterface
                 name: 'Default',
                 members_count: 1,
             );
-
+        
+        $org->setBillingEmail('billing@example.com');
+        $org->setBillingAddress([
+            'line1' => '123 Main St',
+            'city' => 'San Francisco',
+            'state' => 'California',
+            'postal_code' => '94101',
+            'country' => 'us',
+        ]);
+        
         return [$org->getId() => $org];
     }
 

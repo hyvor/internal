@@ -56,7 +56,7 @@ class Auth implements AuthInterface
      */
     public function organizations(array $organizationIds): array
     {
-        $response = $this->comms->send(new GetOrganizations($organizationIds));
+        $response = $this->comms->send(new GetOrganizations($organizationIds, true));
 
         $indexed = [];
         foreach ($response->getOrganizations() as $org) {
