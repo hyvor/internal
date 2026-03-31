@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  *     id: int,
  *     name: string,
  *     members_count: int,
- *     created_user?: AuthUserArray,
+ *     created_user?: AuthUserArray|AuthUser,
  *     billing_email?: string,
  *     billing_address?: BillingAddress|null,
  * }
@@ -114,7 +114,11 @@ final class Organization {
         );
 
         if (isset($data['created_user'])) {
-            $org->setCreatedUser(AuthUser::fromArray($data['created_user']));
+            $org->setCreatedUser(
+                $data['created_user'] instanceof AuthUser ?
+                    $data['created_user'] :
+                    AuthUser::fromArray($data['created_user'])
+            );
         }
 
         if (isset($data['billing_email'])) {

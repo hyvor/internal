@@ -152,6 +152,7 @@ final class AuthFake implements AuthInterface
     }
 
     /**
+     * @param int[] $organizationIds
      * @return array<int, Organization>
      */
     private function doGetOrganizations(array $organizationIds): array
@@ -319,7 +320,7 @@ final class AuthFake implements AuthInterface
 
     /**
      * @param array<int, Organization|OrganizationArrayPartial> $orgs
-     * @return array
+     * @return array<Organization>
      */
     private static function getOrganizationsFromPartial(array $orgs): array
     {
@@ -385,6 +386,9 @@ final class AuthFake implements AuthInterface
         ], $fill));
     }
 
+    /**
+     * @param OrganizationArrayPartial $fill
+     */
     public static function generateOrganization(array $fill = []): Organization
     {
         $faker = Factory::create();
@@ -392,7 +396,7 @@ final class AuthFake implements AuthInterface
         return Organization::fromArray(array_merge([
             'id' => $faker->randomNumber(),
             'name' => $faker->name(),
-            'member_count' => $faker->randomNumber(),
+            'members_count' => $faker->randomNumber(),
             'created_user' => self::generateUser(),
             'billing_email' => $faker->email(),
             'billing_address' => [

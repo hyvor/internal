@@ -53,6 +53,7 @@ class Auth implements AuthInterface
     /**
      * @param int[] $organizationIds
      * @return array<int, Organization> Indexed by organization ID.
+     * @throws CommsApiFailedException
      */
     public function organizations(
         array $organizationIds,
@@ -66,11 +67,7 @@ class Auth implements AuthInterface
             $includeCreatedUser,
         ));
 
-        $indexed = [];
-        foreach ($response->getOrganizations() as $org) {
-            $indexed[$org->getId()] = $org;
-        }
-        return $indexed;
+        return $response->getOrganizations();
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string
