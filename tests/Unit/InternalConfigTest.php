@@ -2,7 +2,6 @@
 
 namespace Hyvor\Internal\Tests\Unit;
 
-use Hyvor\Internal\Auth\AuthMethod;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Deployment;
 use Hyvor\Internal\InternalConfig;
@@ -22,7 +21,9 @@ class InternalConfigTest extends SymfonyTestCase
             privateInstance: 'https://hyvor.internal',
             fake: false,
             i18nFolder: 'i18n',
-            i18nDefaultLocale: 'en'
+            i18nDefaultLocale: 'en',
+            sudoPermissionEnum: null,
+            sudoRoleEnum: null
         );
 
         $this->assertSame('c2VjcmV0', $internalConfig->getAppSecretRaw());
@@ -36,6 +37,8 @@ class InternalConfigTest extends SymfonyTestCase
         $this->assertSame('i18n', $internalConfig->getI18nFolder());
         $this->assertSame('en', $internalConfig->getI18nDefaultLocale());
         $this->assertSame(Deployment::CLOUD, $internalConfig->getDeployment());
+        $this->assertSame(null, $internalConfig->getSudoPermissionEnum());
+        $this->assertSame(null, $internalConfig->getSudoRoleEnum());
     }
 
     public function test_internal_config_i18n_realpath(): void
@@ -49,7 +52,9 @@ class InternalConfigTest extends SymfonyTestCase
             privateInstance: 'https://hyvor.internal',
             fake: false,
             i18nFolder: __DIR__ . '/Resource',
-            i18nDefaultLocale: 'en'
+            i18nDefaultLocale: 'en',
+            sudoPermissionEnum: null,
+            sudoRoleEnum: null
         );
         $this->assertStringEndsWith('/tests/Unit/Resource', $internalConfig->getI18nFolder());
     }

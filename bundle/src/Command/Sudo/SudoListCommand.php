@@ -32,7 +32,7 @@ class SudoListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
-        $headers = ['User ID', 'Email', 'Name'];
+        $headers = ['User ID', 'Role', 'Email', 'Name'];
 
         if ($this->isOidc) {
             $headers[] = 'OIDC sub';
@@ -66,6 +66,7 @@ class SudoListCommand extends Command
             if ($authUser) {
                 $row = [
                     $userId,
+                    $sudoUser->getRole(),
                     $authUser->email,
                     $authUser->name,
                 ];
