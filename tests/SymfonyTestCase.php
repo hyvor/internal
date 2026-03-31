@@ -108,7 +108,8 @@ class SymfonyTestCase extends TestCase
         CREATE TABLE sudo_users (
             user_id INTEGER PRIMARY KEY,
             created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
+            updated_at TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'sudo'
         );
         SQL
         );

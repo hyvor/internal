@@ -91,7 +91,14 @@ class SudoAuthorizationListener
         }
 
         $role = $sudoUser->getRole();
-        $roleEnum = $this->internalConfig->getSudoRoleEnum()::from($role);
+
+        $roleEnumClass = $this->internalConfig->getSudoRoleEnum();
+        assert(
+            $roleEnumClass !== null,
+            'sudo.role_enum is not set in internal config'
+        );
+
+        $roleEnum = $roleEnumClass::from($role);
         $rolePermissions = $roleEnum->getPermissions();
 
         /** @var ?SudoPermissionRequired $requiredPermission */

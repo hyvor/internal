@@ -47,14 +47,14 @@ class InternalConfig
         private ?string $i18nDefaultLocale,
 
         /**
-         * @var class-string<\BackedEnum & SudoPermissionInterface>
+         * @var ?class-string<\BackedEnum & SudoPermissionInterface>
          */
-        private string $sudoPermissionEnum,
+        private ?string $sudoPermissionEnum,
 
         /**
-         * @var class-string<\BackedEnum & SudoRoleInterface>
+         * @var ?class-string<\BackedEnum & SudoRoleInterface>
          */
-        private string $sudoRoleEnum,
+        private ?string $sudoRoleEnum,
     ) {
     }
 
@@ -120,17 +120,17 @@ class InternalConfig
     }
 
     /**
-     * @return class-string<\BackedEnum & SudoPermissionInterface>
+     * @return ?class-string<\BackedEnum & SudoPermissionInterface>
      */
-    public function getSudoPermissionEnum(): string
+    public function getSudoPermissionEnum(): ?string
     {
         return $this->sudoPermissionEnum;
     }
 
     /**
-     * @return class-string<\BackedEnum & SudoRoleInterface>
+     * @return ?class-string<\BackedEnum & SudoRoleInterface>
      */
-    public function getSudoRoleEnum(): string
+    public function getSudoRoleEnum(): ?string
     {
         return $this->sudoRoleEnum;
     }
