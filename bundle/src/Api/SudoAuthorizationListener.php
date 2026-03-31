@@ -67,6 +67,10 @@ class SudoAuthorizationListener
             return;
         }
 
+        if ($event->isMainRequest() === false) {
+            return;
+        }
+
         $request = $event->getRequest();
         $user = $this->getUserFromRequest($request);
 
@@ -86,12 +90,11 @@ class SudoAuthorizationListener
             throw new AccessDeniedHttpException('You do not have sudo access.');
         }
 
-       // $sudoUser->setRole('support');
-
         $role = $sudoUser->getRole();
         $roleEnum = $this->internalConfig->getSudoRoleEnum()::from($role);
         $rolePermissions = $roleEnum->getPermissions();
 
+        /** @var ?SudoPermissionRequired $requiredPermission */
         $requiredPermission = $event->getAttributes(SudoPermissionRequired::class)[0] ?? null;
 
         if ($requiredPermission === null) {
