@@ -41,12 +41,13 @@ class SudoUserService
         return $this->sudoUserRepository->findAll();
     }
 
-    public function create(int $userId): void
+    public function create(int $userId, string $role): void
     {
         $user = new SudoUser();
         $user->setUserId($userId);
         $user->setCreatedAt($this->now());
         $user->setUpdatedAt($this->now());
+        $user->setRole($role);
 
         $this->em->persist($user);
         $this->em->flush();

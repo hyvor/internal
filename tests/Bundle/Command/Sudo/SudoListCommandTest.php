@@ -11,6 +11,7 @@ use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use Hyvor\Internal\Tests\Unit\Sudo\SudoUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 
 #[CoversClass(SudoListCommand::class)]
 class SudoListCommandTest extends SymfonyTestCase
@@ -20,7 +21,9 @@ class SudoListCommandTest extends SymfonyTestCase
     use OidcUserFactoryTrait;
     use UpdatesInternalConfig;
 
-    public function test_lists_sudo_users(): void
+    #[TestWith(['sudo'])]
+    #[TestWith(['support'])]
+    public function test_lists_sudo_users(string $role): void
     {
         AuthFake::enableForSymfony($this->container, usersDatabase: [
             [
@@ -30,7 +33,7 @@ class SudoListCommandTest extends SymfonyTestCase
             ]
         ]);
 
-        $this->createSudoUser(1, $this->em);
+        $this->createSudoUser(1, role: $role, em: $this->em);
 
         $command = $this->getCommandTester('sudo:list');
         $command->execute([]);
@@ -40,6 +43,9 @@ class SudoListCommandTest extends SymfonyTestCase
         $output = $command->getDisplay();
         $this->assertStringContainsString('User ID', $output);
         $this->assertStringContainsString('1', $output);
+
+        $this->assertStringContainsString('Role', $output);
+        $this->assertStringContainsString($role, $output);
 
         $this->assertStringContainsString('Email', $output);
         $this->assertStringContainsString('supun@hyvor.com', $output);
@@ -57,7 +63,7 @@ class SudoListCommandTest extends SymfonyTestCase
         $this->container->set(AuthInterface::class, $oidcAuth);
 
         $oidcUser = $this->createOidcUser(email: 'ishini@hyvor.com', name: 'Ishini', sub: 'ishini-sub', em: $this->em);
-        $this->createSudoUser($oidcUser->getId(), $this->em);
+        $this->createSudoUser($oidcUser->getId(), em: $this->em);
 
         $command = $this->getCommandTester('sudo:list');
         $command->execute([]);

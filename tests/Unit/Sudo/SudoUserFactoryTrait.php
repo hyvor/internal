@@ -10,10 +10,11 @@ trait SudoUserFactoryTrait
 
     // using foundry in tests did not work for some reason
     // so manually creating SudoUser instances
-    private function createSudoUser(int $userId = 1, ?EntityManagerInterface $em = null): SudoUser
+    private function createSudoUser(int $userId = 1, string $role = 'sudo', ?EntityManagerInterface $em = null): SudoUser
     {
         $sudoUser = new SudoUser();
         $sudoUser->setUserId($userId);
+        $sudoUser->setRole($role);
         $sudoUser->setCreatedAt(new \DateTimeImmutable());
         $sudoUser->setUpdatedAt(new \DateTimeImmutable());
 
