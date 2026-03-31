@@ -148,4 +148,13 @@ class OidcUserService
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return OidcUser[]
+     */
+    public function searchUsers(string $query, int $limit = 10): array
+    {
+        /** @var \Hyvor\Internal\Auth\Oidc\Repository\OidcUserRepository $repo */
+        $repo = $this->em->getRepository(OidcUser::class);
+        return $repo->searchByQuery($query, $limit);
+    }
 }

@@ -17,4 +17,16 @@ class OidcUserRepository extends ServiceEntityRepository
         parent::__construct($registry, OidcUser::class);
     }
 
+    /**
+     * @return OidcUser[]
+     */
+    public function searchByQuery(string $query, int $limit = 10): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('LOWER(u.email) LIKE LOWER(:query) OR LOWER(u.name) LIKE LOWER(:query)')
+            ->setParameter('query', '%' . $query . '%')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
