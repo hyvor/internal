@@ -13,9 +13,15 @@ interface AuthInterface
 
     /**
      * @param int[] $organizationIds
+     * @param bool $includeBillingInfo only works with Auth
+     * @param bool $includeCreatedUser only works with HyvorAuth
      * @return array<int, Organization> Indexed by organization ID.
      */
-    public function organizations(array $organizationIds): array;
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array;
 
     /**
      * Redirect to a login, signup, or logout page of the core

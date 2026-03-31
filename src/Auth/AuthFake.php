@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @phpstan-import-type AuthUserArrayPartial from AuthUser
+ * @phpstan-import-type OrganizationArrayPartial from Organization
  */
 final class AuthFake implements AuthInterface
 {
@@ -25,6 +26,13 @@ final class AuthFake implements AuthInterface
     private ?array $usersDatabase = null;
 
     /**
+     * If $organizationsDatabase is set, organizations will be searched from this array
+     * Otherwise, fake data will always be generated
+     * @var Organization[]|null
+     */
+    private ?array $organizationsDatabase = null;
+
+    /**
      * Currently logged-in user
      */
     public ?AuthUser $user = null;
@@ -34,11 +42,13 @@ final class AuthFake implements AuthInterface
     /**
      * @param AuthUser|AuthUserArrayPartial|null $user
      * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
+     * @param array<OrganizationArrayPartial|Organization> $organizationsDatabase
      */
     public function __construct(
         null|AuthUser|array $user = null,
         null|AuthUserOrganization $organization = null,
-        ?iterable $usersDatabase = null
+        ?iterable $usersDatabase = null,
+        ?array $organizationsDatabase = null,
     ) {
         if (is_array($user)) {
             $user = self::generateUser($user);
@@ -46,6 +56,7 @@ final class AuthFake implements AuthInterface
         $this->user = $user;
         $this->organization = $organization;
         $this->usersDatabase = $usersDatabase ? self::getAuthUsersFromPartial($usersDatabase) : null;
+        $this->organizationsDatabase = $organizationsDatabase ? self::getOrganizationsFromPartial($organizationsDatabase) : null;
     }
 
     public function __destruct()
@@ -57,13 +68,15 @@ final class AuthFake implements AuthInterface
      * Laravel-only
      * @param AuthUser|AuthUserArrayPartial|null $user
      * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
+     * @param ?array<Organization|OrganizationArrayPartial> $organizationsDatabase
      */
     public static function enable(
         null|AuthUser|array $user = null,
         null|AuthUserOrganization $organization = null,
-        ?iterable $usersDatabase = null
+        ?iterable $usersDatabase = null,
+        ?array $organizationsDatabase = null,
     ): void {
-        $fake = new self($user, $organization, $usersDatabase);
+        $fake = new self($user, $organization, $usersDatabase, $organizationsDatabase);
         app()->singleton(
             AuthInterface::class,
             fn() => $fake
@@ -74,12 +87,14 @@ final class AuthFake implements AuthInterface
      * Symfony-only
      * @param AuthUser|AuthUserArrayPartial|null $user
      * @param iterable<int, AuthUser|AuthUserArrayPartial>|null $usersDatabase
+     * @param ?array<Organization|OrganizationArrayPartial> $organizationsDatabase
      */
     public static function enableForSymfony(
         Container $container,
         null|AuthUser|array $user = null,
         null|AuthUserOrganization $organization = null,
-        ?iterable $usersDatabase = null
+        ?iterable $usersDatabase = null,
+        ?array $organizationsDatabase = null,
     ): void {
         $fake = new self();
         if (is_array($user)) {
@@ -88,6 +103,7 @@ final class AuthFake implements AuthInterface
         $fake->user = $user;
         $fake->organization = $organization;
         $fake->usersDatabase = $usersDatabase !== null ? self::getAuthUsersFromPartial($usersDatabase) : null;
+        $fake->organizationsDatabase = $organizationsDatabase !== null ? self::getOrganizationsFromPartial($organizationsDatabase) : null;
         self::$symfonyContainer = $container;
         $container->set(AuthInterface::class, $fake);
     }
@@ -101,31 +117,63 @@ final class AuthFake implements AuthInterface
      * @param int[] $organizationIds
      * @return array<int, Organization> Indexed by organization ID.
      */
-    public function organizations(array $organizationIds): array
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array
     {
-    
-        $org = $this->organization
-            ? new Organization(
-                id: $this->organization->id,
-                name: $this->organization->name,
-                members_count: 1,
-            )
-            : new Organization(
-                id: 0,
-                name: 'Default',
-                members_count: 1,
+        $organizations = $this->doGetOrganizations($organizationIds);
+
+        // recreate objects based on include settings
+        // so that we can mimic the exact behaviour of missing properties
+        $return = [];
+
+        foreach ($organizations as $id => $organization) {
+            $org = new Organization(
+                $organization->getId(),
+                $organization->getName(),
+                $organization->getMembersCount()
             );
-        
-        $org->setBillingEmail('billing@example.com');
-        $org->setBillingAddress([
-            'line1' => '123 Main St',
-            'city' => 'San Francisco',
-            'state' => 'California',
-            'postal_code' => '94101',
-            'country' => 'us',
-        ]);
-        
-        return [$org->getId() => $org];
+
+            if ($includeBillingInfo) {
+                $org->setBillingEmail($organization->getBillingEmail());
+                $org->setBillingAddress($organization->getBillingAddress());
+            }
+
+            if ($includeCreatedUser) {
+                $org->setCreatedUser($organization->getCreatedUser());
+            }
+
+            $return[$id] = $org;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @return array<int, Organization>
+     */
+    private function doGetOrganizations(array $organizationIds): array
+    {
+        if ($this->organizationsDatabase !== null) {
+            $result = [];
+            foreach ($this->organizationsDatabase as $org) {
+                if (in_array($org->getId(), $organizationIds)) {
+                    $result[$org->getId()] = $org;
+                }
+            }
+            return $result;
+        }
+
+        $result = [];
+        foreach ($organizationIds as $organizationId) {
+            $organization = self::generateOrganization([
+                'id' => $organizationId
+            ]);
+            $result[$organizationId] = $organization;
+        }
+        return $result;
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string
@@ -270,6 +318,20 @@ final class AuthFake implements AuthInterface
     }
 
     /**
+     * @param array<int, Organization|OrganizationArrayPartial> $orgs
+     * @return array
+     */
+    private static function getOrganizationsFromPartial(array $orgs): array
+    {
+        return array_map(function ($org) {
+            if ($org instanceof Organization) {
+                return $org;
+            }
+            return self::generateOrganization($org);
+        }, $orgs);
+    }
+
+    /**
      * @param iterable<int, AuthUser|AuthUserArrayPartial> $users
      */
     public static function databaseSet(iterable $users = []): void
@@ -320,6 +382,26 @@ final class AuthFake implements AuthInterface
             'email' => $faker->email(),
             'email_relay' => $faker->userName() . '@relay.hyvor.com',
             'picture_url' => 'https://picsum.photos/100/100',
+        ], $fill));
+    }
+
+    public static function generateOrganization(array $fill = []): Organization
+    {
+        $faker = Factory::create();
+
+        return Organization::fromArray(array_merge([
+            'id' => $faker->randomNumber(),
+            'name' => $faker->name(),
+            'member_count' => $faker->randomNumber(),
+            'created_user' => self::generateUser(),
+            'billing_email' => $faker->email(),
+            'billing_address' => [
+                'line1' => $faker->streetAddress(),
+                'city' => $faker->city(),
+                'state' => $faker->city(),
+                'postal_code' => $faker->postcode(),
+                'country' => $faker->countryCode(),
+            ]
         ], $fill));
     }
 

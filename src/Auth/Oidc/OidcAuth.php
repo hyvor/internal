@@ -41,17 +41,23 @@ class OidcAuth implements AuthInterface
     }
 
     /**
+     * Only ID 0 is possible
      * @param int[] $organizationIds
      * @return array<int, Organization> Indexed by organization ID.
      */
-    public function organizations(array $organizationIds): array
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array
     {
-        $org = new Organization(
-            id: 0,
-            name: 'Default',
-            members_count: 1,
-        );
-        return [$org->getId() => $org];
+        return [
+            0 => new Organization(
+                id: 0,
+                name: 'Default',
+                members_count: $this->oidcUserService->getTotalUserCount(),
+            )
+        ];
     }
 
     public function authUrl(string $page, string|Request|null $redirect = null): string

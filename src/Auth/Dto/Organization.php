@@ -17,6 +17,15 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  *     billing_address?: BillingAddress|null,
  * }
  *
+ * @phpstan-type OrganizationArrayPartial array{
+ *     id?: int,
+ *     name?: string,
+ *     members_count?: int,
+ *     created_user?: AuthUserArray,
+ *     billing_email?: string,
+ *     billing_address?: BillingAddress|null,
+ * }
+ *
  * @phpstan-type BillingAddress array{
  *     line1: string,
  *     city: string,
@@ -96,9 +105,9 @@ final class Organization {
     /**
      * @param OrganizationArray $data
      */
-    public static function fromArray(array $data): static
+    public static function fromArray(array $data): self
     {
-        $org = new static(
+        $org = new self(
             id: $data['id'],
             name: $data['name'],
             members_count: $data['members_count'],

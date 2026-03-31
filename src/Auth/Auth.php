@@ -54,9 +54,17 @@ class Auth implements AuthInterface
      * @param int[] $organizationIds
      * @return array<int, Organization> Indexed by organization ID.
      */
-    public function organizations(array $organizationIds): array
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array
     {
-        $response = $this->comms->send(new GetOrganizations($organizationIds, true));
+        $response = $this->comms->send(new GetOrganizations(
+            $organizationIds,
+            $includeBillingInfo,
+            $includeCreatedUser,
+        ));
 
         $indexed = [];
         foreach ($response->getOrganizations() as $org) {

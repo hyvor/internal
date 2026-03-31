@@ -374,16 +374,8 @@ trait AuthTestTrait
         $mockComms = $this->getContainer()->get(MockComms::class);
         $mockComms->addResponse(GetOrganizations::class, new GetOrganizationsResponse(
             organizations: [
-                Organization::fromArray([
-                    'id' => 1,
-                    'name' => 'Org One',
-                    'members_count' => 5,
-                ]),
-                Organization::fromArray([
-                    'id' => 2,
-                    'name' => 'Org Two',
-                    'members_count' => 10,
-                ]),
+                new Organization(1, 'Org One', 5),
+                new Organization(2, 'Org Two', 10),
             ]
         ));
         $this->setComms($mockComms);
