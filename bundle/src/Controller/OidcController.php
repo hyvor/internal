@@ -2,25 +2,22 @@
 
 namespace Hyvor\Internal\Bundle\Controller;
 
-use Firebase\JWT\JWT;
-use Hyvor\Internal\Auth\Oidc\Dto\OidcDecodedIdTokenDto;
 use Hyvor\Internal\Auth\Oidc\Exception\OidcApiException;
-use Hyvor\Internal\Auth\Oidc\JwkHelper;
 use Hyvor\Internal\Auth\Oidc\OidcConfig;
 use Hyvor\Internal\Auth\Oidc\OidcApiService;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
-use Hyvor\Internal\Bundle\Comms\Comms;
+use Hyvor\Internal\Deployment;
+use Hyvor\Internal\InternalConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Firebase\JWT\JWK;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OidcController extends AbstractController
 {
@@ -34,8 +31,8 @@ class OidcController extends AbstractController
         private OidcApiService $oidcApiService,
         private OidcUserService $oidcUserService,
         private LoggerInterface $logger,
-    ) {
-    }
+        private InternalConfig $internalConfig,
+    ) {}
 
     #[Route('/login', methods: 'GET')]
     public function oidcLogin(Request $request): RedirectResponse
@@ -141,4 +138,41 @@ class OidcController extends AbstractController
         return new RedirectResponse($logoutUrl);
     }
 
+    #[Route('/search', methods: 'GET')]
+    public function search(Request $request): JsonResponse
+    {
+        if ($this->internalConfig->getDeployment() !== Deployment::ON_PREM) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = $this->oidcUserService->getCurrentUser($request->getSession());
+
+        if ($user === null) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $query = $request->query->getString('search', '');
+
+        if (trim($query) === '') {
+            return $this->json([]);
+        }
+
+        $limit = $request->query->getInt('limit', 10);
+        $offset = $request->query->getInt('offset');
+
+        $oidcUsers = $this->oidcUserService->searchUsers(
+            $query,
+            $limit,
+            $offset
+        );
+
+        return $this->json(array_map(fn($oidcUser) => [
+            'id' => $oidcUser->getId(),
+            'role' => 'admin',
+            'user_id' => $oidcUser->getId(),
+            'user_username' => $oidcUser->getName(),
+            'user_email' => $oidcUser->getEmail(),
+            'user_picture_url' => $oidcUser->getPictureUrl(),
+        ], $oidcUsers));
+    }
 }
