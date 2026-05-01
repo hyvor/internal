@@ -32,8 +32,12 @@ class Plan
          * Usually, if one plan has a group, all plans should have a group
          */
         public ?string $group = null,
+
+        /**
+         * Meter for usage-based billing
+         */
+        public ?Meter $meter = null,
     ) {
         $this->nameReadable = $nameReadable ?? ucfirst($this->name);
     }
-
 }
