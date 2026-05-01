@@ -9,6 +9,7 @@ use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalConfig;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Billing\RecordMeteredUsage;
 
 class Billing implements BillingInterface
 {
@@ -17,8 +18,7 @@ class Billing implements BillingInterface
         private InternalConfig $internalConfig,
         private InstanceUrlResolver $instanceUrlResolver,
         private CommsInterface $comms,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array{urlNew: string, urlChange: string}
@@ -95,4 +95,25 @@ class Billing implements BillingInterface
         return $response->getLicenses();
     }
 
+    /**
+     * @throws CommsApiFailedException
+     */
+    public function recordMeteredUsage(
+        int $organizationId,
+        int $amount,
+        string $idempotencyKey,
+        ?Component $component = null
+    ): void {
+        $component ??= $this->internalConfig->getComponent();
+
+        $this->comms->send(
+            new RecordMeteredUsage(
+                $component,
+                $organizationId,
+                $amount,
+                $idempotencyKey
+            ),
+            Component::CORE
+        );
+    }
 }

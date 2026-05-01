@@ -14,7 +14,8 @@ class BillingFake implements BillingInterface
      * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>) $licenses
      * @return void
      */
-    public static function enable(array|callable $licenses): void {
+    public static function enable(array|callable $licenses): void
+    {
         app()->singleton(Billing::class, function () use ($licenses) {
             return new BillingFake(
                 app(InternalConfig::class),
@@ -48,8 +49,7 @@ class BillingFake implements BillingInterface
          * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>)|null $licenses
          */
         private readonly mixed $licenses = null
-    ) {
-    }
+    ) {}
 
     public function license(int $organizationId, ?Component $component = null): ResolvedLicense
     {
@@ -83,4 +83,21 @@ class BillingFake implements BillingInterface
         return ($this->licenses)($organizationIds, $component);
     }
 
+    public array $recordedUsage = [];
+
+    public function recordMeteredUsage(
+        int $organizationId,
+        int $amount,
+        string $idempotencyKey,
+        ?Component $component = null
+    ): void {
+        $component ??= $this->internalConfig->getComponent();
+
+        $this->recordedUsage[] = [
+            'organizationId' => $organizationId,
+            'amount' => $amount,
+            'idempotencyKey' => $idempotencyKey,
+            'component' => $component,
+        ];
+    }
 }
