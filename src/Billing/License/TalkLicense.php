@@ -14,8 +14,10 @@ final class TalkLicense extends License
         public bool $sso,
         public bool $noBranding,
         public bool $webhooks,
-    ) {
-    }
+        public int $websites, // 0 for unlimited
+        public int $moderators, // 0 for unlimited
+        public bool $rules,
+    ) {}
 
     public static function properties(): array
     {
@@ -46,6 +48,20 @@ final class TalkLicense extends License
             LicenseProperty::bool('webhooks')
                 ->name('Webhooks')
                 ->description('Enable Webhooks to integrate with other services'),
+
+            LicenseProperty::int('websites')
+                ->name('Websites')
+                ->description('Number of websites allowed under this license.')
+                ->note('Set to 0 for unlimited'),
+
+            LicenseProperty::int('moderators')
+                ->name('Moderators')
+                ->description('Number of moderators allowed under this license.')
+                ->note('Set to 0 for unlimited'),
+
+            LicenseProperty::bool('rules')
+                ->name('Rules')
+                ->description('Enable advanced moderation rules to automate your moderation process'),
         ];
     }
 
@@ -57,8 +73,10 @@ final class TalkLicense extends License
             storage: 100_000_000,
             sso: true,
             noBranding: false,
-            webhooks: true
+            webhooks: true,
+            websites: 0,
+            moderators: 0,
+            rules: true,
         );
     }
-
 }

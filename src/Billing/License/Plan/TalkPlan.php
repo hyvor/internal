@@ -35,6 +35,24 @@ class TalkPlan extends PlanAbstract
         });
 
         $this->version(2, function () {
+            $this->plan(
+                'personal',
+                5,
+                new TalkLicense(
+                    credits: 2500,
+                    comments: -1,
+                    storage: 5 * 10 ** 9,
+                    sso: false,
+                    noBranding: false,
+                    webhooks: false,
+                    websites: 1,
+                    moderators: 1,
+                    rules: false,
+                ),
+                nameReadable: "Personal",
+                annualOnly: true,
+            );
+
             $this->premiumPlan(100_000, 12);
             $this->premiumPlan(500_000, 35);
             $this->premiumPlan(1_000_000, 65);
@@ -59,6 +77,9 @@ class TalkPlan extends PlanAbstract
             sso: false,
             noBranding: false,
             webhooks: false,
+            websites: 0,
+            moderators: 0,
+            rules: true,
         );
 
         $nameSuffix = $credits / 1_000_000;
@@ -84,6 +105,9 @@ class TalkPlan extends PlanAbstract
             sso: true,
             noBranding: true,
             webhooks: true,
+            websites: 0,
+            moderators: 0,
+            rules: true,
         );
 
         $nameSuffix = $credits / 1_000_000;
@@ -109,5 +133,4 @@ class TalkPlan extends PlanAbstract
         $gbBytes = 10 ** 9;
         return $creditsMil * 100 * $gbBytes;
     }
-
 }
