@@ -64,6 +64,8 @@ class Comms implements CommsInterface
             'X-Signature' => $this->signature($jsonPayload),
         ];
 
+        $failedPrefix = 'comms event ' . get_class($event) . ' to ' . $url . ' failed. ';
+
         try {
             $response = $this->httpClient->request(
                 'POST',
@@ -82,17 +84,13 @@ class Comms implements CommsInterface
 
             return $response;
         } catch (TransportExceptionInterface $e) { // @codeCoverageIgnoreStart
-            throw new CommsApiFailedException(
-                'comms event to ' . $url . ' failed. Connection error: ' . $e->getMessage(),
-            );
+            throw new CommsApiFailedException($failedPrefix . 'Connection error: ' . $e->getMessage());
         } catch (DecodingExceptionInterface $e) {
-            throw new CommsApiFailedException(
-                'comms event to ' . $url . ' failed. Decoding error: ' . $e->getMessage(),
-            );
+            throw new CommsApiFailedException($failedPrefix . 'Decoding error: ' . $e->getMessage());
         } catch (HttpExceptionInterface $e) {
             throw new CommsApiFailedException(
-                'comms event to ' . $url . ' failed. Status code: ' . $response->getStatusCode() .
-                    ' - ' . substr($response->getContent(false), 0, 250)
+                $failedPrefix . 'Status code: ' . $e->getResponse()->getStatusCode() .
+                    ' - ' . substr($e->getResponse()->getContent(false), 0, 250)
             );
         }
         // @codeCoverageIgnoreEnd
