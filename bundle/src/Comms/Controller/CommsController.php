@@ -4,8 +4,8 @@ namespace Hyvor\Internal\Bundle\Comms\Controller;
 
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\AbstractEvent;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -44,6 +44,10 @@ class CommsController extends AbstractController
 
         if (!$event instanceof AbstractEvent) {
             throw new BadRequestHttpException('invalid event received: unable to unserialize');
+        }
+
+        if (!$this->ed->hasListeners($event::class)) {
+            throw new HttpException(500, 'no event listeners available to handle this event');
         }
 
         $this->ed->dispatch($event);
