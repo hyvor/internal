@@ -20,6 +20,8 @@ class SudoUser
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $updated_at;
 
+    #[ORM\Column(type: 'string')]
+    private string $role = 'sudo';
 
     public function getUserId(): int
     {
@@ -51,6 +53,17 @@ class SudoUser
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
         return $this;
     }
 

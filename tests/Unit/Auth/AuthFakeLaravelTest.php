@@ -10,10 +10,11 @@ class AuthFakeLaravelTest extends LaravelTestCase
     use AuthFakeTestTrait;
 
     /**
-     * @param array<mixed> $user
+     * @param array<mixed>|null $user
+     * @param array<mixed>|null $organizationsDatabase
      */
-    protected function enable(?array $user = null): void
+    protected function enable(?array $user = null, ?array $organizationsDatabase = null): void
     {
-        AuthFake::enable($user);
+        AuthFake::enable($user, organizationsDatabase: $organizationsDatabase);
     }
 }

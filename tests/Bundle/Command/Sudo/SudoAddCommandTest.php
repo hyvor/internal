@@ -7,13 +7,16 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Bundle\Command\Sudo\SudoAddCommand;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
-use Hyvor\Internal\Bundle\EventDispatcher\TestEventDispatcher;
 use Hyvor\Internal\Sudo\Event\SudoAddedEvent;
 use Hyvor\Internal\Sudo\SudoUserService;
+use Hyvor\Internal\Tests\Bundle\Api\Enum\TestSudoPermissionEnum;
+use Hyvor\Internal\Tests\Bundle\Api\Enum\TestSudoRoleEnum;
+use Hyvor\Internal\Tests\Helper\UpdatesInternalConfig;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use Hyvor\Internal\Tests\Unit\Auth\Oidc\OidcUserFactoryTrait;
 use Hyvor\Internal\Tests\Unit\Sudo\SudoUserFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Component\Console\Command\Command;
 
 #[CoversClass(SudoAddCommand::class)]
@@ -25,6 +28,14 @@ class SudoAddCommandTest extends SymfonyTestCase
 
     use OidcUserFactoryTrait;
     use SudoUserFactoryTrait;
+    use UpdatesInternalConfig;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->updateInternalConfig('sudoPermissionEnum', TestSudoPermissionEnum::class);
+        $this->updateInternalConfig('sudoRoleEnum', TestSudoRoleEnum::class);
+    }
 
     public function test_fails_on_invalid_email(): void
     {
@@ -70,7 +81,22 @@ class SudoAddCommandTest extends SymfonyTestCase
         $this->assertSame(Command::FAILURE, $command->getStatusCode());
     }
 
-    public function test_adds_user_when_one_user_found(): void
+    public function test_fails_when_role_invalid(): void
+    {
+        $command = $this->getCommandTester('sudo:add');
+        $command->execute([
+            'email' => 'supun@hyvor.com',
+            'role' => 'invalid'
+        ]);
+
+        $output = $command->getDisplay();
+        $this->assertStringContainsString('Invalid sudo role: invalid, available roles: sudo, support', $output);
+        $this->assertSame(Command::FAILURE, $command->getStatusCode());
+    }
+
+    #[TestWith(['sudo'])]
+    #[TestWith(['support'])]
+    public function test_adds_user_when_one_user_found(string $role): void
     {
         AuthFake::enableForSymfony($this->container, usersDatabase: [
             ['id' => 1, 'email' => 'supun@hyvor.com', 'name' => 'Supun'],
@@ -79,6 +105,7 @@ class SudoAddCommandTest extends SymfonyTestCase
         $command = $this->getCommandTester('sudo:add');
         $command->execute([
             'email' => 'supun@hyvor.com',
+            'role' => $role
         ]);
 
         $output = $command->getDisplay();
@@ -93,6 +120,7 @@ class SudoAddCommandTest extends SymfonyTestCase
 
         $event = $this->getEd()->getFirstEvent(SudoAddedEvent::class);
         $this->assertSame(1, $event->getSudoUser()->getUserId());
+        $this->assertSame($role, $event->getSudoUser()->getRole());
     }
 
     public function test_asks_question_when_multiple_users_found(): void

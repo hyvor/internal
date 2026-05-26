@@ -148,4 +148,18 @@ class OidcUserService
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return OidcUser[]
+     */
+    public function searchUsers(string $query, int $limit = 10, int $offset = 0): array
+    {
+        return $this->em->getRepository(OidcUser::class)
+            ->createQueryBuilder('u')
+            ->where('LOWER(u.email) LIKE LOWER(:query) OR LOWER(u.name) LIKE LOWER(:query)')
+            ->setParameter('query', '%' . $query . '%')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+    }
 }

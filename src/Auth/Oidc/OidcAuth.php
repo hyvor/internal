@@ -7,6 +7,7 @@ use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -37,6 +38,26 @@ class OidcAuth implements AuthInterface
                 'admin'
             ),
         );
+    }
+
+    /**
+     * Only ID 0 is possible
+     * @param int[] $organizationIds
+     * @return array<int, Organization> Indexed by organization ID.
+     */
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array
+    {
+        return [
+            0 => new Organization(
+                id: 0,
+                name: 'Default',
+                members_count: $this->oidcUserService->getTotalUserCount(),
+            )
+        ];
     }
 
     public function authUrl(string $page, string|Request|null $redirect = null): string

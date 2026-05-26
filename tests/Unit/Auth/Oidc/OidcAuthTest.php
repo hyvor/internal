@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Tests\Unit\Auth\Oidc;
 
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Hyvor\Internal\Auth\Oidc\OidcAuth;
 use Hyvor\Internal\Auth\Oidc\OidcUserService;
 use Hyvor\Internal\Auth\Oidc\Repository\OidcUserRepository;
@@ -147,6 +148,23 @@ class OidcAuthTest extends SymfonyTestCase
 
         $this->assertSame($user1->getId(), $fetchedUsers[0]->id);
         $this->assertSame($user2->getId(), $fetchedUsers[1]->id);
+    }
+
+    public function test_organizations(): void
+    {
+        $oidcAuth = $this->getOidcAuth();
+
+        // Always returns the single default organization with ID 0
+        $orgs = $oidcAuth->organizations([0]);
+        $this->assertArrayHasKey(0, $orgs);
+        $this->assertInstanceOf(Organization::class, $orgs[0]);
+        $this->assertSame(0, $orgs[0]->getId());
+        $this->assertSame('Default', $orgs[0]->getName());
+
+        // Returns same result regardless of requested IDs
+        $orgs = $oidcAuth->organizations([1, 2]);
+        $this->assertArrayHasKey(0, $orgs);
+        $this->assertSame('Default', $orgs[0]->getName());
     }
 
     public function test_from_emails(): void

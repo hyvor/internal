@@ -16,5 +16,4 @@ class OidcUserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, OidcUser::class);
     }
-
 }

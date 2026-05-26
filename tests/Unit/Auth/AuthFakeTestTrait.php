@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Tests\Unit\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Auth\Dto\Organization;
 
 trait AuthFakeTestTrait
 {
@@ -16,7 +17,7 @@ trait AuthFakeTestTrait
         return $provider;
     }
 
-    abstract protected function enable(?array $user = null): void;
+    abstract protected function enable(?array $user = null, ?array $organizationsDatabase = null): void;
 
     public function testCheckBasedOnUserIdConfig_1(): void
     {
@@ -244,6 +245,82 @@ trait AuthFakeTestTrait
         $this->assertCount(2, $emails);
         $this->assertSame('john@test.com', $emails['john@test.com'][0]->email);
         $this->assertSame('jane@test.com', $emails['jane@test.com'][0]->email);
+    }
+
+    public function testOrganizations_withoutDatabase(): void
+    {
+        $this->enable();
+        $orgs = $this->getAuthFake()->organizations([1, 2]);
+        $this->assertCount(2, $orgs);
+        $this->assertArrayHasKey(1, $orgs);
+        $this->assertArrayHasKey(2, $orgs);
+        $this->assertInstanceOf(Organization::class, $orgs[1]);
+        $this->assertSame(1, $orgs[1]->getId());
+        $this->assertInstanceOf(Organization::class, $orgs[2]);
+        $this->assertSame(2, $orgs[2]->getId());
+    }
+
+    public function testOrganizations_withDatabase(): void
+    {
+        $this->enable(organizationsDatabase: [
+            ['id' => 10, 'name' => 'Org Ten', 'members_count' => 3],
+            ['id' => 20, 'name' => 'Org Twenty', 'members_count' => 7],
+        ]);
+
+        $orgs = $this->getAuthFake()->organizations([10, 20]);
+        $this->assertCount(2, $orgs);
+        $this->assertSame('Org Ten', $orgs[10]->getName());
+        $this->assertSame(3, $orgs[10]->getMembersCount());
+        $this->assertSame('Org Twenty', $orgs[20]->getName());
+
+        // only matching IDs are returned
+        $orgs = $this->getAuthFake()->organizations([10]);
+        $this->assertCount(1, $orgs);
+        $this->assertArrayHasKey(10, $orgs);
+
+        $orgs = $this->getAuthFake()->organizations([99]);
+        $this->assertCount(0, $orgs);
+    }
+
+    public function testOrganizations_includeBillingInfo(): void
+    {
+        $this->enable(organizationsDatabase: [
+            ['id' => 1, 'name' => 'Org', 'members_count' => 1, 'billing_email' => 'billing@org.com', 'billing_address' => [
+                'line1' => '123 Street',
+                'city' => 'City',
+                'state' => 'State',
+                'postal_code' => '00000',
+                'country' => 'US',
+            ]],
+        ]);
+
+        // with includeBillingInfo, billing fields are present
+        $orgs = $this->getAuthFake()->organizations([1], includeBillingInfo: true);
+        $this->assertSame('billing@org.com', $orgs[1]->getBillingEmail());
+        $this->assertSame('US', $orgs[1]->getBillingAddress()['country'] ?? null);
+    }
+
+    public function testOrganizations_includeCreatedUser(): void
+    {
+        $createdUser = AuthFake::generateUser(['id' => 5, 'name' => 'Owner']);
+        $org = AuthFake::generateOrganization(['id' => 1]);
+        $org->setCreatedUser($createdUser);
+
+        $this->enable(organizationsDatabase: [$org]);
+
+        // without includeCreatedUser, created_user is not set
+        $orgs = $this->getAuthFake()->organizations([1], includeCreatedUser: false);
+        try {
+            $u = $orgs[1]->getCreatedUser();
+            $this->fail('Expected error when accessing unset created_user');
+        } catch (\Throwable) {
+            // expected - property not initialized
+        }
+
+        // with includeCreatedUser, created_user is present
+        $orgs = $this->getAuthFake()->organizations([1], includeCreatedUser: true);
+        $this->assertSame(5, $orgs[1]->getCreatedUser()->id);
+        $this->assertSame('Owner', $orgs[1]->getCreatedUser()->name);
     }
 
 }

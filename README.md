@@ -596,7 +596,7 @@ Every application has sudo users, who can access /sudo and perform administrativ
 
 - Commands
   - `sudo:list` - List all sudo users.
-  - `sudo:add <email>` - Add a sudo user by email.
+  - `sudo:add <email> <role=sudo>` - Add a sudo user by email.
   - `sudo:remove <id>` - Remove a sudo user by user ID.
 
 First, add the migration:
@@ -605,8 +605,75 @@ First, add the migration:
 CREATE TABLE sudo_users (
   user_id BIGINT PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL
+  updated_at TIMESTAMPTZ NOT NULL,
+  role TEXT NOT NULL DEFAULT 'sudo'
 );
+```
+
+Then, define the available sudo permissions in an enum:
+
+```php
+namespace App\Service\Sudo;
+
+use Hyvor\Internal\Sudo\SudoPermissionInterface;
+
+enum SudoPermission: string implements SudoPermissionInterface
+{
+    case ACCESS_SUDO = 'access_sudo';
+    case VIEW_USER = 'view_user';
+    case DELETE_USER = 'delete_user';
+    // etc...
+}
+```
+
+Then, configure the available roles and their permissions:
+
+```php
+namespace App\Service\Sudo;
+
+use Hyvor\Internal\Sudo\SudoRoleInterface;
+
+enum SudoRole: string implements SudoRoleInterface
+{
+    // first role must always be sudo, who has access to everything
+    case SUDO = 'sudo';
+    case SUPPORT = 'support';
+    case BILLING = 'billing';
+    
+    /**
+    * @return SudoPermission[]
+    */
+    public function getPermissions(): array
+    {
+        return match ($this) {
+            self::SUDO => SudoPermission::cases(), // all
+            self::SUPPORT => [SudoPermission::ACCESS_SUDO, SudoPermission::VIEW_USER],
+            self::BILLING => [SudoPermission::ACCESS_SUDO]
+        };
+    }
+}
+```
+
+Then, set the enums in the config (`config/packages/internal.php`):
+
+```php
+return App::config([
+    'internal' => [
+        'sudo' => [
+            'permission_enum' => SudoPermission::class,
+            'role_enum' => SudoRole::class,
+        ]
+    ],
+]);
+```
+
+Finally, use attributes to set the required permission for each sudo route:
+
+```php
+#[Route('/init')]
+#[SudoPermissionRequired(SudoPermission::ACCESS_SUDO)]
+public function initSudo(): JsonResponse
+{}
 ```
 
 ## Logging

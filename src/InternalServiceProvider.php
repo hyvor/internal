@@ -69,6 +69,9 @@ class InternalServiceProvider extends ServiceProvider
             (bool)config('internal.fake'),
             (string)config('internal.i18n.folder'),
             config('internal.i18n.default_locale'),
+            // laravel does not support sudo
+            null,
+            null
         ));
     }
 

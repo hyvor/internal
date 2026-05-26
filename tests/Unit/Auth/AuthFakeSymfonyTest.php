@@ -10,11 +10,12 @@ class AuthFakeSymfonyTest extends SymfonyTestCase
     use AuthFakeTestTrait;
 
     /**
-     * @param array<mixed> $user
+     * @param array<mixed>|null $user
+     * @param array<mixed>|null $organizationsDatabase
      */
-    protected function enable(?array $user = null): void
+    protected function enable(?array $user = null, ?array $organizationsDatabase = null): void
     {
-        AuthFake::enableForSymfony($this->container, $user);
+        AuthFake::enableForSymfony($this->container, $user, organizationsDatabase: $organizationsDatabase);
     }
 
 }

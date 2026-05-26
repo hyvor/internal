@@ -4,6 +4,7 @@ namespace Hyvor\Internal\Bundle\Command\Sudo;
 
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Sudo\SudoUserService;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -23,17 +24,28 @@ class SudoAddCommand extends Command
     public function __construct(
         private AuthInterface $auth,
         private SudoUserService $sudoUserService,
+        private InternalConfig $internalConfig,
     ) {
         parent::__construct();
     }
 
     public function __invoke(
-        #[Argument('Email of the user to add as sudo')] string $email,
         InputInterface $input,
-        OutputInterface $output
+        OutputInterface $output,
+        #[Argument('Email of the user to add as sudo')] string $email,
+        #[Argument('Role of the sudo user')] string $role = 'sudo',
     ): int {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $output->writeln('<error>Invalid email format.</error>');
+            return Command::FAILURE;
+        }
+
+        $sudoRoleEnum = $this->internalConfig->getSudoRoleEnum();
+        assert($sudoRoleEnum !== null);
+
+        if ($sudoRoleEnum::tryFrom($role) === null) {
+            $availableRoles = implode(', ', array_map(fn ($v) => $v->value, $sudoRoleEnum::cases()));
+            $output->writeln("<error>Invalid sudo role: $role, available roles: $availableRoles</error>");
             return Command::FAILURE;
         }
 
@@ -67,7 +79,7 @@ class SudoAddCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->sudoUserService->create($user->id);
+        $this->sudoUserService->create($user->id, $role);
 
         $oidcSub = $user->oidc_sub ? ' (OIDC sub: ' . $user->oidc_sub . ')' : '';
         $output->writeln(

@@ -13,6 +13,9 @@ use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
+use Hyvor\Internal\Sudo\DefaultSudoRole;
+use Hyvor\Internal\Sudo\SudoPermissionInterface;
+use Hyvor\Internal\Sudo\SudoRoleInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -44,6 +47,12 @@ class InternalBundle extends AbstractBundle
                         ->scalarNode('default')->defaultValue('en-US')->end()
                     ->end()
                 ->end()
+                ->arrayNode('sudo')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->stringNode('permission_enum')->defaultNull()->end()
+                        ->stringNode('role_enum')->defaultNull()->end()
+                    ->end()
             ->end();
         // @formatter:on
     }
@@ -73,6 +82,27 @@ class InternalBundle extends AbstractBundle
 
         $services = $container->services();
 
+        $sudoPermissionsEnum = $config['sudo']['permission_enum'];
+        $sudoRoleEnum = $config['sudo']['role_enum'];
+
+        if ($sudoPermissionsEnum || $sudoRoleEnum) {
+
+            assert(
+                enum_exists($sudoPermissionsEnum) &&
+                is_a($sudoPermissionsEnum, \BackedEnum::class, true) &&
+                is_a($sudoPermissionsEnum, SudoPermissionInterface::class, true),
+                'sudo.permission_enum must be a backed enum that implements SudoPermissionInterface'
+            );
+
+            assert(
+                enum_exists($sudoRoleEnum) &&
+                is_a($sudoRoleEnum, \BackedEnum::class, true) &&
+                is_a($sudoRoleEnum, SudoRoleInterface::class, true),
+                'sudo.role_enum must be a backed enum that implements SudoRoleInterface'
+            );
+
+        }
+
         // InternalConfig class
         $services
             ->get(InternalConfig::class)
@@ -86,6 +116,8 @@ class InternalBundle extends AbstractBundle
                 '%env(bool:default:internal.default_fake:HYVOR_FAKE)%',
                 $config['i18n']['folder'],
                 $config['i18n']['default'],
+                $sudoPermissionsEnum,
+                $sudoRoleEnum,
             ]);
 
         $services

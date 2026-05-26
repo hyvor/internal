@@ -5,8 +5,11 @@ namespace Hyvor\Internal\Tests\Unit\Auth;
 use Hyvor\Internal\Auth\Auth;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMeResponse;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\GetOrganizations;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\GetOrganizationsResponse;
 use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
@@ -80,11 +83,13 @@ trait AuthTestTrait
 
     public function testReturnsFalseWhenUserIsNull(): void
     {
-
         /** @var MockComms $mockComms */
         $mockComms = $this->getContainer()->get(MockComms::class);
         $mockComms->addResponse(GetMe::class, new GetMeResponse(
             user: null
+        ));
+        $mockComms->addResponse(GetOrganizations::class, new GetOrganizationsResponse(
+            organizations: []
         ));
         $this->setComms($mockComms);
         $this->assertNull($this->getAuth()->me($this->requestWithCookie('test')));
@@ -363,4 +368,35 @@ trait AuthTestTrait
         $this->assertCount(0, $user);
     }
 
+    public function testOrganizations(): void
+    {
+        /** @var MockComms $mockComms */
+        $mockComms = $this->getContainer()->get(MockComms::class);
+        $mockComms->addResponse(GetOrganizations::class, new GetOrganizationsResponse(
+            organizations: [
+                1 => new Organization(1, 'Org One', 5),
+                2 => new Organization(2, 'Org Two', 10),
+            ]
+        ));
+        $this->setComms($mockComms);
+
+        $organizations = $this->getAuth()->organizations([1, 2]);
+
+        $this->assertCount(2, $organizations);
+        $this->assertArrayHasKey(1, $organizations);
+        $this->assertArrayHasKey(2, $organizations);
+
+        $this->assertInstanceOf(Organization::class, $organizations[1]);
+        $this->assertEquals(1, $organizations[1]->getId());
+        $this->assertEquals('Org One', $organizations[1]->getName());
+        $this->assertEquals(5, $organizations[1]->getMembersCount());
+
+        $this->assertInstanceOf(Organization::class, $organizations[2]);
+        $this->assertEquals(2, $organizations[2]->getId());
+        $this->assertEquals('Org Two', $organizations[2]->getName());
+        $this->assertEquals(10, $organizations[2]->getMembersCount());
+
+        $mockComms->assertSent(GetOrganizations::class, Component::CORE,
+            eventValidator: fn (GetOrganizations $event) => $this->assertSame([1, 2], $event->getOrganizationIds()));
+    }
 }

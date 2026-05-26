@@ -3,7 +3,9 @@
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Auth\Dto\Me;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\GetOrganizations;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\User\GetMe;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
@@ -46,6 +48,26 @@ class Auth implements AuthInterface
         }
 
         return new Me($user, $response->getOrganization());
+    }
+
+    /**
+     * @param int[] $organizationIds
+     * @return array<int, Organization> Indexed by organization ID.
+     * @throws CommsApiFailedException
+     */
+    public function organizations(
+        array $organizationIds,
+        bool $includeBillingInfo = false,
+        bool $includeCreatedUser = false,
+    ): array
+    {
+        $response = $this->comms->send(new GetOrganizations(
+            $organizationIds,
+            $includeBillingInfo,
+            $includeCreatedUser,
+        ));
+
+        return $response->getOrganizations();
     }
 
     public function authUrl(string $page, null|string|Request $redirect = null): string

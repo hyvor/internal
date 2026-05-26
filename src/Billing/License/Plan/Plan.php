@@ -32,8 +32,10 @@ class Plan
          * Usually, if one plan has a group, all plans should have a group
          */
         public ?string $group = null,
+
+        // plan will only be available as an annual subscription
+        public bool $annualOnly = false,
     ) {
         $this->nameReadable = $nameReadable ?? ucfirst($this->name);
     }
-
 }
