@@ -35,6 +35,9 @@ class Plan
 
         // plan will only be available as an annual subscription
         public bool $annualOnly = false,
+
+        // plan will only be available as a monthly subscription
+        public bool $monthlyOnly = false,
     ) {
         $this->nameReadable = $nameReadable ?? ucfirst($this->name);
     }

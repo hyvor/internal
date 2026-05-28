@@ -20,6 +20,7 @@ class FortGuardPlan extends PlanAbstract
                     credits: 150_000
                 ),
                 nameReadable: 'Base Plan',
+                monthlyOnly: true,
             );
         });
     }
