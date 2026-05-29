@@ -34,7 +34,7 @@ enum Component: string
             self::BLOGS => 'Hyvor Blogs',
             self::POST => 'Hyvor Post',
             self::RELAY => 'Hyvor Relay',
-            self::FORTGUARD => 'Hyvor FortGuard',
+            self::FORTGUARD => 'FortGuard',
         };
     }
 
