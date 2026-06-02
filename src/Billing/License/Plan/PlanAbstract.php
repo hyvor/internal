@@ -49,6 +49,7 @@ abstract class PlanAbstract
         ?string $nameReadable = null,
         ?string $group = null,
         bool $annualOnly = false,
+        bool $monthlyOnly = false,
     ): void {
         assert($this->currentVersionForConfig !== null);
         $plan = new Plan(
@@ -59,6 +60,7 @@ abstract class PlanAbstract
             $nameReadable,
             $group,
             $annualOnly,
+            $monthlyOnly,
         );
 
         $currentVersionPlans = $this->versions[$this->currentVersionForConfig];
