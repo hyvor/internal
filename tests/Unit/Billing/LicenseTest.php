@@ -88,14 +88,14 @@ class LicenseTest extends TestCase
                 // safely skips the following
                 'invalidkey' => 0, // invalid key
                 'aiTokens' => false, // invalid type
-                'analyses' => 30,
+                'seoAnalysis' => 30,
                 'badtype' => 'ohno'
             ]
         );
 
         $this->assertInstanceOf(BlogsLicense::class, $license);
         $this->assertSame(1000, $license->users);
-        $this->assertSame(false, $license->analyses);
+        $this->assertSame(false, $license->seoAnalysis);
     }
 
 

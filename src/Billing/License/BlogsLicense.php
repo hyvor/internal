@@ -12,10 +12,10 @@ final class BlogsLicense extends License
         public int $storage,
         public int $aiTokens,
         public int $autoTranslationsChars,
-        public bool $analyses,
-    )
-    {
-    }
+        public bool $seoAnalysis,
+        public bool $linkAnalysis,
+        public int $blogs, // 0 for unlimited
+    ) {}
 
     public static function properties(): array
     {
@@ -37,9 +37,18 @@ final class BlogsLicense extends License
                 ->name('Auto Translation Characters')
                 ->description('Number of characters for automatic translations per month'),
 
-            LicenseProperty::bool('analyses')
-                ->name('Link and SEO Analyses')
-                ->description('Enable link and SEO analyses for blog posts'),
+            LicenseProperty::bool('seoAnalysis')
+                ->name('SEO Analysis')
+                ->description('Enable in-post SEO analysis for blog posts'),
+
+            LicenseProperty::bool('linkAnalysis')
+                ->name('Link Analysis')
+                ->description('Enable post link analysis and bi-weekly full-blog link checks'),
+
+            LicenseProperty::int('blogs')
+                ->name('Blogs')
+                ->description('Number of blogs allowed under this license.')
+                ->note('Set to 0 for unlimited'),
         ];
     }
 
@@ -50,7 +59,9 @@ final class BlogsLicense extends License
             storage: 1_000_000_000, // 1GB
             aiTokens: 1_000,
             autoTranslationsChars: 1000,
-            analyses: true
+            seoAnalysis: true,
+            linkAnalysis: true,
+            blogs: 0,
         );
     }
 
