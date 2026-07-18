@@ -43,7 +43,7 @@ class ScopeBuilder
 
         foreach ($this->scopes as $component => $scopes) {
             foreach ($scopes as $scope) {
-                $scopeStrings[] = "{$component}.{$scope}";
+                $scopeStrings[] = "{$component}:{$scope}";
             }
         }
 
@@ -55,18 +55,10 @@ class ScopeBuilder
         $scopeBuilder = new self();
         $scopes = explode(' ', $scopeString);
         foreach ($scopes as $scope) {
-            $dotPos = strpos($scope, '.');
-            if ($dotPos === false) {
-                continue;
-            }
-
-            $component = substr($scope, 0, $dotPos);
-            $scopeName = substr($scope, $dotPos + 1);
-
+            [$component, $scopeName] = explode(':', $scope, 2);
             if (!Component::tryFrom($component)) {
                 continue;
             }
-
             $scopeBuilder->scopes[$component][] = $scopeName;
         }
         return $scopeBuilder;

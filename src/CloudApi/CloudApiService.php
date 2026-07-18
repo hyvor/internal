@@ -17,11 +17,14 @@ use Hyvor\Sdk\HyvorClient;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CloudApiService
 {
+
+    use ClockAwareTrait;
 
     private const string JWKS_URI = '/.well-known/jwks.json';
 
@@ -41,7 +44,8 @@ class CloudApiService
         return CloudJwt::create(
             $this->internalConfig->getInstance(),
             $orgId,
-            $scopeBuilder
+            $scopeBuilder,
+            $this->now()->getTimestamp(),
         );
     }
 

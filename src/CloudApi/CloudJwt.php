@@ -56,10 +56,11 @@ class CloudJwt
         string $instanceUrl,
         int $orgId,
         ScopeBuilder $scopeBuilder,
+        ?int $now = null
     ): self
     {
         $jwt = new self();
-        $now = time();
+        $now ??= time();
 
         $jwt->iss = $instanceUrl;
         $jwt->sub = (string) $orgId;
