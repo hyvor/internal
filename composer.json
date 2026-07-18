@@ -23,13 +23,14 @@
         }
     ],
     "require-dev": {
-        "orchestra/testbench": "^9.0",
+        "orchestra/testbench": "^11.0",
         "phpstan/phpstan": "^2.1.7",
-        "phpunit/phpunit": "^10.5",
-        "symfony/dependency-injection": "^7.4 || ^8.0",
-        "symfony/config": "^7.4 || ^8.0",
-        "symfony/framework-bundle": "^7.4 || ^8.0",
-        "symfony/browser-kit": "^7.4 || ^8.0"
+        "phpunit/phpunit": "^13.0",
+        "symfony/dependency-injection": "^7.4 || ^8.0 || ^8.1",
+        "symfony/config": "^7.4 || ^8.0 || ^8.1",
+        "symfony/framework-bundle": "^7.4 || ^8.0 || ^8.1",
+        "symfony/browser-kit": "^7.4 || ^8.0 || ^8.1",
+        "hyvor/sdk": "0.0.2"
     },
     "extra": {
         "laravel": {
@@ -39,24 +40,30 @@
         }
     },
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-intl": "*",
         "ext-apcu": "*",
         "ext-openssl": "*",
         "guzzlehttp/guzzle": "^7.8",
         "promphp/prometheus_client_php": "^2.14",
         "illuminate/encryption": "*",
-        "symfony/http-client": "^7.4 || ^8.0",
-        "symfony/expression-language": "^7.4 || ^8.0",
-        "symfony/twig-bundle": "^7.4 || ^8.0",
+        "symfony/http-client": "^7.4 || ^8.0 || ^8.1",
+        "symfony/expression-language": "^7.4 || ^8.0 || ^8.1",
+        "symfony/twig-bundle": "^7.4 || ^8.0 || ^8.1",
         "symfony/ux-twig-component": "^2.24",
-        "symfony/validator": "^7.4 || ^8.0",
-        "firebase/php-jwt": "^6.11",
+        "symfony/validator": "^7.4 || ^8.0 || ^8.1",
+        "firebase/php-jwt": "^7.1.0",
         "symfony/orm-pack": "^2.4",
         "symfony/serializer-pack": "^1.3",
-        "symfony/scheduler": "^7.4 || ^8.0",
-        "symfony/messenger": "^7.4 || ^8.0",
+        "symfony/scheduler": "^7.4 || ^8.0 || ^8.1",
+        "symfony/messenger": "^7.4 || ^8.0 || ^8.1",
         "zenstruck/foundry": "^2.6",
-        "zenstruck/messenger-test": "^1.13"
+        "zenstruck/messenger-test": "^1.13",
+        "nyholm/psr7": "^1.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

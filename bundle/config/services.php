@@ -29,7 +29,8 @@ return function (ContainerConfigurator $container): void {
             '../../src/Metric',
             '../../src/Http',
             '../../src/routes',
-            '../../src/InternalServiceProvider.php'
+            '../../src/InternalServiceProvider.php',
+            '../../src/CloudApi/InternalCloudApiTokenProvider.php'
         ]);
 
     if ($container->env() === 'test') {

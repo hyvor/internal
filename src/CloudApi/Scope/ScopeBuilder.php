@@ -50,4 +50,26 @@ class ScopeBuilder
         return implode(' ', $scopeStrings);
     }
 
+    public static function fromScopeString(string $scopeString): self
+    {
+        $scopeBuilder = new self();
+        $scopes = explode(' ', $scopeString);
+        foreach ($scopes as $scope) {
+            $dotPos = strpos($scope, '.');
+            if ($dotPos === false) {
+                continue;
+            }
+
+            $component = substr($scope, 0, $dotPos);
+            $scopeName = substr($scope, $dotPos + 1);
+
+            if (!Component::tryFrom($component)) {
+                continue;
+            }
+
+            $scopeBuilder->scopes[$component][] = $scopeName;
+        }
+        return $scopeBuilder;
+    }
+
 }
