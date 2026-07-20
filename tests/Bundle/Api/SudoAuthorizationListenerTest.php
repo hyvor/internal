@@ -35,7 +35,7 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
     }
 
     /**
-     * @param array<class-string, list<object>>|null $attributes
+     * @param list<object>|null $attributes
      */
     private function createEvent(string $path, ?array $attributes = null): ControllerEvent
     {
@@ -135,9 +135,7 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
         $this->expectExceptionMessage('Your sudo role does not have permission to access this resource.');
 
         $event = $this->createEvent('/api/sudo/dangerous-endpoint', [
-            SudoPermissionRequired::class => [
-                new SudoPermissionRequired(TestSudoPermissionEnum::DELETE_EVERYTHING)
-            ]
+            new SudoPermissionRequired(TestSudoPermissionEnum::DELETE_EVERYTHING)
         ]);
         $listener = $this->getListener($sudoService);
         $listener($event);
@@ -163,9 +161,7 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
 
 
         $event = $this->createEvent('/api/sudo/some-endpoint', [
-            SudoPermissionRequired::class => [
-                new SudoPermissionRequired(TestSudoPermissionEnum::DELETE_EVERYTHING)
-            ]
+            new SudoPermissionRequired(TestSudoPermissionEnum::DELETE_EVERYTHING)
         ]);
         $listener = $this->getListener($sudoService);
         $listener($event);

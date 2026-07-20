@@ -5,6 +5,7 @@ namespace Unit\CloudApi;
 use Hyvor\Internal\Auth\Oidc\Testing\OidcTestingUtils;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\CloudJwt;
+use Hyvor\Internal\CloudApi\JwtSource\JwtSource;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
 use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
 use Hyvor\Internal\CloudApi\Scope\TalkScope;
@@ -34,7 +35,7 @@ class CloudApiServiceTest extends SymfonyTestCase
         $scopeBuilder = new ScopeBuilder();
         $scopeBuilder->addScopes(Component::TALK, [TalkScope::WEBSITE_READ]);
 
-        $jwtToken = $cloudApiService->createJwtToken(10, $scopeBuilder);
+        $jwtToken = $cloudApiService->createJwtToken(10, $scopeBuilder, JwtSource::forCloud('cloud-api-key'));
 
         $this->assertSame(10, $jwtToken->getOrganizationId());
         $this->assertSame('2024-06-01 13:00:00', new \DateTimeImmutable('@' . $jwtToken->getExpiresAt())->format('Y-m-d H:i:s'));
@@ -67,7 +68,9 @@ class CloudApiServiceTest extends SymfonyTestCase
 
         $scopeBuilder = new ScopeBuilder();
         $scopeBuilder->addScopes(Component::POST, [PostScope::ORG_NEWSLETTERS_CREATE, PostScope::ORG_NEWSLETTERS_READ]);
-        $jwtToken = $cloudApiService->createJwtToken(10, $scopeBuilder)->encode($keys['privateKeyPem'], 'cloud-api-key');
+        $jwtToken = $cloudApiService
+            ->createJwtToken(10, $scopeBuilder, JwtSource::forCloud('cloud-api-key'))
+            ->encode($keys['privateKeyPem'], 'cloud-api-key');
 
         $decodedJwt = $cloudApiService->decodeJwtToken($jwtToken);
         $this->assertSame(10, $decodedJwt->getOrganizationId());

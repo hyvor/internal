@@ -87,7 +87,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
         $response = $exceptionEvent->getResponse();
         $this->assertNotNull($response);
-        $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
+        $data = json_decode((string)$response->getContent(), true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame(422, $response->getStatusCode());
         $this->assertSame('subscriber.email: email should contain @', $data['message']);
         $this->assertSame('subscriber.email', $data['violations'][0]['property']);
@@ -148,7 +148,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
         $response = $exceptionEvent->getResponse();
         $this->assertNotNull($response);
-        $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
+        $data = json_decode((string)$response->getContent(), true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame(500, $response->getStatusCode());
         $this->assertSame('Internal Server Error. Our team has been notified.', $data['message']);
 
@@ -189,7 +189,7 @@ class AbstractApiExceptionListenerTest extends SymfonyTestCase
 
         $response = $exceptionEvent->getResponse();
         $this->assertNotNull($response);
-        $data = json_decode((string)$response->getContent(), true, JSON_THROW_ON_ERROR);
+        $data = json_decode((string)$response->getContent(), true, flags: JSON_THROW_ON_ERROR);
         $this->assertSame(400, $response->getStatusCode());
         $this->assertSame('Custom error message', $data['message']);
         $this->assertSame(['foo' => 'bar'], $data['data']);

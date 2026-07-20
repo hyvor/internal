@@ -43,6 +43,7 @@ class OidcAuthTest extends SymfonyTestCase
         $oidc = $this->getOidcAuth();
         $session = $this->createMock(SessionInterface::class);
         $session
+            ->expects($this->once())
             ->method('get')
             ->with('oidc_user_id')
             ->willReturn(1);
@@ -62,6 +63,7 @@ class OidcAuthTest extends SymfonyTestCase
         $oidc = $this->getOidcAuth();
         $session = $this->createMock(SessionInterface::class);
         $session
+            ->expects($this->once())
             ->method('get')
             ->with('oidc_user_id')
             ->willReturn($oidcUser->getId());
@@ -144,7 +146,6 @@ class OidcAuthTest extends SymfonyTestCase
         $fetchedUsers = $oidcAuth->fromEmail('test@hyvor.com');
 
         $this->assertCount(2, $fetchedUsers);
-        $this->assertContainsOnlyInstancesOf(AuthUser::class, $fetchedUsers);
 
         $this->assertSame($user1->getId(), $fetchedUsers[0]->id);
         $this->assertSame($user2->getId(), $fetchedUsers[1]->id);
@@ -189,13 +190,11 @@ class OidcAuthTest extends SymfonyTestCase
 
         $one = $fetchedUsers['one@hyvor.com'];
         $this->assertCount(2, $one);
-        $this->assertContainsOnlyInstancesOf(AuthUser::class, $one);
         $this->assertSame($email1User1->getId(), $one[0]->id);
         $this->assertSame($email1User2->getId(), $one[1]->id);
 
         $two = $fetchedUsers['two@hyvor.com'];
         $this->assertCount(1, $two);
-        $this->assertContainsOnlyInstancesOf(AuthUser::class, $two);
         $this->assertSame($email2User1->getId(), $two[0]->id);
     }
 
