@@ -47,7 +47,8 @@ class CloudApiServiceTest extends SymfonyTestCase
                 'iat' => 1717243200,
                 'nbf' => 1717243200,
                 'exp' => 1717246800,
-                'scope' => 'talk:website.read'
+                'scope' => 'talk:website.read',
+                'src' => 'cloud:cloud-api-key',
             ],
             $jwtToken->toArray()
         );
