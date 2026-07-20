@@ -6,7 +6,7 @@ use Hyvor\Internal\Bundle\Api\ApiExceptionListener;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -20,9 +20,9 @@ use Symfony\Component\Validator\Exception\ValidationFailedException;
 class AbstractApiExceptionListenerTest extends SymfonyTestCase
 {
 
-    private function getLogger(): LoggerInterface&MockObject
+    private function getLogger(): LoggerInterface&Stub
     {
-        return $this->createMock(LoggerInterface::class);
+        return $this->createStub(LoggerInterface::class);
     }
 
     public function test_matches_prefix(): void

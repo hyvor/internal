@@ -34,7 +34,7 @@ class OidcAuthTest extends SymfonyTestCase
     {
         $oidc = $this->getOidcAuth();
         $requestNotLoggedIn = Request::create('/');
-        $requestNotLoggedIn->setSession($this->createMock(SessionInterface::class));
+        $requestNotLoggedIn->setSession($this->createStub(SessionInterface::class));
         $this->assertNull($oidc->me($requestNotLoggedIn));
     }
 

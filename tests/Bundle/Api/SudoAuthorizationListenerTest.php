@@ -176,7 +176,7 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
     public function test_sudo_api_access_with_guest_user(): void
     {
         AuthFake::enableForSymfony($this->container, null);
-        $sudoService = $this->createSudoServiceMock();
+        $sudoService = $this->createStub(SudoUserService::class);
 
         $listener = $this->getListener($sudoService);
         $event = $this->createEvent('/api/sudo/some-endpoint');
@@ -223,7 +223,7 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
     public function test_sudo_api_access_without_session(): void
     {
         AuthFake::enableForSymfony($this->container, null);
-        $sudoService = $this->createSudoServiceMock();
+        $sudoService = $this->createStub(SudoUserService::class);
 
         $listener = $this->getListener($sudoService);
         $event = $this->createEvent('/api/sudo/some-endpoint');
