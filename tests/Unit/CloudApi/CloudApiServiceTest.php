@@ -3,8 +3,13 @@
 namespace Unit\CloudApi;
 
 use Hyvor\Internal\Auth\Oidc\Testing\OidcTestingUtils;
+use Hyvor\Internal\Bundle\Comms\CommsInterface;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\CloudApi\GetJwtToken;
+use Hyvor\Internal\Bundle\Comms\Event\ToCore\CloudApi\GetJwtTokenResponse;
+use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\CloudJwt;
+use Hyvor\Internal\CloudApi\InternalCloudApiTokenProvider;
 use Hyvor\Internal\CloudApi\JwtSource\JwtSource;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
 use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
@@ -12,6 +17,7 @@ use Hyvor\Internal\CloudApi\Scope\TalkScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\SymfonyTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Clock\Test\ClockSensitiveTrait;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
@@ -19,6 +25,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[CoversClass(CloudApiService::class)]
 #[CoversClass(CloudJwt::class)]
+#[CoversClass(InternalCloudApiTokenProvider::class)]
 class CloudApiServiceTest extends SymfonyTestCase
 {
 
@@ -77,6 +84,79 @@ class CloudApiServiceTest extends SymfonyTestCase
         $this->assertSame(10, $decodedJwt->getOrganizationId());
         $this->assertSame(['org.newsletters.create', 'org.newsletters.read'], $decodedJwt->getScopesFor(Component::POST));
         $this->assertSame([], $decodedJwt->getScopesFor(Component::TALK));
+    }
+
+    public function test_sdk_client_for_org(): void
+    {
+        $httpResponse = new JsonMockResponse([]);
+        $this->getContainer()
+            ->set(HttpClientInterface::class, new MockHttpClient($httpResponse));
+
+        /** @var CloudApiService $cloudApiService */
+        $cloudApiService = $this->getContainer()->get(CloudApiService::class);
+
+        /** @var MockComms $mockComms */
+        $mockComms = $this->getContainer()->get(CommsInterface::class);
+        $mockComms->addResponse(
+            GetJwtToken::class,
+            new GetJwtTokenResponse(
+                'eyJhbGciOi',
+                new \DateTimeImmutable('2024-06-01 13:00:00')
+            )
+        );
+
+        $client = $cloudApiService->getHyvorClientForOrganization(
+            10,
+            Component::POST,
+            [PostScope::NEWSLETTER_READ]
+        );
+
+        $client->post->newsletter(1)->issues->list();
+
+        $this->assertSame(
+            'https://post.hyvor.internal/api/console/issues',
+            $httpResponse->getRequestUrl()
+        );
+
+        $this->assertContains(
+            'Authorization: Bearer eyJhbGciOi',
+            $httpResponse->getRequestOptions()['headers']
+        );
+    }
+
+    public function test_sdk_client_for_org_from_cache(): void
+    {
+        $httpResponse = new JsonMockResponse([]);
+        $this->getContainer()
+            ->set(HttpClientInterface::class, new MockHttpClient($httpResponse));
+
+
+        /** @var CacheItemPoolInterface $cache */
+        $cache = $this->getContainer()->get(CacheItemPoolInterface::class);
+
+        $cacheKey = 'cloud_api_token_post_10_' . md5('issues.read');
+        $cacheItem = $cache->getItem($cacheKey);
+        $cacheItem->set('token-from-cache');
+        $cache->save($cacheItem);
+
+        /** @var CloudApiService $cloudApiService */
+        $cloudApiService = $this->getContainer()->get(CloudApiService::class);
+        $client = $cloudApiService->getHyvorClientForOrganization(
+            10,
+            Component::POST,
+            [PostScope::ISSUES_READ]
+        );
+        $client->post->newsletter(1)->issues->list();
+
+        $this->assertSame(
+            'https://post.hyvor.internal/api/console/issues',
+            $httpResponse->getRequestUrl()
+        );
+
+        $this->assertContains(
+            'Authorization: Bearer token-from-cache',
+            $httpResponse->getRequestOptions()['headers']
+        );
     }
 
 }

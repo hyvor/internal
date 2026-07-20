@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ced8f375a436810290ec972c1d2c43e",
+    "content-hash": "9e587e7ee5a403d3a1aaff700728ea1c",
     "packages": [
         {
             "name": "brick/math",
@@ -9783,16 +9783,16 @@
         },
         {
             "name": "hyvor/sdk",
-            "version": "0.0.2",
+            "version": "0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyvor/sdk-php.git",
-                "reference": "75b5932d77179cad7dda770a6d680361e1ec1a7e"
+                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/75b5932d77179cad7dda770a6d680361e1ec1a7e",
-                "reference": "75b5932d77179cad7dda770a6d680361e1ec1a7e",
+                "url": "https://api.github.com/repos/hyvor/sdk-php/zipball/800c8671cbf175681618f44e3e5b291b720eb1a9",
+                "reference": "800c8671cbf175681618f44e3e5b291b720eb1a9",
                 "shasum": ""
             },
             "require": {
@@ -9809,8 +9809,10 @@
                 "symfony/serializer": "^8.1"
             },
             "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.95",
                 "guzzlehttp/guzzle": "^7.15",
                 "nyholm/psr7": "^1.8",
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
@@ -9825,9 +9827,9 @@
             ],
             "description": "Official PHP SDK for HYVOR products",
             "support": {
-                "source": "https://github.com/hyvor/sdk-php/tree/0.0.2"
+                "source": "https://github.com/hyvor/sdk-php/tree/0.0.4"
             },
-            "time": "2026-07-18T16:05:59+00:00"
+            "time": "2026-07-20T14:31:14+00:00"
         },
         {
             "name": "laravel/pail",

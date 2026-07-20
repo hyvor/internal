@@ -116,6 +116,7 @@ class CloudApiService
                 logger: $this->logger,
             ),
             cloudInstance: $this->internalConfig->getPrivateInstanceWithFallback(),
+            httpClient: new Psr18Client($this->httpClient, new Psr17Factory())
         );
 
     }

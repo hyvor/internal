@@ -31,7 +31,7 @@
         "symfony/config": "^8.0 || ^8.1",
         "symfony/framework-bundle": "^8.0 || ^8.1",
         "symfony/browser-kit": "^8.0 || ^8.1",
-        "hyvor/sdk": "0.0.2"
+        "hyvor/sdk": "0.0.4"
     },
     "extra": {
         "laravel": {
