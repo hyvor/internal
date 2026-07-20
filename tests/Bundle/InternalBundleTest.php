@@ -29,7 +29,7 @@ class InternalBundleTest extends TestCase
     public function test_configure(): void
     {
         $treeBuilder = new TreeBuilder('tree');
-        $definitionFileLoader = new DefinitionFileLoader($treeBuilder, $this->createMock(FileLocatorInterface::class));
+        $definitionFileLoader = new DefinitionFileLoader($treeBuilder, $this->createStub(FileLocatorInterface::class));
         $definitionConfigurator = new DefinitionConfigurator($treeBuilder, $definitionFileLoader, 'path', 'file');
 
         $bundle = new InternalBundle();
@@ -48,7 +48,7 @@ class InternalBundleTest extends TestCase
         $containerBuilder = new ContainerBuilder();
         $containerConfigurator = new ContainerConfigurator(
             $containerBuilder,
-            $this->createMock(PhpFileLoader::class),
+            $this->createStub(PhpFileLoader::class),
             $instanceof,
             'path',
             'file',

@@ -65,7 +65,7 @@ class MetricMiddleware
          * This returns placeholder /api/sudo/user/{id} for /api/sudo/user/123
          */
         $route = $request->route();
-        return $route instanceof Route ? '/' . $route->uri() : '/<unknown>';
+        return '/' . $route->uri();
     }
 
     private function getMetricsResponse(): mixed

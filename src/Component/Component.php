@@ -16,6 +16,8 @@ use Hyvor\Internal\Billing\License\Plan\TalkPlan;
 use Hyvor\Internal\Billing\License\PostLicense;
 use Hyvor\Internal\Billing\License\RelayLicense;
 use Hyvor\Internal\Billing\License\TalkLicense;
+use Hyvor\Internal\CloudApi\Scope\PostScope;
+use Hyvor\Internal\CloudApi\Scope\TalkScope;
 
 enum Component: string
 {
@@ -65,6 +67,15 @@ enum Component: string
         };
 
         return new $class();
+    }
+
+    public function scope(): string
+    {
+        return match ($this) {
+            self::TALK => TalkScope::class,
+            self::POST => PostScope::class,
+            default => '',
+        };
     }
 
     public function selfHostable(): bool
