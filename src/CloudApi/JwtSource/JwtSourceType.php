@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Internal\CloudApi;
+namespace Hyvor\Internal\CloudApi\JwtSource;
 
 enum JwtSourceType
 {

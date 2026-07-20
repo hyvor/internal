@@ -1,8 +1,9 @@
 <?php
 
-namespace Hyvor\Internal\CloudApi;
+namespace Hyvor\Internal\CloudApi\JwtSource;
 
 use Hyvor\Internal\Component\Component;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
  * custom Jwt Source claim.
@@ -11,6 +12,7 @@ use Hyvor\Internal\Component\Component;
  * for cloud API usage, cloud:<cloud_api_key_id>
  * for internal API usage, internal:<component_name>
  */
+#[Exclude]
 class JwtSource
 {
 
@@ -31,7 +33,7 @@ class JwtSource
 
     public static function forInternal(Component $component): self
     {
-        return new self(JwtSourceType::INTERNAL, $component->name);
+        return new self(JwtSourceType::INTERNAL, $component->value);
     }
 
     public static function fromString(string $src): self
@@ -41,9 +43,10 @@ class JwtSource
         } elseif (str_starts_with($src, 'cloud:')) {
             return self::forCloud(substr($src, 6));
         } elseif (str_starts_with($src, 'internal:')) {
-            $component = Component::tryFrom(substr($src, 9));
+            $componentName = substr($src, 9);
+            $component = Component::tryFrom($componentName);
             if ($component === null) {
-                throw new \InvalidArgumentException('Invalid component name in JWT source: ' . $src);
+                throw new \InvalidArgumentException('Invalid component name in JWT source: ' . $componentName);
             }
             return self::forInternal($component);
         } else {

@@ -9,6 +9,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\CloudApi\Exception\JwtDecodeException;
+use Hyvor\Internal\CloudApi\JwtSource\JwtSource;
 use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
 use Hyvor\Internal\CloudApi\Scope\ScopeInterface;
 use Hyvor\Internal\Component\Component;
@@ -38,13 +39,15 @@ class CloudApiService
 
     public function createJwtToken(
         int $orgId,
-        ScopeBuilder $scopeBuilder
+        ScopeBuilder $scopeBuilder,
+        JwtSource $jwtSource
     ): CloudJwt
     {
         return CloudJwt::create(
             $this->internalConfig->getInstance(),
             $orgId,
             $scopeBuilder,
+            $jwtSource,
             $this->now()->getTimestamp(),
         );
     }

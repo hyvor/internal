@@ -2,9 +2,12 @@
 
 namespace Hyvor\Internal\CloudApi\ConsoleApiAuth;
 
+use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\Dto\Me;
-use Hyvor\Internal\CloudApi\JwtSource;
+use Hyvor\Internal\CloudApi\JwtSource\JwtSource;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
+#[Exclude]
 readonly class ConsoleAuthResults
 {
 
@@ -80,5 +83,9 @@ readonly class ConsoleAuthResults
         return 0; // should not happen. review if an entity does not have getId() method
     }
 
+    public function getNullableUser(): ?AuthUser
+    {
+        return $this->user?->getUser();
+    }
 
 }

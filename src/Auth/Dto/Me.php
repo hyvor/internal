@@ -12,7 +12,8 @@ class Me {
     public function __construct(
         private AuthUser $user,
         private ?AuthUserOrganization $organization,
-        private int $sessionId,
+        // session ID from HYVOR (used for audits mostly)
+        private ?int $sessionId = null,
     ) {}
 
     public function getUser(): AuthUser
@@ -25,7 +26,7 @@ class Me {
         return $this->organization;
     }
 
-    public function getSessionId(): int
+    public function getSessionId(): ?int
     {
         return $this->sessionId;
     }

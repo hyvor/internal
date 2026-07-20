@@ -4,6 +4,7 @@ namespace Hyvor\Internal\CloudApi;
 
 use Firebase\JWT\JWT;
 use Hyvor\Internal\CloudApi\Exception\JwtDecodeException;
+use Hyvor\Internal\CloudApi\JwtSource\JwtSource;
 use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
 use Hyvor\Internal\Component\Component;
 
@@ -49,7 +50,7 @@ class CloudJwt
             $jwt->scope = ScopeBuilder::fromScopeString($data['scope']);
             $jwt->src = JwtSource::fromString($data['src']);
         } catch (\Throwable $e) {
-            throw new JwtDecodeException('Invalid JWT payload: unable to parse required fields', previous: $e);
+            throw new JwtDecodeException('Invalid JWT payload: unable to parse required fields' . $e->getMessage(), previous: $e);
         }
 
         return $jwt;

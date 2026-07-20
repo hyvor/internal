@@ -19,8 +19,8 @@ abstract class ConsoleApiAuthorizationListenerAbstract
     public const string ATTRIBUTE_KEY = 'console_auth_results';
 
     public function __construct(
-        private CloudApiService $cloudApiService,
         private InternalConfig $internalConfig,
+        private CloudApiService $cloudApiService,
         private AuthInterface $auth
     ) {}
 
@@ -250,7 +250,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
         }
 
         return new ConsoleAuthResults(
-            accessType: AccessType::CLOUD_TOKEN,
+            accessType: AccessType::SESSION,
             organizationId: $organization->id,
             resource: $resource,
             user: $me
