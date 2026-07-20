@@ -133,7 +133,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
         if ($orgEndpoint) {
             throw new AccessDeniedHttpException(
-                'Organization are not supported with resource API keys. Please use a Cloud API token instead.',
+                'Organization endpoints are not supported with resource API keys. Please use a Cloud API token instead.',
             );
         }
 

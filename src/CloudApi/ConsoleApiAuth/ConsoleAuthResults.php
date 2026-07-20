@@ -53,11 +53,6 @@ readonly class ConsoleAuthResults
         return $this->resource;
     }
 
-    public function getUser(): ?Me
-    {
-        return $this->user;
-    }
-
     /**
      * Generates a standardized string representation of the source of the access.
      * for session, user:<session_id>

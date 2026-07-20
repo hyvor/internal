@@ -70,8 +70,7 @@ class CloudApiService
             new Psr18Client($this->httpClient, $psr17Factory),
             $psr17Factory,
             $this->cache,
-            null, // $expiresAfter int seconds to set the JWKS to expire
-            true  // $rateLimit    true to enable rate limit of 10 RPS on lookup of invalid keys
+            3600, // 1 hour
         );
 
         try {
