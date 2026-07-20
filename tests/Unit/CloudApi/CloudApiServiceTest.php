@@ -101,7 +101,7 @@ class CloudApiServiceTest extends SymfonyTestCase
             GetJwtToken::class,
             new GetJwtTokenResponse(
                 'eyJhbGciOi',
-                new \DateTimeImmutable('2024-06-01 13:00:00')
+                new \DateTimeImmutable('+1 hour')
             )
         );
 
@@ -122,9 +122,16 @@ class CloudApiServiceTest extends SymfonyTestCase
             'Authorization: Bearer eyJhbGciOi',
             $httpResponse->getRequestOptions()['headers']
         );
+
+        // make sure it's cached
+        $cacheKey = 'cloud_api_token_post_10_' . md5('newsletter.read');
+        /** @var CacheItemPoolInterface $cache */
+        $cache = $this->getContainer()->get(CacheItemPoolInterface::class);
+        $cacheItem = $cache->getItem($cacheKey);
+        $this->assertTrue($cacheItem->isHit());
     }
 
-    public function test_sdk_client_for_org_from_cache(): void
+    public function test_sdk_client_cached_for_org(): void
     {
         $httpResponse = new JsonMockResponse([]);
         $this->getContainer()
