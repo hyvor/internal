@@ -40,7 +40,7 @@ class CommsController extends AbstractController
         }
 
         $eventSerialized = $input->event;
-        $event = unserialize($eventSerialized);
+        $event = @unserialize($eventSerialized);
 
         if (!$event instanceof AbstractEvent) {
             throw new BadRequestHttpException('invalid event received: unable to unserialize');

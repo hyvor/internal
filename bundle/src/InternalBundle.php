@@ -82,8 +82,8 @@ class InternalBundle extends AbstractBundle
 
         $services = $container->services();
 
-        $sudoPermissionsEnum = $config['sudo']['permission_enum'];
-        $sudoRoleEnum = $config['sudo']['role_enum'];
+        $sudoPermissionsEnum = $config['sudo']['permission_enum'] ?? null;
+        $sudoRoleEnum = $config['sudo']['role_enum'] ?? null;
 
         if ($sudoPermissionsEnum || $sudoRoleEnum) {
 
