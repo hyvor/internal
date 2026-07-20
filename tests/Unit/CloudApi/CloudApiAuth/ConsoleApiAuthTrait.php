@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Tests\Unit\CloudApi\CloudApiAuth;
 
 use Hyvor\Internal\Auth\AuthInterface;
+use Hyvor\Internal\Auth\Dto\Me;
 use Hyvor\Internal\CloudApi\CloudApiService;
 use Hyvor\Internal\CloudApi\ConsoleApiAuth\ConsoleApiAuthorizationListenerAbstract;
 use Hyvor\Internal\Component\Component;
@@ -22,16 +23,18 @@ trait ConsoleApiAuthTrait
         int $organizationId = 1,
         ?CloudApiService $cloudApiService  = null,
         Component $component = Component::POST,
-        ?object $resourceFromRequest = null
+        ?object $resourceFromRequest = null,
+        ?AuthInterface $auth = null,
+        null|Closure $getUserResourceScopes = null,
     ): ConsoleApiAuthorizationListenerAbstract
     {
 
-        $internalConfig = $this->createMock(InternalConfig::class);
+        $internalConfig = $this->createStub(InternalConfig::class);
         $internalConfig
             ->method('getComponent')
             ->willReturn($component);
         $cloudApiService ??= $this->createMock(CloudApiService::class);
-        $auth = $this->createMock(AuthInterface::class);
+        $auth ??= $this->createStub(AuthInterface::class);
 
         return new class(
             $internalConfig,
@@ -41,6 +44,7 @@ trait ConsoleApiAuthTrait
             $onProductApiKeyUse,
             $organizationId,
             $resourceFromRequest,
+            $getUserResourceScopes,
         ) extends ConsoleApiAuthorizationListenerAbstract
         {
 
@@ -51,7 +55,8 @@ trait ConsoleApiAuthTrait
                 private null|Closure $getResourceFromApiKey = null,
                 private null|Closure $onProductApiKeyUse = null,
                 private int $organizationId = 1,
-                private ?object $resourceFromRequest = null
+                private ?object $resourceFromRequest = null,
+                private null|Closure $getUserResourceScopes = null,
             ) {
                 parent::__construct($internalConfig, $cloudApiService, $auth);
             }
@@ -93,6 +98,10 @@ trait ConsoleApiAuthTrait
 
             protected function getUserResourceScopes(object $resource, int $userId): null|array
             {
+                if ($this->getUserResourceScopes) {
+                    return ($this->getUserResourceScopes)($resource, $userId);
+                }
+                return null;
             }
 
             protected function onProductApiKeyUse(object $apiKeyModel): void
@@ -120,7 +129,7 @@ trait ConsoleApiAuthTrait
         }
 
         $event = new ControllerEvent(
-            $this->createMock(HttpKernelInterface::class),
+            $this->createStub(HttpKernelInterface::class),
             fn() => null,
             $request,
             Kernel::MAIN_REQUEST
