@@ -111,7 +111,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
         if ($authorizationHeader) {
             if (!str_starts_with($authorizationHeader, 'Bearer ')) {
-                throw new AccessDeniedHttpException('Authorization header must start with "Bearer ".');
+                throw new AccessDeniedHttpException('Authorization header must be a Bearer token');
             }
             $bearerToken = trim(substr($authorizationHeader, 7));
 

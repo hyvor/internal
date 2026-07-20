@@ -29,11 +29,11 @@ trait ConsoleApiAuthTrait
     ): ConsoleApiAuthorizationListenerAbstract
     {
 
-        $internalConfig = $this->createStub(InternalConfig::class);
+        $internalConfig = $this->createMock(InternalConfig::class);
         $internalConfig
             ->method('getComponent')
             ->willReturn($component);
-        $cloudApiService ??= $this->createMock(CloudApiService::class);
+        $cloudApiService ??= $this->createStub(CloudApiService::class);
         $auth ??= $this->createStub(AuthInterface::class);
 
         return new class(
@@ -118,7 +118,8 @@ trait ConsoleApiAuthTrait
         array $controllerAttributes = [],
         string $path = '/api/console/test',
         ?ConsoleApiAuthorizationListenerAbstract $listener = null,
-        array $headers = []
+        array $headers = [],
+        bool $isMainRequest = true
     ): Request
     {
         $listener ??= $this->createListener();
@@ -132,7 +133,7 @@ trait ConsoleApiAuthTrait
             $this->createStub(HttpKernelInterface::class),
             fn() => null,
             $request,
-            Kernel::MAIN_REQUEST
+            $isMainRequest ? Kernel::MAIN_REQUEST : Kernel::SUB_REQUEST
         );
 
         $event->setController(fn() => null, $controllerAttributes);
