@@ -30,6 +30,8 @@ class CloudJwt
     // scope
     private ScopeBuilder $scope;
 
+    private JwtSource $src;
+
     /**
      * @param array<string, string> $data
      * @throws JwtDecodeException
@@ -45,6 +47,7 @@ class CloudJwt
             $jwt->nbf = (int) $data['nbf'];
             $jwt->exp = (int) $data['exp'];
             $jwt->scope = ScopeBuilder::fromScopeString($data['scope']);
+            $jwt->src = JwtSource::fromString($data['src']);
         } catch (\Throwable $e) {
             throw new JwtDecodeException('Invalid JWT payload: unable to parse required fields', previous: $e);
         }
@@ -56,6 +59,7 @@ class CloudJwt
         string $instanceUrl,
         int $orgId,
         ScopeBuilder $scopeBuilder,
+        JwtSource $src,
         ?int $now = null
     ): self
     {
@@ -68,6 +72,7 @@ class CloudJwt
         $jwt->nbf = $now;
         $jwt->exp = $now + self::DEFAULT_EXPIRATION; // expires in 1 hour
         $jwt->scope = $scopeBuilder;
+        $jwt->src = $src;
 
         return $jwt;
     }
@@ -84,6 +89,7 @@ class CloudJwt
             'nbf' => $this->nbf,
             'exp' => $this->exp,
             'scope' => $this->scope->getScopeString(),
+            'src' => $this->src->getSource(),
         ];
     }
 
@@ -109,6 +115,11 @@ class CloudJwt
     public function getOrganizationId(): int
     {
         return (int) $this->sub;
+    }
+
+    public function getSource(): JwtSource
+    {
+        return $this->src;
     }
 
 }

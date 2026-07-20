@@ -15,7 +15,7 @@ class ScopeBuilder
     private array $scopes = [];
 
     /**
-     * @param array<ScopeInterface&\BackedEnum> $scopes
+     * @param array<ScopeInterface> $scopes
      */
     public function addScopes(Component $component, array $scopes): self
     {

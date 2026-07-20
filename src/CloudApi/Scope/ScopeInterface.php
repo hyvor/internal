@@ -2,4 +2,4 @@
 
 namespace Hyvor\Internal\CloudApi\Scope;
 
-interface ScopeInterface {}
+interface ScopeInterface extends \BackedEnum {}

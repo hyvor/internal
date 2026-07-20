@@ -17,7 +17,7 @@ class InternalCloudApiTokenProvider implements TokenProviderInterface
 
     /**
      * @param int $orgId
-     * @param array<ScopeInterface&\BackedEnum> $scopes
+     * @param array<ScopeInterface> $scopes
      */
     public function __construct(
         private int $orgId,

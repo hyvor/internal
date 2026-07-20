@@ -54,7 +54,7 @@ class CloudApiService
      */
     public function decodeJwtToken(string $jwtToken): CloudJwt
     {
-        $jwksUri = $this->internalConfig->getInstance() . self::JWKS_URI;
+        $jwksUri = $this->internalConfig->getPrivateInstanceWithFallback() . self::JWKS_URI;
 
         $psr17Factory = new Psr17Factory();
 
@@ -94,7 +94,7 @@ class CloudApiService
      * uses the given scopes.
      * Note: this fetches the JWT token via the comms API and caches it for 1 hour.
      *
-     * @param array<ScopeInterface&\BackedEnum> $scopes
+     * @param array<ScopeInterface> $scopes
      */
     public function getHyvorClientForOrganization(
         int $orgId,
