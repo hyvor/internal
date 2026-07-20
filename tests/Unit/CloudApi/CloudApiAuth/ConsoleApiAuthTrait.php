@@ -17,6 +17,9 @@ use Closure;
 trait ConsoleApiAuthTrait
 {
 
+    /**
+     * @return ConsoleApiAuthorizationListenerAbstract<object>
+     */
     protected function createListener(
         null|Closure $getResourceFromApiKey = null,
         null|Closure $onProductApiKeyUse = null,
@@ -29,7 +32,7 @@ trait ConsoleApiAuthTrait
     ): ConsoleApiAuthorizationListenerAbstract
     {
 
-        $internalConfig = $this->createMock(InternalConfig::class);
+        $internalConfig = $this->createStub(InternalConfig::class);
         $internalConfig
             ->method('getComponent')
             ->willReturn($component);
@@ -114,6 +117,11 @@ trait ConsoleApiAuthTrait
 
     }
 
+    /**
+     * @param list<object> $controllerAttributes
+     * @param array<string, string> $headers
+     * @param ConsoleApiAuthorizationListenerAbstract<object>|null $listener
+     */
     protected function invokeListener(
         array $controllerAttributes = [],
         string $path = '/api/console/test',
