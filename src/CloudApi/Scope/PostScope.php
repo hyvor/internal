@@ -12,6 +12,7 @@ enum PostScope: string implements ScopeInterface
     // newsletter-level
     case NEWSLETTER_READ = 'newsletter.read';
     case NEWSLETTER_WRITE = 'newsletter.write';
+    case NEWSLETTER_DELETE = 'newsletter.delete';
 
     case ISSUES_READ = 'issues.read';
     case ISSUES_WRITE = 'issues.write';

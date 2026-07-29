@@ -13,7 +13,7 @@ readonly class ConsoleAuthResults
 
     public function __construct(
         private AccessType $accessType,
-        private ?int $organizationId,
+        private int $organizationId,
         private ?object $resource,
 
         // for session
@@ -43,7 +43,7 @@ readonly class ConsoleAuthResults
         return $this->accessType;
     }
 
-    public function getOrganizationId(): ?int
+    public function getOrganizationId(): int
     {
         return $this->organizationId;
     }

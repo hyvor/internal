@@ -34,8 +34,6 @@ class InternalCloudApiTokenProvider implements TokenProviderInterface
         $scopesStrings = array_map(fn($scope) => (string) $scope->value, $this->scopes);
         sort($scopesStrings);
         $cacheKey = "cloud_api_token_{$this->component->value}_{$this->orgId}_" . md5(implode(',', $scopesStrings));
-
-        dump($cacheKey);
         $cacheItem = $this->cache->getItem($cacheKey);
 
         if ($cacheItem->isHit()) {

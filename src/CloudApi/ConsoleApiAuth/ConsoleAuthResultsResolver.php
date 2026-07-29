@@ -33,4 +33,11 @@ class ConsoleAuthResultsResolver implements ValueResolverInterface
         return [$value];
     }
 
+    public static function fromRequest(Request $request): ConsoleAuthResults
+    {
+        $value = $request->attributes->get(ConsoleApiAuthorizationListenerAbstract::ATTRIBUTE_KEY);
+        assert($value instanceof ConsoleAuthResults, 'ConsoleAuthResults not found in request attributes');
+        return $value;
+    }
+
 }
