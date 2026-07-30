@@ -11,7 +11,11 @@ class ResolvedLicense implements \JsonSerializable
         public ResolvedLicenseType $type,
         public ?License $license = null,
         public ?ResolvedLicenseSubscription $subscription = null,
-        public ?\DateTimeImmutable $trialEndsAt = null
+        public ?\DateTimeImmutable $trialEndsAt = null,
+        /**
+         * @var ResolvedComplimentaryLicense[]
+         */
+        public array $complimentaryLicenses = [],
     ) {
     }
 
@@ -22,6 +26,7 @@ class ResolvedLicense implements \JsonSerializable
             'license' => $this->license,
             'subscription' => $this->subscription,
             'trial_ends_at' => $this->trialEndsAt?->getTimestamp(),
+            'complimentary_licenses' => $this->complimentaryLicenses,
         ];
     }
 }

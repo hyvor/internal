@@ -63,7 +63,7 @@ class BlogsPlan extends PlanAbstract
         $this->version(2, function () {
             $this->plan(
                 'personal',
-                40,
+                5,
                 new BlogsLicense(
                     users: 1,
                     storage: 1 * self::GB,
