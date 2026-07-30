@@ -13,7 +13,8 @@ class ResolvedLicenseSubscription implements \JsonSerializable
         public string $plan,
         public int $planVersion,
         public string $planReadableName,
-        public ?\DateTimeImmutable $cancelAt
+        public ?\DateTimeImmutable $cancelAt,
+        public bool $isLegacyPaddle,
     ) {
     }
 
@@ -28,6 +29,7 @@ class ResolvedLicenseSubscription implements \JsonSerializable
             'plan_version' => $this->planVersion,
             'plan_readable_name' => $this->planReadableName,
             'cancel_at' => $this->cancelAt?->getTimestamp(),
+            'is_legacy_paddle' => $this->isLegacyPaddle,
         ];
     }
 }
