@@ -34,6 +34,7 @@ class AuthUserLaravelTest extends LaravelTestCase
         $this->assertNull($user->location);
         $this->assertNull($user->bio);
         $this->assertNull($user->website_url);
+        $this->assertNull($user->language);
 
         $this->assertSame([
             'id' => 1,
@@ -44,7 +45,22 @@ class AuthUserLaravelTest extends LaravelTestCase
             'location' => null,
             'bio' => null,
             'website_url' => null,
+            'language' => null,
         ], $user->toArray());
+    }
+
+    public function testRoundTripsLanguage(): void
+    {
+        $user = AuthUser::fromArray([
+            'id' => 1,
+            'name' => 'John Doe',
+            'username' => 'johndoe',
+            'email' => 'john@hyvor.com',
+            'language' => 'fr-FR',
+        ]);
+
+        $this->assertSame('fr-FR', $user->language);
+        $this->assertSame('fr-FR', $user->toArray()['language']);
     }
 
     public function testFromIds(): void
