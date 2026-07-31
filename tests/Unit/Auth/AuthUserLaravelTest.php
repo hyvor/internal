@@ -60,7 +60,18 @@ class AuthUserLaravelTest extends LaravelTestCase
         ]);
 
         $this->assertSame('fr-FR', $user->language);
-        $this->assertSame('fr-FR', $user->toArray()['language']);
+
+        $this->assertSame([
+            'id' => 1,
+            'username' => 'johndoe',
+            'name' => 'John Doe',
+            'email' => 'john@hyvor.com',
+            'picture_url' => null,
+            'location' => null,
+            'bio' => null,
+            'website_url' => null,
+            'language' => 'fr-FR',
+        ], $user->toArray());
     }
 
     public function testFromIds(): void
