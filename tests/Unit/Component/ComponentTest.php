@@ -13,6 +13,7 @@ use Hyvor\Internal\Billing\License\PostLicense;
 use Hyvor\Internal\Billing\License\RelayLicense;
 use Hyvor\Internal\Billing\License\TalkLicense;
 use Hyvor\Internal\CloudApi\Scope\PostScope;
+use Hyvor\Internal\CloudApi\Scope\RelayScope;
 use Hyvor\Internal\CloudApi\Scope\TalkScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\LaravelTestCase;
@@ -53,7 +54,7 @@ class ComponentTest extends LaravelTestCase
         $this->assertSame(TalkScope::class, Component::TALK->scope());
         $this->assertSame('', Component::BLOGS->scope());
         $this->assertSame(PostScope::class, Component::POST->scope());
-        $this->assertSame('', Component::RELAY->scope());
+        $this->assertSame(RelayScope::class, Component::RELAY->scope());
     }
 
     public function test_self_hostable(): void
