@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Billing;
 
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
 use Symfony\Component\DependencyInjection\Container;
@@ -26,6 +27,7 @@ class BillingFake implements BillingInterface
     /**
      * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>) $licenses
      * @return void
+     * @deprecated BillingFake is automatically enabled in tests, so use setLicenses() to set custom licenses if needed
      */
     public static function enableForSymfony(
         Container $container,
@@ -47,7 +49,7 @@ class BillingFake implements BillingInterface
         /**
          * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>)|null $licenses
          */
-        private readonly mixed $licenses = null
+        private mixed $licenses = null
     ) {
     }
 
@@ -71,9 +73,11 @@ class BillingFake implements BillingInterface
         $component ??= $this->internalConfig->getComponent();
 
         if ($this->licenses === null) {
-            // @codeCoverageIgnoreStart
-            throw new \Exception('No licenses set in BillingFake::enable()');
-            // @codeCoverageIgnoreEnd
+            $ret = [];
+            foreach ($organizationIds as $organizationId) {
+                $ret[$organizationId] = new ResolvedLicense(ResolvedLicenseType::NONE);
+            }
+            return $ret;
         }
 
         if (is_array($this->licenses)) {
@@ -81,6 +85,14 @@ class BillingFake implements BillingInterface
         }
 
         return ($this->licenses)($organizationIds, $component);
+    }
+
+    /**
+     * @param array<int, ResolvedLicense>|(callable(int[] $organizationIds, Component $component) : array<int, ResolvedLicense>) $licenses
+     */
+    public function setLicenses(array|callable $licenses): void
+    {
+        $this->licenses = $licenses;
     }
 
 }

@@ -27,6 +27,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: false,
                     linkAnalysis: false,
                     blogs: 0,
+                    noBranding: false,
                 )
             );
 
@@ -41,6 +42,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: true,
                     linkAnalysis: true,
                     blogs: 0,
+                    noBranding: true,
                 )
             );
 
@@ -55,6 +57,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: true,
                     linkAnalysis: true,
                     blogs: 0,
+                    noBranding: true,
                 )
             );
         });
@@ -72,6 +75,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: false,
                     linkAnalysis: false,
                     blogs: 1,
+                    noBranding: false,
                 ),
                 nameReadable: 'Personal',
                 annualOnly: true,
@@ -88,6 +92,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: true,
                     linkAnalysis: false,
                     blogs: 0,
+                    noBranding: true,
                 )
             );
 
@@ -102,6 +107,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: true,
                     linkAnalysis: true,
                     blogs: 0,
+                    noBranding: true,
                 )
             );
 
@@ -116,6 +122,7 @@ class BlogsPlan extends PlanAbstract
                     seoAnalysis: true,
                     linkAnalysis: true,
                     blogs: 0,
+                    noBranding: true,
                 )
             );
         });

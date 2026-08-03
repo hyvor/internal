@@ -1,5 +1,7 @@
 <?php
 
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Bundle\Comms\Comms;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 

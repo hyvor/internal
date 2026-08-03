@@ -15,6 +15,7 @@ final class BlogsLicense extends License
         public bool $seoAnalysis,
         public bool $linkAnalysis,
         public int $blogs, // 0 for unlimited
+        public bool $noBranding,
     ) {}
 
     public static function properties(): array
@@ -62,6 +63,7 @@ final class BlogsLicense extends License
             seoAnalysis: true,
             linkAnalysis: true,
             blogs: 0,
+            noBranding: false,
         );
     }
 
