@@ -57,7 +57,7 @@ return [
         /**
          * Default locale
          */
-        'default' => 'en-US',
+        'default' => \Hyvor\Internal\Internationalization\Language::EN->value,
 
     ],
 

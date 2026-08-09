@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hyvor\Internal\Auth;
 
 use Hyvor\Internal\Bundle\Entity\OidcUser;
+use Hyvor\Internal\Internationalization\Language;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
@@ -46,7 +47,11 @@ class AuthUser
         public ?string $bio = null,
         public ?string $website_url = null,
         public ?string $oidc_sub = null,
-        public ?string $language = null,
+        /**
+         * The user's preferred language.
+         * null when the user has not chosen one.
+         */
+        public ?Language $language = null,
     ) {
     }
 
@@ -64,7 +69,9 @@ class AuthUser
             location: $data['location'] ?? null,
             bio: $data['bio'] ?? null,
             website_url: $data['website_url'] ?? null,
-            language: $data['language'] ?? null,
+            // tryFrom, not from: an unknown code from a peer on a different
+            // version should degrade to null, not throw across a Comms boundary
+            language: isset($data['language']) ? Language::tryFrom($data['language']) : null,
         );
     }
 
@@ -98,7 +105,7 @@ class AuthUser
             'location' => $this->location,
             'bio' => $this->bio,
             'website_url' => $this->website_url,
-            'language' => $this->language,
+            'language' => $this->language?->value,
         ];
 
         return $user;

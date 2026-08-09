@@ -3,6 +3,7 @@
 namespace Hyvor\Internal;
 
 use Hyvor\Internal\Component\Component;
+use Hyvor\Internal\Internationalization\Language;
 use Hyvor\Internal\Sudo\SudoPermissionInterface;
 use Hyvor\Internal\Sudo\SudoRoleInterface;
 
@@ -116,7 +117,7 @@ class InternalConfig
 
     public function getI18nDefaultLocale(): string
     {
-        return $this->i18nDefaultLocale ?? 'en-US';
+        return $this->i18nDefaultLocale ?? Language::EN->value;
     }
 
     /**

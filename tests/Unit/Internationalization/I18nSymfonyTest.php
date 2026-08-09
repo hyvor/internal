@@ -17,6 +17,7 @@ class I18nSymfonyTest extends SymfonyTestCase
     {
         parent::setUp();
         $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nDefaultLocale', 'en-US');
     }
 
     public function testI18nWorks(): void
