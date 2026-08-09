@@ -46,10 +46,6 @@ class AuthUser
         public ?string $bio = null,
         public ?string $website_url = null,
         public ?string $oidc_sub = null,
-        /**
-         * The user's preferred language, as a locale code (ex: en-US, fr-FR).
-         * null when the user has not chosen one.
-         */
         public ?string $language = null,
     ) {
     }
