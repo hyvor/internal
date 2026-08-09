@@ -25,7 +25,7 @@ class PlanTest extends TestCase
         $plan = new BlogsPlan();
         $this->assertEquals(2, $plan->getCurrentVersion());
 
-        $this->assertCount(3, $plan->getCurrentPlans());
+        $this->assertCount(4, $plan->getCurrentPlans());
 
         $starter = $plan->getPlan('starter');
         $this->assertEquals(2, $starter->version);

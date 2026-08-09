@@ -24,7 +24,9 @@ class BlogsPlan extends PlanAbstract
                     storage: 1 * self::GB,
                     aiTokens: 0,
                     autoTranslationsChars: 0,
-                    analyses: false,
+                    seoAnalysis: false,
+                    linkAnalysis: false,
+                    blogs: 0,
                 )
             );
 
@@ -36,7 +38,9 @@ class BlogsPlan extends PlanAbstract
                     storage: 40 * self::GB,
                     aiTokens: 100_000,
                     autoTranslationsChars: 100_000,
-                    analyses: true,
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 0,
                 )
             );
 
@@ -48,13 +52,31 @@ class BlogsPlan extends PlanAbstract
                     storage: 250 * self::GB,
                     aiTokens: 1_000_000,
                     autoTranslationsChars: 300_000,
-                    analyses: true,
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 0,
                 )
             );
         });
 
         // Version 2: 2025-02
         $this->version(2, function () {
+            $this->plan(
+                'personal',
+                40,
+                new BlogsLicense(
+                    users: 1,
+                    storage: 1 * self::GB,
+                    aiTokens: 0,
+                    autoTranslationsChars: 0,
+                    seoAnalysis: false,
+                    linkAnalysis: false,
+                    blogs: 1,
+                ),
+                nameReadable: 'Personal',
+                annualOnly: true,
+            );
+
             $this->plan(
                 'starter',
                 12,
@@ -63,7 +85,9 @@ class BlogsPlan extends PlanAbstract
                     storage: 5 * self::GB,
                     aiTokens: 0,
                     autoTranslationsChars: 0,
-                    analyses: false,
+                    seoAnalysis: true,
+                    linkAnalysis: false,
+                    blogs: 0,
                 )
             );
 
@@ -75,7 +99,9 @@ class BlogsPlan extends PlanAbstract
                     storage: 150 * self::GB,
                     aiTokens: 100_000,
                     autoTranslationsChars: 100_000,
-                    analyses: true,
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 0,
                 )
             );
 
@@ -87,7 +113,9 @@ class BlogsPlan extends PlanAbstract
                     storage: 500 * self::GB,
                     aiTokens: 1_000_000,
                     autoTranslationsChars: 500_000,
-                    analyses: true,
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 0,
                 )
             );
         });
