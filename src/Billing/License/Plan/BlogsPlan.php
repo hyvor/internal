@@ -87,7 +87,7 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 5,
                     storage: 5 * self::GB,
-                    aiTokens: 0,
+                    aiTokens: 1_000_000,
                     autoTranslationsChars: 0,
                     seoAnalysis: true,
                     linkAnalysis: false,
@@ -102,7 +102,7 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 15,
                     storage: 150 * self::GB,
-                    aiTokens: 100_000,
+                    aiTokens: 3_000_000,
                     autoTranslationsChars: 100_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
@@ -117,7 +117,7 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 50,
                     storage: 500 * self::GB,
-                    aiTokens: 1_000_000,
+                    aiTokens: 10_000_000,
                     autoTranslationsChars: 500_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
