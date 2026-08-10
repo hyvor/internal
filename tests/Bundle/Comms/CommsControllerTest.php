@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 #[CoversClass(CommsController::class)]
 class CommsControllerTest extends SymfonyTestCase
@@ -68,6 +69,24 @@ class CommsControllerTest extends SymfonyTestCase
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage('invalid event received: unable to unserialize');
+
+        $this->kernel->handle($request, catch: false);
+    }
+
+    public function test_fails_on_no_event_listeners(): void
+    {
+        $event = new TestEventToCore(1);
+        $payload = json_encode([
+            'event' => serialize($event),
+            'at' => time()
+        ], JSON_THROW_ON_ERROR);
+
+        $request = Request::create('/api/comms/event', 'POST', content: $payload);
+        $request->headers->set('Content-Type', 'application/json');
+        $request->headers->set('X-Signature', $this->comms()->signature($payload));
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage('no event listeners available to handle this event');
 
         $this->kernel->handle($request, catch: false);
     }
