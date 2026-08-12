@@ -12,5 +12,10 @@ enum TalkScope: string implements ScopeInterface
     // website-level
     case WEBSITE_READ = 'website.read';
     case WEBSITE_WRITE = 'website.write';
+    case WEBSITE_DELETE = 'website.delete';
+
+    case DOMAINS_WRITE = 'domains.write';
+
+    case MODS_WRITE = 'mods.write';
 
 }
