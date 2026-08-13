@@ -14,7 +14,7 @@ use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
 use Hyvor\Internal\CloudApi\Scope\ScopeInterface;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalConfig;
-use Hyvor\Sdk\HyvorClient;
+use Hyvor\Sdk\HyvorBaseClientAbstract;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
@@ -92,20 +92,24 @@ class CloudApiService
 
 
     /**
-     * Gets a HyvorClient instance for the given organization ID and component
+     * Gets a product client instance for the given organization ID and component
      * uses the given scopes.
      * Note: this fetches the JWT token via the comms API and caches it for 1 hour.
      *
+     * @template T of HyvorBaseClientAbstract
+     * @param class-string<T> $clientClass
      * @param array<ScopeInterface> $scopes
+     * @return T
      */
     public function getHyvorClientForOrganization(
+        string $clientClass,
         int $orgId,
         Component $component,
         array $scopes,
-    ): HyvorClient
+    ): HyvorBaseClientAbstract
     {
 
-        return new HyvorClient(
+        return new $clientClass(
             tokenProvider: new InternalCloudApiTokenProvider(
                 orgId: $orgId,
                 component: $component,

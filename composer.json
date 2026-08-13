@@ -30,7 +30,8 @@
         "symfony/config": "^8.0 || ^8.1",
         "symfony/framework-bundle": "^8.0 || ^8.1",
         "symfony/browser-kit": "^8.0 || ^8.1",
-        "hyvor/sdk": "0.0.4"
+        "hyvor/sdk-core": "^0.0.8",
+        "nelmio/api-doc-bundle": "^5.11"
     },
     "extra": {
         "laravel": {
