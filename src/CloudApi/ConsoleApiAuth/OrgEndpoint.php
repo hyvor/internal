@@ -10,4 +10,5 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class OrgEndpoint
 {
+    public const string ORG_ENDPOINT_TAG = 'org-endpoint';
 }
