@@ -31,8 +31,7 @@
         "symfony/framework-bundle": "^8.0 || ^8.1",
         "symfony/browser-kit": "^8.0 || ^8.1",
         "hyvor/sdk-core": "^0.1.4",
-        "hyvor/sdk-post": "^0.1.4",
-        "nelmio/api-doc-bundle": "^5.11"
+        "hyvor/sdk-post": "^0.1.4"
     },
     "extra": {
         "laravel": {
@@ -60,7 +59,8 @@
         "symfony/messenger": "^8.0 || ^8.1",
         "zenstruck/foundry": "^2.6",
         "zenstruck/messenger-test": "^1.13",
-        "nyholm/psr7": "^1.8"
+        "nyholm/psr7": "^1.8",
+        "nelmio/api-doc-bundle": "^5.11"
     },
     "config": {
         "allow-plugins": {
