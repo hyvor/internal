@@ -96,17 +96,19 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
     public function __invoke(ControllerEvent $event): void
     {
-        if (!str_starts_with($event->getRequest()->getPathInfo(), $this->getBasePath())) {
+        $request =  $event->getRequest();
+        $path = $request->getPathInfo();
+
+        if (!str_starts_with($path, $this->getBasePath())) {
             return;
         }
-        if (in_array($event->getRequest()->getPathInfo(), $this->getBypassPaths(), true)) {
+        if (in_array($path, $this->getBypassPaths(), true)) {
             return;
         }
         if ($event->isMainRequest() === false) {
             return;
         }
 
-        $request = $event->getRequest();
         $authorizationHeader = $request->headers->get('authorization');
 
         if ($authorizationHeader) {
@@ -129,9 +131,8 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
     private function handleResourceApiKey(ControllerEvent $event, string $apiKey): ConsoleAuthResults
     {
-        $orgEndpoint = $event->getAttributes(OrgEndpoint::class)[0] ?? null;
 
-        if ($orgEndpoint) {
+        if (count($event->getAttributes(OrgEndpoint::class)) > 0) {
             throw new AccessDeniedHttpException(
                 'Organization endpoints are not supported with resource API keys. Please use a Cloud API token instead.',
             );
@@ -162,7 +163,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
     private function handleCloudToken(ControllerEvent $event, string $jwtToken): ConsoleAuthResults
     {
-        $orgEndpoint = $event->getAttributes(OrgEndpoint::class)[0] ?? null;
+        $isOrgEndpoint = count($event->getAttributes(OrgEndpoint::class)) > 0;
 
         try {
             $cloudToken = $this->cloudApiService->decodeJwtToken($jwtToken);
@@ -174,7 +175,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
         $resource = null;
 
-        if (!$orgEndpoint) {
+        if (!$isOrgEndpoint) {
             $resource = $this->getResourceFromRequest($event);
 
             if ($resource === null) {
@@ -197,7 +198,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
     private function handleSession(ControllerEvent $event): ConsoleAuthResults
     {
         $request = $event->getRequest();
-        $orgEndpoint = $event->getAttributes(OrgEndpoint::class)[0] ?? null;
+        $isOrgEndpoint = count($event->getAttributes(OrgEndpoint::class)) > 0;
 
         $me = $this->auth->me($request);
 
@@ -229,7 +230,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
 
         $resource = null;
 
-        if (!$orgEndpoint) {
+        if (!$isOrgEndpoint) {
             $resource = $this->getResourceFromRequest($event);
 
             if ($resource === null) {

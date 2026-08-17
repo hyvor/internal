@@ -2,10 +2,13 @@
 
 namespace Unit\CloudApi\CloudApiAuth;
 
+use Hyvor\Internal\CloudApi\ConsoleApiAuth\ConsoleApiAuthorizationListenerAbstract;
 use Hyvor\Internal\Tests\Unit\CloudApi\CloudApiAuth\ConsoleApiAuthTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+#[CoversClass(ConsoleApiAuthorizationListenerAbstract::class)]
 class CloudApiAuthBasicTest extends TestCase
 {
 
