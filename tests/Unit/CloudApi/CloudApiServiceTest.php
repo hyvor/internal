@@ -16,6 +16,7 @@ use Hyvor\Internal\CloudApi\Scope\ScopeBuilder;
 use Hyvor\Internal\CloudApi\Scope\TalkScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\SymfonyTestCase;
+use Hyvor\Sdk\Post\PostClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Clock\Test\ClockSensitiveTrait;
@@ -106,12 +107,13 @@ class CloudApiServiceTest extends SymfonyTestCase
         );
 
         $client = $cloudApiService->getHyvorClientForOrganization(
+            PostClient::class,
             10,
             Component::POST,
             [PostScope::NEWSLETTER_READ]
         );
 
-        $client->post->newsletter(1)->issues->list();
+        $client->newsletter(1)->issues->list();
 
         $this->assertSame(
             'https://post.hyvor.internal/api/console/issues',
@@ -149,11 +151,12 @@ class CloudApiServiceTest extends SymfonyTestCase
         /** @var CloudApiService $cloudApiService */
         $cloudApiService = $this->getContainer()->get(CloudApiService::class);
         $client = $cloudApiService->getHyvorClientForOrganization(
+            PostClient::class,
             10,
             Component::POST,
             [PostScope::ISSUES_READ]
         );
-        $client->post->newsletter(1)->issues->list();
+        $client->newsletter(1)->issues->list();
 
         $this->assertSame(
             'https://post.hyvor.internal/api/console/issues',

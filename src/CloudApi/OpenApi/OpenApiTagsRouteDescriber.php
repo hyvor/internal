@@ -29,6 +29,7 @@ class OpenApiTagsRouteDescriber implements RouteDescriberInterface
 
         $operation = Util::getOperation($path, strtolower($methods[0]));
 
+        // @phpstan-ignore-next-line OA has weird string defaults
         if ($operation->tags === Undefined::UNDEFINED) {
             $operation->tags = [];
         }
@@ -45,7 +46,7 @@ class OpenApiTagsRouteDescriber implements RouteDescriberInterface
     {
         $class = $reflectionMethod->getDeclaringClass()->getShortName();
         $withoutController = str_replace('Controller', '', $class);
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $withoutController));
+        return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $withoutController));
     }
 
 }
