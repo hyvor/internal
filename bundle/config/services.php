@@ -1,5 +1,7 @@
 <?php
 
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Bundle\Comms\Comms;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -29,7 +31,8 @@ return function (ContainerConfigurator $container): void {
             '../../src/Metric',
             '../../src/Http',
             '../../src/routes',
-            '../../src/InternalServiceProvider.php'
+            '../../src/InternalServiceProvider.php',
+            '../../src/CloudApi/InternalCloudApiTokenProvider.php'
         ]);
 
     if ($container->env() === 'test') {

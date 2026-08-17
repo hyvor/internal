@@ -52,6 +52,8 @@ class InternalServiceProvider extends ServiceProvider
                 }
             };
         });
+
+        // CacheItemPoolInterface works automatically
     }
 
     private function config(): void

@@ -37,7 +37,7 @@ trait LogoTestTrait
 
     public static function allComponents(): mixed
     {
-        return [Component::cases()];
+        return array_map(fn($component) => [$component], Component::cases());
     }
 
     #[DataProvider('allComponents')]

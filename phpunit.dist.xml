@@ -27,5 +27,6 @@
         <env name="APP_DEBUG" value="true"/>
         <env name="APP_ENV" value="testing"/>
         <env name="HYVOR_PRIVATE_INSTANCE" value="https://hyvor.internal"/>
+        <ini name="memory_limit" value="256M"/>
     </php>
 </phpunit>

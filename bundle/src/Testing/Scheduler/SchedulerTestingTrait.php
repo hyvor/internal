@@ -24,7 +24,7 @@ trait SchedulerTestingTrait
         $messageContext = new MessageContext(
             '',
             '',
-            $this->createMock(TriggerInterface::class),
+            $this->createStub(TriggerInterface::class),
             new \DateTimeImmutable()
         );
         foreach ($messages as $message) {

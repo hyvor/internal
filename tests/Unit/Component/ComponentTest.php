@@ -12,6 +12,8 @@ use Hyvor\Internal\Billing\License\Plan\TalkPlan;
 use Hyvor\Internal\Billing\License\PostLicense;
 use Hyvor\Internal\Billing\License\RelayLicense;
 use Hyvor\Internal\Billing\License\TalkLicense;
+use Hyvor\Internal\CloudApi\Scope\PostScope;
+use Hyvor\Internal\CloudApi\Scope\TalkScope;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Tests\LaravelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -43,6 +45,15 @@ class ComponentTest extends LaravelTestCase
             $this->assertInstanceOf($plan[1], $plan[0]->plans());
             $this->assertSame($plan[2], $plan[0]->license());
         }
+    }
+
+    public function test_scope(): void
+    {
+        $this->assertSame('', Component::CORE->scope());
+        $this->assertSame(TalkScope::class, Component::TALK->scope());
+        $this->assertSame('', Component::BLOGS->scope());
+        $this->assertSame(PostScope::class, Component::POST->scope());
+        $this->assertSame('', Component::RELAY->scope());
     }
 
     public function test_self_hostable(): void

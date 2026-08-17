@@ -32,7 +32,7 @@ class SudoUserServiceTest extends SymfonyTestCase
 
     public function test_get_user_from_request(): void
     {
-        $authUser = $this->createMock(AuthUser::class);
+        $authUser = $this->createStub(AuthUser::class);
 
         $request = new Request();
         $request->attributes->set(

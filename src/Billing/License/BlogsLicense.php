@@ -15,6 +15,7 @@ final class BlogsLicense extends License
         public bool $seoAnalysis,
         public bool $linkAnalysis,
         public int $blogs, // 0 for unlimited
+        public bool $noBranding,
     ) {}
 
     public static function properties(): array
@@ -49,6 +50,10 @@ final class BlogsLicense extends License
                 ->name('Blogs')
                 ->description('Number of blogs allowed under this license.')
                 ->note('Set to 0 for unlimited'),
+
+            LicenseProperty::bool('noBranding')
+                ->name('Disable Branding')
+                ->description('Disable Hyvor Blogs Branding on your blog'),
         ];
     }
 
@@ -62,6 +67,7 @@ final class BlogsLicense extends License
             seoAnalysis: true,
             linkAnalysis: true,
             blogs: 0,
+            noBranding: false,
         );
     }
 

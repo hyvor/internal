@@ -59,11 +59,7 @@ class SymfonyTestCase extends TestCase
         $this->kernel->shutdown();
         $this->container->reset();
         $this->em->clear();
-    }
-
-    public function createMock(string $originalClassName): MockObject
-    {
-        return parent::createMock($originalClassName);
+        $this->restoreExceptionHandler();
     }
 
     protected function getContainer(): Container
@@ -129,6 +125,19 @@ class SymfonyTestCase extends TestCase
         $ed = $this->getContainer()->get(EventDispatcherInterface::class);
         assert($ed instanceof TestEventDispatcher);
         return $ed;
+    }
+
+    // Symfony + PHPUnit bug: https://github.com/symfony/symfony/issues/53812#issuecomment-1958859357
+    protected function restoreExceptionHandler(): void
+    {
+        while (true) {
+            $previousHandler = set_exception_handler(static fn() => null);
+            restore_exception_handler();
+            if ($previousHandler === null) {
+                break;
+            }
+            restore_exception_handler();
+        }
     }
 
 }
