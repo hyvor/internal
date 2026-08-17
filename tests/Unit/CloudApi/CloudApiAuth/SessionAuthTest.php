@@ -43,7 +43,7 @@ class SessionAuthTest extends TestCase
 
     public function test_fails_when_not_logged_in(): void
     {
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(null);
         $auth->method('authUrl')->willReturnCallback(fn(string $page): string => match ($page) {
             'login' => 'https://hyvor.com/login',
@@ -75,7 +75,7 @@ class SessionAuthTest extends TestCase
             'User does not have a valid current organization, or the organization is not found.'
         );
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn($this->createMe(organization: null));
 
         $listener = $this->createListener(auth: $auth);
@@ -90,7 +90,7 @@ class SessionAuthTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessageIsOrContains('org_mismatch');
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(organization: new AuthUserOrganization(1, 'Org', 'admin'))
         );
@@ -107,7 +107,7 @@ class SessionAuthTest extends TestCase
 
     public function test_succeeds_for_org_endpoint(): void
     {
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(
                 userId: 43,
@@ -144,7 +144,7 @@ class SessionAuthTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessageIsOrContains('Unable to find the given resource from the request.');
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(organization: new AuthUserOrganization(1, 'Org', 'admin'))
         );
@@ -167,7 +167,7 @@ class SessionAuthTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessageIsOrContains('does_not_belong_the_resource');
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(organization: new AuthUserOrganization(1, 'Org', 'admin'))
         );
@@ -191,7 +191,7 @@ class SessionAuthTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessageIsOrContains('You do not have access to this resource.');
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(organization: new AuthUserOrganization(1, 'Org', 'admin'))
         );
@@ -218,7 +218,7 @@ class SessionAuthTest extends TestCase
             'You do not have the required scope \'newsletter.write\' to access this resource.'
         );
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(organization: new AuthUserOrganization(1, 'Org', 'admin'))
         );
@@ -245,7 +245,7 @@ class SessionAuthTest extends TestCase
     {
         $resource = new TestResource();
 
-        $auth = $this->createMock(AuthInterface::class);
+        $auth = $this->createStub(AuthInterface::class);
         $auth->method('me')->willReturn(
             $this->createMe(userId: 5, organization: new AuthUserOrganization(1, 'Org', 'admin'), sessionId: 200)
         );

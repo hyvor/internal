@@ -50,6 +50,10 @@ final class BlogsLicense extends License
                 ->name('Blogs')
                 ->description('Number of blogs allowed under this license.')
                 ->note('Set to 0 for unlimited'),
+
+            LicenseProperty::bool('noBranding')
+                ->name('Disable Branding')
+                ->description('Disable Hyvor Blogs Branding on your blog'),
         ];
     }
 

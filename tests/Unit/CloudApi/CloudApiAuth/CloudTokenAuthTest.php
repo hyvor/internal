@@ -32,7 +32,7 @@ class CloudTokenAuthTest extends TestCase
         $this->expectException(AccessDeniedHttpException::class);
         $this->expectExceptionMessageIsOrContains('Invalid Cloud API token: token invalid');
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willThrowException(new JwtDecodeException('token invalid'));
 
         $listener = $this->createListener(
@@ -62,7 +62,7 @@ class CloudTokenAuthTest extends TestCase
             'src' => JwtSource::forCloud('apikey')->getSource(),
         ]);
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willReturn($cloudJwtToken);
 
         $listener = $this->createListener(
@@ -92,7 +92,7 @@ class CloudTokenAuthTest extends TestCase
             'src' => JwtSource::forInternal(Component::BLOGS)->getSource(),
         ]);
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willReturn($cloudJwtToken);
 
         $listener = $this->createListener(
@@ -133,7 +133,7 @@ class CloudTokenAuthTest extends TestCase
             'src' => JwtSource::forCloud('key-1')->getSource(),
         ]);
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willReturn($cloudJwtToken);
 
         $resource = new TestResource();
@@ -178,7 +178,7 @@ class CloudTokenAuthTest extends TestCase
             'src' => JwtSource::forCloud('key-1')->getSource(),
         ]);
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willReturn($cloudJwtToken);
 
         $listener = $this->createListener(
@@ -212,7 +212,7 @@ class CloudTokenAuthTest extends TestCase
             'src' => JwtSource::forCloud('key-1')->getSource(),
         ]);
 
-        $cloudApiService = $this->createMock(CloudApiService::class);
+        $cloudApiService = $this->createStub(CloudApiService::class);
         $cloudApiService->method('decodeJwtToken')->willReturn($cloudJwtToken);
 
         $resource = new TestResource();
