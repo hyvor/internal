@@ -55,11 +55,23 @@ class ScopeBuilder
         $scopeBuilder = new self();
         $scopes = explode(' ', $scopeString);
         foreach ($scopes as $scope) {
-            [$component, $scopeName] = explode(':', $scope, 2);
-            if (!Component::tryFrom($component)) {
+            [$componentString, $scopeName] = explode(':', $scope, 2);
+
+            $component = Component::tryFrom($componentString);
+            if (!$component) {
                 continue;
             }
-            $scopeBuilder->scopes[$component][] = $scopeName;
+
+            $componentScopeClass = $component->scope();
+            if (!$componentScopeClass) {
+                continue;
+            }
+
+            if (!$componentScopeClass::tryFrom($scopeName)) {
+                continue;
+            }
+
+            $scopeBuilder->scopes[$componentString][] = $scopeName;
         }
         return $scopeBuilder;
     }

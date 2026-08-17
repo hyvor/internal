@@ -31,6 +31,16 @@ class ScopeBuilderTest extends SymfonyTestCase
         );
     }
 
+    public function test_throws_on_invalid_scope_type(): void
+    {
+        $this->expectException(\AssertionError::class);
+        $this->expectExceptionMessageIsOrContains('Scope must be instance of');
+
+        $scopeBuilder = new ScopeBuilder();
+        $scopeBuilder->addScopes(Component::POST, [TalkScope::WEBSITE_READ]);
+    }
+
+
     public function test_from_scope_string(): void
     {
         $scopeString = 'talk:website.read talk:website.write post:newsletter.read';
@@ -45,6 +55,15 @@ class ScopeBuilderTest extends SymfonyTestCase
         $this->assertArrayHasKey('post', $scopes);
         $this->assertCount(1, $scopes['post']);
         $this->assertContains('newsletter.read', $scopes['post']);
+    }
+
+    public function test_from_scope_ignores_invalid(): void
+    {
+        $scopeString = 'talk:wrong.delete component:delete';
+        $scopeBuilder = ScopeBuilder::fromScopeString($scopeString);
+
+        $scopes = $scopeBuilder->getScopes();
+        $this->assertSame([], $scopes);
     }
 
 }
