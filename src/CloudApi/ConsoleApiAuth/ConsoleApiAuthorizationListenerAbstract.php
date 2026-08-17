@@ -11,6 +11,11 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
+ * Console APIs support 3 authentication methods:
+ * - Session - can access org and resource endpoints based on the user's access. Scopes are based on the user's role.
+ * - Resource API key (website API key in Hyvor Talk for example) - can only access the resource
+ * - Cloud API JWT token - can access org or resource-level endpoints based on the token's scopes
+ *
  * @template TResource of object
  */
 abstract class ConsoleApiAuthorizationListenerAbstract
