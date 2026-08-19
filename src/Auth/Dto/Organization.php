@@ -37,12 +37,12 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
 #[Exclude]
 final class Organization {
     private AuthUser $created_user;
-    private string $billing_email;
+    private string $billing_email = '';
 
     /**
      * @var BillingAddress|null
      */
-    private ?array $billing_address;
+    private ?array $billing_address = null;
 
     public function __construct(
         private int $id,
