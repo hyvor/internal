@@ -7,13 +7,13 @@
     "autoload": {
         "psr-4": {
             "Hyvor\\Internal\\": "src/",
-            "Hyvor\\Internal\\Bundle\\": "bundle/src"
+            "Hyvor\\Internal\\Bundle\\": "bundle/src",
+            "Hyvor\\Internal\\Types\\": "types"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Hyvor\\Internal\\Tests\\": "tests",
-            "Hyvor\\Internal\\Types\\": "types"
+            "Hyvor\\Internal\\Tests\\": "tests"
         }
     },
     "authors": [
