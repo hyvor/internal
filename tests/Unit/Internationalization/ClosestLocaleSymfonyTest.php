@@ -16,6 +16,7 @@ class ClosestLocaleSymfonyTest extends SymfonyTestCase
     public function testGetsTheClosestLocale(): void
     {
         $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nDefaultLocale', 'en-US');
 
         $closestLocale = $this->container->get(ClosestLocale::class);
         assert($closestLocale instanceof ClosestLocale);

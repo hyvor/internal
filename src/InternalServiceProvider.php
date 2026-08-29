@@ -70,7 +70,7 @@ class InternalServiceProvider extends ServiceProvider
             $privateInstance,
             (bool)config('internal.fake'),
             (string)config('internal.i18n.folder'),
-            config('internal.i18n.default_locale'),
+            config('internal.i18n.default'),
             // laravel does not support sudo
             null,
             null

@@ -13,7 +13,7 @@ class I18NLaravelLaravelTest extends LaravelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['internal.i18n.folder' => __DIR__ . '/locales']);
+        config(['internal.i18n.folder' => __DIR__ . '/locales', 'internal.i18n.default' => 'en-US']);
     }
 
     public function testI18nWorks(): void

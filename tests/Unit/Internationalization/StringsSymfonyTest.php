@@ -21,6 +21,7 @@ class StringsSymfonyTest extends SymfonyTestCase
     {
         parent::setUp();
         $this->updateInternalConfig('i18nFolder', __DIR__ . '/locales');
+        $this->updateInternalConfig('i18nDefaultLocale', 'en-US');
     }
 
     private function getStrings(string $locale): Strings
