@@ -34,7 +34,6 @@ class InternalServiceProvider extends ServiceProvider
         $this->i18n();
         $this->metrics();
         $this->fake();
-        $this->phpRuntime();
     }
 
     private function setInterfaceBindings(): void
@@ -131,21 +130,6 @@ class InternalServiceProvider extends ServiceProvider
         BillingFake::enable(
             licenses: fn(array $organizationIds, Component $component) => $fakeConfig->licenses($organizationIds, $component)
         );
-    }
-
-    /**
-     * PHP is not the most beautifully designed language.
-     * Here, we are trying to adjust/validate some not-so-good parts of PHP.
-     */
-    private function phpRuntime(): void
-    {
-        // assert() should always throw an exception
-        // docs: https://www.php.net/manual/en/function.assert.php
-        if (ini_get('zend.assertions') !== '1') {
-            // @codeCoverageIgnoreStart
-            throw new \RuntimeException('zend.assertions must be set to 1');
-            // @codeCoverageIgnoreEnd
-        }
     }
 
     public function register()
