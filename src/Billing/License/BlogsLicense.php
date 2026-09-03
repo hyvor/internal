@@ -14,7 +14,7 @@ final class BlogsLicense extends License
         public int $autoTranslationsChars,
         public bool $seoAnalysis,
         public bool $linkAnalysis,
-        public int $blogs, // 0 for unlimited
+        public int $blogs, // -1 for unlimited
         public bool $noBranding,
     ) {}
 
@@ -49,7 +49,7 @@ final class BlogsLicense extends License
             LicenseProperty::int('blogs')
                 ->name('Blogs')
                 ->description('Number of blogs allowed under this license.')
-                ->note('Set to 0 for unlimited'),
+                ->note('Set to -1 for unlimited'),
 
             LicenseProperty::bool('noBranding')
                 ->name('Disable Branding')
@@ -66,7 +66,7 @@ final class BlogsLicense extends License
             autoTranslationsChars: 1000,
             seoAnalysis: true,
             linkAnalysis: true,
-            blogs: 0,
+            blogs: -1,
             noBranding: false,
         );
     }

@@ -77,8 +77,8 @@ class TalkPlan extends PlanAbstract
             sso: false,
             noBranding: false,
             webhooks: false,
-            websites: 0,
-            moderators: 0,
+            websites: -1,
+            moderators: -1,
             rules: true,
         );
 
@@ -105,8 +105,8 @@ class TalkPlan extends PlanAbstract
             sso: true,
             noBranding: true,
             webhooks: true,
-            websites: 0,
-            moderators: 0,
+            websites: -1,
+            moderators: -1,
             rules: true,
         );
 
