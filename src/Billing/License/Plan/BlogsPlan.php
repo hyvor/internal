@@ -26,7 +26,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 0,
                     seoAnalysis: false,
                     linkAnalysis: false,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: false,
                 )
             );
@@ -41,7 +41,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 100_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: true,
                 )
             );
@@ -56,7 +56,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 300_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: true,
                 )
             );
@@ -91,7 +91,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 0,
                     seoAnalysis: true,
                     linkAnalysis: false,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: true,
                 )
             );
@@ -106,7 +106,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 100_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: true,
                 )
             );
@@ -121,7 +121,7 @@ class BlogsPlan extends PlanAbstract
                     autoTranslationsChars: 500_000,
                     seoAnalysis: true,
                     linkAnalysis: true,
-                    blogs: 0,
+                    blogs: -1,
                     noBranding: true,
                 )
             );

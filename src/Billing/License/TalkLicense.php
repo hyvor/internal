@@ -14,8 +14,8 @@ final class TalkLicense extends License
         public bool $sso,
         public bool $noBranding,
         public bool $webhooks,
-        public int $websites, // 0 for unlimited
-        public int $moderators, // 0 for unlimited
+        public int $websites, // -1 for unlimited
+        public int $moderators, // -1 for unlimited
         public bool $rules,
     ) {}
 
@@ -52,12 +52,12 @@ final class TalkLicense extends License
             LicenseProperty::int('websites')
                 ->name('Websites')
                 ->description('Number of websites allowed under this license.')
-                ->note('Set to 0 for unlimited'),
+                ->note('Set to -1 for unlimited'),
 
             LicenseProperty::int('moderators')
                 ->name('Moderators')
                 ->description('Number of moderators allowed under this license.')
-                ->note('Set to 0 for unlimited'),
+                ->note('Set to -1 for unlimited'),
 
             LicenseProperty::bool('rules')
                 ->name('Rules')
@@ -74,8 +74,8 @@ final class TalkLicense extends License
             sso: true,
             noBranding: false,
             webhooks: true,
-            websites: 0,
-            moderators: 0,
+            websites: -1,
+            moderators: -1,
             rules: true,
         );
     }
