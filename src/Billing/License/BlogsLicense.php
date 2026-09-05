@@ -10,8 +10,7 @@ final class BlogsLicense extends License
     public function __construct(
         public int $users,
         public int $storage,
-        public int $aiTokens,
-        public int $autoTranslationsChars,
+        public int $aiCost, // allowed AI cost per month, in USD cents (100 = $1.00). 0 = not included
         public bool $seoAnalysis,
         public bool $linkAnalysis,
         public int $blogs, // 0 for unlimited
@@ -30,13 +29,9 @@ final class BlogsLicense extends License
                 ->description('Maximum storage for uploaded media files in blogs')
                 ->bytes(),
 
-            LicenseProperty::int('aiTokens')
-                ->name('AI Tokens')
-                ->description('Number of AI tokens per month for content generation'),
-
-            LicenseProperty::int('autoTranslationsChars')
-                ->name('Auto Translation Characters')
-                ->description('Number of characters for automatic translations per month'),
+            LicenseProperty::int('aiCost')
+                ->name('AI Cost')
+                ->description('Allowed AI usage cost per month, in USD cents'),
 
             LicenseProperty::bool('seoAnalysis')
                 ->name('SEO Analysis')
@@ -62,8 +57,7 @@ final class BlogsLicense extends License
         return new self(
             users: 2,
             storage: 1_000_000_000, // 1GB
-            aiTokens: 1_000,
-            autoTranslationsChars: 1000,
+            aiCost: 500, // $5.00
             seoAnalysis: true,
             linkAnalysis: true,
             blogs: 0,
