@@ -53,6 +53,11 @@ readonly class ConsoleAuthResults
         return $this->resource;
     }
 
+    public function getProductApiKey(): ?object
+    {
+        return $this->productApiKey;
+    }
+
     /**
      * Generates a standardized string representation of the source of the access.
      * for session, user:<session_id>
