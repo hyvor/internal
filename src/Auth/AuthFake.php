@@ -75,7 +75,7 @@ final class AuthFake implements AuthInterface
         $this->organization = new AuthUserOrganization(
             id: $id,
             name: '',
-            role: ''
+            role: 'admin'
         );
     }
 
