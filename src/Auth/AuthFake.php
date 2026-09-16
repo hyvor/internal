@@ -59,6 +59,26 @@ final class AuthFake implements AuthInterface
         $this->organizationsDatabase = $organizationsDatabase ? self::getOrganizationsFromPartial($organizationsDatabase) : null;
     }
 
+    /**
+     * @param AuthUser|AuthUserArrayPartial|null $user
+     */
+    public function setUser(null|array|AuthUser $user): void
+    {
+        if (is_array($user)) {
+            $user = self::generateUser($user);
+        }
+        $this->user = $user;
+    }
+
+    public function setOrganization(int $id, string $name = ''): void
+    {
+        $this->organization = new AuthUserOrganization(
+            id: $id,
+            name: '',
+            role: ''
+        );
+    }
+
     public function __destruct()
     {
         self::$symfonyContainer = null;
