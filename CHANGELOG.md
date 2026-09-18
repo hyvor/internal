@@ -1,3 +1,9 @@
+## Unreleased
+
+- `Hyvor\Internal\Auth\Dto\Organization` gained `has_payment_method` (bool), populated by
+  `ToCore\Organization\GetOrganizations` when `includeBillingInfo` is true
+- New Comms event: ToCore\Billing\CreateSubscription
+
 ## 4.0.0 - 2026-02-01
 
 - Organization support

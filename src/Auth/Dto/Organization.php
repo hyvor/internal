@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  *     created_user?: AuthUserArray|AuthUser,
  *     billing_email?: string,
  *     billing_address?: BillingAddress|null,
+ *     has_payment_method?: bool,
  * }
  *
  * @phpstan-type OrganizationArrayPartial array{
@@ -24,6 +25,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  *     created_user?: AuthUserArray,
  *     billing_email?: string,
  *     billing_address?: BillingAddress|null,
+ *     has_payment_method?: bool,
  * }
  *
  * @phpstan-type BillingAddress array{
@@ -43,6 +45,8 @@ final class Organization {
      * @var BillingAddress|null
      */
     private ?array $billing_address = null;
+
+    private bool $has_payment_method = false;
 
     public function __construct(
         private int $id,
@@ -102,6 +106,16 @@ final class Organization {
         $this->billing_address = $billing_address;
     }
 
+    public function hasPaymentMethod(): bool
+    {
+        return $this->has_payment_method;
+    }
+
+    public function setHasPaymentMethod(bool $has_payment_method): void
+    {
+        $this->has_payment_method = $has_payment_method;
+    }
+
     /**
      * @param OrganizationArray $data
      */
@@ -127,6 +141,10 @@ final class Organization {
 
         if (isset($data['billing_address'])) {
             $org->setBillingAddress($data['billing_address']);
+        }
+
+        if (isset($data['has_payment_method'])) {
+            $org->setHasPaymentMethod($data['has_payment_method']);
         }
 
         return $org;
