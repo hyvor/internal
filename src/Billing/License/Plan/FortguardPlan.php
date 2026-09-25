@@ -2,22 +2,13 @@
 
 namespace Hyvor\Internal\Billing\License\Plan;
 
-use Hyvor\Internal\Billing\License\FortguardLicense;
-
-// 20k 
-// 50k - 40k
-
-// 1st - 50k
-
-// 50k 50€
-// 20k - 40k
+use Hyvor\Internal\Billing\License\FortGuardLicense;
 
 /**
- * @extends PlanAbstract<FortguardLicense>
+ * @extends PlanAbstract<FortGuardLicense>
  */
-class FortguardPlan extends PlanAbstract
+class FortGuardPlan extends PlanAbstract
 {
-
     protected function config(): void
     {
         // Meters
@@ -33,8 +24,11 @@ class FortguardPlan extends PlanAbstract
             $this->plan(
                 'base',
                 30,
-                new FortguardLicense(credits: 150_000),
-                nameReadable: 'Base',
+                new FortGuardLicense(
+                    credits: 150_000
+                ),
+                nameReadable: 'Base Plan',
+                monthlyOnly: true,
                 meterName: 'base_credits',
             );
         });
