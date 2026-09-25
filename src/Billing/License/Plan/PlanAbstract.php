@@ -53,6 +53,8 @@ abstract class PlanAbstract
         License $license,
         ?string $nameReadable = null,
         ?string $group = null,
+        bool $annualOnly = false,
+        bool $monthlyOnly = false,
         ?string $meterName = null,
     ): void {
         assert($this->currentVersionForConfig !== null);
@@ -69,6 +71,8 @@ abstract class PlanAbstract
             $license,
             $nameReadable,
             $group,
+            $annualOnly,
+            $monthlyOnly,
             $meter,
         );
 

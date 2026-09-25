@@ -76,7 +76,7 @@ class SelfHostedTelemetryTest extends SymfonyTestCase
         $this->updateInternalConfig('component', 'relay');
         $this->updateInternalConfig('privateInstance', 'https://hyvor.com');
 
-        $telemetryProvider = $this->createMock(TelemetryProviderInterface::class);
+        $telemetryProvider = $this->createStub(TelemetryProviderInterface::class);
         $telemetryProvider->method('getInstanceUuid')->willReturn('test-uuid');
         $telemetryProvider->method('getVersion')->willReturn('1.0.0');
         $telemetryProvider->method('getPayload')->willReturn(['key' => 'value']);

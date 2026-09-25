@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Billing\License\Plan;
 
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Plan\Meter;
 
 /**
  * @template T of License = License
@@ -32,6 +33,12 @@ class Plan
          * Usually, if one plan has a group, all plans should have a group
          */
         public ?string $group = null,
+
+        // plan will only be available as an annual subscription
+        public bool $annualOnly = false,
+
+        // plan will only be available as a monthly subscription
+        public bool $monthlyOnly = false,
 
         /**
          * Meter for usage-based billing

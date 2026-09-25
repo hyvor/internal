@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  *  location?: string,
  *  bio?: string,
  *  website_url?: string,
+ *  language?: string,
  * }
  *
  * @phpstan-type AuthUserArrayPartial array{
@@ -28,6 +29,7 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
  * location?: string,
  * bio?: string,
  * website_url?: string,
+ * language?: string,
  * }
  */
 #[Exclude]
@@ -44,6 +46,7 @@ class AuthUser
         public ?string $bio = null,
         public ?string $website_url = null,
         public ?string $oidc_sub = null,
+        public ?string $language = null,
     ) {
     }
 
@@ -61,6 +64,7 @@ class AuthUser
             location: $data['location'] ?? null,
             bio: $data['bio'] ?? null,
             website_url: $data['website_url'] ?? null,
+            language: $data['language'] ?? null,
         );
     }
 
@@ -94,6 +98,7 @@ class AuthUser
             'location' => $this->location,
             'bio' => $this->bio,
             'website_url' => $this->website_url,
+            'language' => $this->language,
         ];
 
         return $user;

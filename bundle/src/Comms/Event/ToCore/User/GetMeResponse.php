@@ -10,6 +10,8 @@ readonly class GetMeResponse {
     public function __construct(
         private ?AuthUser $user = null,
         private ?AuthUserOrganization $organization = null,
+        // session ID from HYVOR (used for audits mostly)
+        private ?int $sessionId = null,
     ) {}
 
     public function getUser(): ?AuthUser
@@ -22,4 +24,8 @@ readonly class GetMeResponse {
         return $this->organization;
     }
 
+    public function getSessionId(): ?int
+    {
+        return $this->sessionId;
+    }
 }
