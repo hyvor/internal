@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Tests\Unit\Auth;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Auth\AuthUser;
+use Hyvor\Internal\Internationalization\Language;
 use Hyvor\Internal\Tests\LaravelTestCase;
 
 class AuthUserLaravelTest extends LaravelTestCase
@@ -56,10 +57,10 @@ class AuthUserLaravelTest extends LaravelTestCase
             'name' => 'John Doe',
             'username' => 'johndoe',
             'email' => 'john@hyvor.com',
-            'language' => 'fr-FR',
+            'language' => 'fr',
         ]);
 
-        $this->assertSame('fr-FR', $user->language);
+        $this->assertSame(Language::FR, $user->language);
 
         $this->assertSame([
             'id' => 1,
@@ -70,8 +71,21 @@ class AuthUserLaravelTest extends LaravelTestCase
             'location' => null,
             'bio' => null,
             'website_url' => null,
-            'language' => 'fr-FR',
+            'language' => 'fr',
         ], $user->toArray());
+    }
+
+    public function testUnknownLanguageBecomesNull(): void
+    {
+        $user = AuthUser::fromArray([
+            'id' => 1,
+            'name' => 'John Doe',
+            'username' => 'johndoe',
+            'email' => 'john@hyvor.com',
+            'language' => 'de',
+        ]);
+
+        $this->assertNull($user->language);
     }
 
     public function testFromIds(): void

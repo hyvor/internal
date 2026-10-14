@@ -12,6 +12,7 @@ use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Bundle\EventDispatcher\EventDispatcherCompilerPass;
 use Hyvor\Internal\InternalConfig;
+use Hyvor\Internal\Internationalization\Language;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetry;
 use Hyvor\Internal\SelfHosted\SelfHostedTelemetryInterface;
 use Hyvor\Internal\Sudo\DefaultSudoRole;
@@ -45,7 +46,7 @@ class InternalBundle extends AbstractBundle
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('folder')->defaultValue('%kernel.project_dir%/../shared/locale')->end()
-                        ->scalarNode('default')->defaultValue('en-US')->end()
+                        ->scalarNode('default')->defaultValue(Language::EN->value)->end()
                     ->end()
                 ->end()
                 ->arrayNode('sudo')
