@@ -17,6 +17,7 @@ final class TalkLicense extends License
         public int $websites, // -1 for unlimited
         public int $moderators, // -1 for unlimited
         public bool $rules,
+        public int $aiAnalysisChecks,
     ) {}
 
     public static function properties(): array
@@ -62,6 +63,10 @@ final class TalkLicense extends License
             LicenseProperty::bool('rules')
                 ->name('Rules')
                 ->description('Enable advanced moderation rules to automate your moderation process'),
+
+            LicenseProperty::int('aiAnalysisChecks')
+                ->name('AI Analysis Checks')
+                ->description('Number of AI analysis checks allowed per website'),
         ];
     }
 
@@ -77,6 +82,7 @@ final class TalkLicense extends License
             websites: -1,
             moderators: -1,
             rules: true,
+            aiAnalysisChecks: 3,
         );
     }
 }
