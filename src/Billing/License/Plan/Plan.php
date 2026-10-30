@@ -3,6 +3,7 @@
 namespace Hyvor\Internal\Billing\License\Plan;
 
 use Hyvor\Internal\Billing\License\License;
+use Hyvor\Internal\Billing\License\Plan\Meter;
 
 /**
  * @template T of License = License
@@ -38,6 +39,11 @@ class Plan
 
         // plan will only be available as a monthly subscription
         public bool $monthlyOnly = false,
+
+        /**
+         * Meter for usage-based billing
+         */
+        public ?Meter $meter = null,
     ) {
         $this->nameReadable = $nameReadable ?? ucfirst($this->name);
     }

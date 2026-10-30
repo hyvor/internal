@@ -19,4 +19,16 @@ interface BillingInterface
      * @throws CommsApiFailedException
      */
     public function licenses(array $organizationIds, ?Component $component = null): array;
+
+    /**
+     * @param string $idempotencyKey A unique key within the component to ensure the same usage isn't recorded twice.
+     *  ex: orgId + date
+     * @throws CommsApiFailedException
+     */
+    public function recordMeteredUsage(
+        int $organizationId,
+        int $amount,
+        string $idempotencyKey,
+        ?Component $component = null
+    ): void;
 }

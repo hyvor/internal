@@ -15,6 +15,11 @@ abstract class PlanAbstract
      */
     private array $versions;
 
+    /**
+     * @var array<string, Meter>
+     */
+    private array $meters = [];
+
     // this only helps with config() method. Do not use for anything else.
     private ?int $currentVersionForConfig = null;
 
@@ -50,8 +55,15 @@ abstract class PlanAbstract
         ?string $group = null,
         bool $annualOnly = false,
         bool $monthlyOnly = false,
+        ?string $meterName = null,
     ): void {
         assert($this->currentVersionForConfig !== null);
+
+        $meter = $meterName ? $this->meters[$meterName] : null;
+        if ($meter) {
+            assert(property_exists($license, $meter->property));
+        }
+
         $plan = new Plan(
             $this->currentVersionForConfig,
             $name,
@@ -61,12 +73,31 @@ abstract class PlanAbstract
             $group,
             $annualOnly,
             $monthlyOnly,
+            $meter,
         );
 
         $currentVersionPlans = $this->versions[$this->currentVersionForConfig];
         $currentVersionPlans[$name] = $plan;
 
         $this->versions[$this->currentVersionForConfig] = $currentVersionPlans;
+    }
+
+    protected function meter(
+        string $name,
+        string $nameReadable,
+        string $property,
+        float $pricePerUnit,
+    ): void {
+        if (isset($this->meters[$name])) {
+            throw new \Exception("Meter with name $name already exists");
+        }
+
+        $this->meters[$name] = new Meter(
+            name: $name,
+            property: $property,
+            nameReadable: $nameReadable,
+            pricePerUnit: $pricePerUnit,
+        );
     }
 
     /**
@@ -109,5 +140,13 @@ abstract class PlanAbstract
     {
         $version ??= $this->getCurrentVersion();
         return $this->versions[$version][$name] ?? null;
+    }
+
+    /**
+     * @return array<string, Meter>
+     */
+    public function getMeters(): array
+    {
+        return $this->meters;
     }
 }
