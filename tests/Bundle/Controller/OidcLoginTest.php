@@ -52,7 +52,7 @@ class OidcLoginTest extends SymfonyTestCase
 
         $sessionData = [];
 
-        $session = $this->createMock(SessionInterface::class);
+        $session = $this->createStub(SessionInterface::class);
         $session->method('set')->willReturnCallback(fn($key, $value) => $sessionData[$key] = $value);
 
         $request = Request::create('/api/oidc/login');

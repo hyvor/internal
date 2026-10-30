@@ -22,9 +22,11 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 2,
                     storage: 1 * self::GB,
-                    aiTokens: 0,
-                    autoTranslationsChars: 0,
-                    analyses: false,
+                    aiCost: 500, // $5.00
+                    seoAnalysis: false,
+                    linkAnalysis: false,
+                    blogs: -1,
+                    noBranding: false,
                 )
             );
 
@@ -34,9 +36,11 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 5,
                     storage: 40 * self::GB,
-                    aiTokens: 100_000,
-                    autoTranslationsChars: 100_000,
-                    analyses: true,
+                    aiCost: 2000, // $20.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: -1,
+                    noBranding: true,
                 )
             );
 
@@ -46,9 +50,11 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 15,
                     storage: 250 * self::GB,
-                    aiTokens: 1_000_000,
-                    autoTranslationsChars: 300_000,
-                    analyses: true,
+                    aiCost: 6000, // $60.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: -1,
+                    noBranding: true,
                 )
             );
         });
@@ -56,14 +62,32 @@ class BlogsPlan extends PlanAbstract
         // Version 2: 2025-02
         $this->version(2, function () {
             $this->plan(
+                'personal',
+                5,
+                new BlogsLicense(
+                    users: 1,
+                    storage: 1 * self::GB,
+                    aiCost: 0,
+                    seoAnalysis: false,
+                    linkAnalysis: false,
+                    blogs: 1,
+                    noBranding: false,
+                ),
+                nameReadable: 'Personal',
+                annualOnly: true,
+            );
+
+            $this->plan(
                 'starter',
                 12,
                 new BlogsLicense(
                     users: 5,
                     storage: 5 * self::GB,
-                    aiTokens: 0,
-                    autoTranslationsChars: 0,
-                    analyses: false,
+                    aiCost: 500, // $5.00
+                    seoAnalysis: true,
+                    linkAnalysis: false,
+                    blogs: -1,
+                    noBranding: true,
                 )
             );
 
@@ -73,9 +97,11 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 15,
                     storage: 150 * self::GB,
-                    aiTokens: 100_000,
-                    autoTranslationsChars: 100_000,
-                    analyses: true,
+                    aiCost: 2000, // $20.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: -1,
+                    noBranding: true,
                 )
             );
 
@@ -85,9 +111,11 @@ class BlogsPlan extends PlanAbstract
                 new BlogsLicense(
                     users: 50,
                     storage: 500 * self::GB,
-                    aiTokens: 1_000_000,
-                    autoTranslationsChars: 500_000,
-                    analyses: true,
+                    aiCost: 6000, // $60.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: -1,
+                    noBranding: true,
                 )
             );
         });

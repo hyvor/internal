@@ -27,7 +27,7 @@ class OidcLogoutTest extends SymfonyTestCase
         $invalidated = false;
 
         $request = Request::create('/api/oidc/logout', server: ['HTTP_HOST' => 'relay.hyvor.com']);
-        $session = $this->createMock(SessionInterface::class);
+        $session = $this->createStub(SessionInterface::class);
         $session->method('invalidate')->willReturnCallback(function () use (&$invalidated) {
             $invalidated = true;
             return true;
@@ -50,7 +50,7 @@ class OidcLogoutTest extends SymfonyTestCase
         $this->setHttpClientResponse(new JsonMockResponse('{}', info: ['status' => 500]));
 
         $request = Request::create('/api/oidc/logout', server: ['HTTP_HOST' => 'relay.hyvor.com']);
-        $session = $this->createMock(SessionInterface::class);
+        $session = $this->createStub(SessionInterface::class);
         $request->setSession($session);
 
         $response = $this->kernel->handle($request, catch: false);
@@ -71,7 +71,7 @@ class OidcLogoutTest extends SymfonyTestCase
         ]));
 
         $request = Request::create('/api/oidc/logout', server: ['HTTP_HOST' => 'relay.hyvor.com']);
-        $session = $this->createMock(SessionInterface::class);
+        $session = $this->createStub(SessionInterface::class);
         $request->setSession($session);
 
         $response = $this->kernel->handle($request, catch: false);

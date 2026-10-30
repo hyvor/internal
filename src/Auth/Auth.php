@@ -47,7 +47,11 @@ class Auth implements AuthInterface
             return null;
         }
 
-        return new Me($user, $response->getOrganization());
+        return new Me(
+            $user, 
+            $response->getOrganization(),
+            $response->getSessionId(),
+        );
     }
 
     /**

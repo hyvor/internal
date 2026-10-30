@@ -5,6 +5,7 @@ namespace Hyvor\Internal\Bundle;
 use Hyvor\Internal\Auth\AuthFactory;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingFactory;
+use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Bundle\Comms\Comms;
 use Hyvor\Internal\Bundle\Comms\CommsInterface;
@@ -82,8 +83,8 @@ class InternalBundle extends AbstractBundle
 
         $services = $container->services();
 
-        $sudoPermissionsEnum = $config['sudo']['permission_enum'];
-        $sudoRoleEnum = $config['sudo']['role_enum'];
+        $sudoPermissionsEnum = $config['sudo']['permission_enum'] ?? null;
+        $sudoRoleEnum = $config['sudo']['role_enum'] ?? null;
 
         if ($sudoPermissionsEnum || $sudoRoleEnum) {
 
@@ -124,15 +125,17 @@ class InternalBundle extends AbstractBundle
             ->set(AuthInterface::class)
             ->factory([service(AuthFactory::class), 'create']);
 
-        $services
-            ->set(BillingInterface::class)
-            ->public() // because this is not used from outside, so tests fail (inlined)
-            ->factory([service(BillingFactory::class), 'create']);
 
         if ($container->env() === 'test') {
             $services->alias(CommsInterface::class, MockComms::class);
+            $services->alias(BillingInterface::class, BillingFake::class);
         } else {
             $services->alias(CommsInterface::class, Comms::class);
+
+            $services
+                ->set(BillingInterface::class)
+                ->public() // because this is not used from outside, so tests fail (inlined)
+                ->factory([service(BillingFactory::class), 'create']);
         }
 
         // other services

@@ -10,12 +10,12 @@ final class BlogsLicense extends License
     public function __construct(
         public int $users,
         public int $storage,
-        public int $aiTokens,
-        public int $autoTranslationsChars,
-        public bool $analyses,
-    )
-    {
-    }
+        public int $aiCost, // allowed AI cost per month, in USD cents (100 = $1.00). 0 = not included
+        public bool $seoAnalysis,
+        public bool $linkAnalysis,
+        public int $blogs, // -1 for unlimited
+        public bool $noBranding,
+    ) {}
 
     public static function properties(): array
     {
@@ -29,17 +29,26 @@ final class BlogsLicense extends License
                 ->description('Maximum storage for uploaded media files in blogs')
                 ->bytes(),
 
-            LicenseProperty::int('aiTokens')
-                ->name('AI Tokens')
-                ->description('Number of AI tokens per month for content generation'),
+            LicenseProperty::int('aiCost')
+                ->name('AI Cost')
+                ->description('Allowed AI usage cost per month, in USD cents'),
 
-            LicenseProperty::int('autoTranslationsChars')
-                ->name('Auto Translation Characters')
-                ->description('Number of characters for automatic translations per month'),
+            LicenseProperty::bool('seoAnalysis')
+                ->name('SEO Analysis')
+                ->description('Enable in-post SEO analysis for blog posts'),
 
-            LicenseProperty::bool('analyses')
-                ->name('Link and SEO Analyses')
-                ->description('Enable link and SEO analyses for blog posts'),
+            LicenseProperty::bool('linkAnalysis')
+                ->name('Link Analysis')
+                ->description('Enable post link analysis and bi-weekly full-blog link checks'),
+
+            LicenseProperty::int('blogs')
+                ->name('Blogs')
+                ->description('Number of blogs allowed under this license.')
+                ->note('Set to -1 for unlimited'),
+
+            LicenseProperty::bool('noBranding')
+                ->name('Disable Branding')
+                ->description('Disable Hyvor Blogs Branding on your blog'),
         ];
     }
 
@@ -48,9 +57,11 @@ final class BlogsLicense extends License
         return new self(
             users: 2,
             storage: 1_000_000_000, // 1GB
-            aiTokens: 1_000,
-            autoTranslationsChars: 1000,
-            analyses: true
+            aiCost: 500, // $5.00
+            seoAnalysis: true,
+            linkAnalysis: true,
+            blogs: -1,
+            noBranding: false,
         );
     }
 
