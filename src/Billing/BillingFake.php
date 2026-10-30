@@ -88,6 +88,9 @@ class BillingFake implements BillingInterface
         return ($this->licenses)($organizationIds, $component);
     }
 
+    /**
+     * @var array<int, array{organizationId: int, amount: int, idempotencyKey: string, component: Component}>
+     */
     public array $recordedUsage = [];
 
     public function recordMeteredUsage(
