@@ -14,7 +14,7 @@ class FortGuardPlan extends PlanAbstract
         // Meters
         $this->meter(
             name: 'base_credits',
-            nameReadable: 'Extra Credits',
+            nameReadable: 'Additional Usage (Base Plan)',
             property: 'credits',
             pricePerUnit: 0.0004, // 4 per 10,000
         );
