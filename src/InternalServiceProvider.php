@@ -118,6 +118,10 @@ class InternalServiceProvider extends ServiceProvider
             $class = 'Hyvor\Internal\InternalFakeExtended';
         }
 
+        if (class_exists('App\InternalFake')) {
+            $class = 'App\InternalFake';
+        }
+
         /** @var class-string<InternalFake> $class */
         $fakeConfig = new $class;
 
