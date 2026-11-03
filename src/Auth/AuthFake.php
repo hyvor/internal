@@ -159,6 +159,7 @@ final class AuthFake implements AuthInterface
             if ($includeBillingInfo) {
                 $org->setBillingEmail($organization->getBillingEmail());
                 $org->setBillingAddress($organization->getBillingAddress());
+                $org->setHasPaymentMethod($organization->hasPaymentMethod());
             }
 
             if ($includeCreatedUser) {
