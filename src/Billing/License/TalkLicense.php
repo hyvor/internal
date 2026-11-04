@@ -16,8 +16,10 @@ final class TalkLicense extends License
         public bool $webhooks,
         public int $websites, // -1 for unlimited
         public int $moderators, // -1 for unlimited
-        public bool $rules,
+        public bool $rules, // old moderation rules (not moderation v2)
         public int $aiAnalysisChecks,
+        public int $rulesV2, // moderation v2 rules per website
+        public int $customQueues,
     ) {}
 
     public static function properties(): array
@@ -61,12 +63,20 @@ final class TalkLicense extends License
                 ->note('Set to -1 for unlimited'),
 
             LicenseProperty::bool('rules')
-                ->name('Rules')
-                ->description('Enable advanced moderation rules to automate your moderation process'),
+                ->name('Rules (old moderation)')
+                ->description('Enable advanced moderation rules (old moderation, not moderation v2)'),
 
             LicenseProperty::int('aiAnalysisChecks')
                 ->name('AI Analysis Checks')
                 ->description('Number of AI analysis checks allowed per website'),
+
+            LicenseProperty::int('rulesV2')
+                ->name('Rules (Moderation v2)')
+                ->description('Number of moderation v2 rules allowed per website'),
+
+            LicenseProperty::int('customQueues')
+                ->name('Custom Queues')
+                ->description('Number of custom moderation queues allowed per website'),
         ];
     }
 
@@ -83,6 +93,8 @@ final class TalkLicense extends License
             moderators: -1,
             rules: true,
             aiAnalysisChecks: 3,
+            rulesV2: 3,
+            customQueues: 3,
         );
     }
 }
