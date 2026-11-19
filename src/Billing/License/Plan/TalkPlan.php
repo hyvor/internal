@@ -85,7 +85,7 @@ class TalkPlan extends PlanAbstract
             rules: true,
             aiAnalysisChecks: 5,
             rulesV2: 5,
-            customQueues: 3,
+            customQueues: 2,
         );
 
         $nameSuffix = $credits / 1_000_000;
@@ -116,7 +116,7 @@ class TalkPlan extends PlanAbstract
             rules: true,
             aiAnalysisChecks: 20,
             rulesV2: 20,
-            customQueues: 10,
+            customQueues: 5,
         );
 
         $nameSuffix = $credits / 1_000_000;
