@@ -24,7 +24,7 @@ trait BillingTestTrait
     public function testSubscriptionIntent(): void
     {
         $billing = $this->getBilling();
-        $intent = $billing->subscriptionIntent(1, 'starter', true, Component::BLOGS);
+        $intent = $billing->subscriptionIntent(1, 'pro', true, Component::BLOGS);
 
 
         $this->assertStringContainsString(
