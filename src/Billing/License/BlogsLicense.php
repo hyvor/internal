@@ -15,6 +15,7 @@ final class BlogsLicense extends License
         public bool $linkAnalysis,
         public int $blogs, // -1 for unlimited
         public bool $noBranding,
+        public int $languages, // languages per blog, -1 for unlimited
     ) {}
 
     public static function properties(): array
@@ -49,6 +50,11 @@ final class BlogsLicense extends License
             LicenseProperty::bool('noBranding')
                 ->name('Disable Branding')
                 ->description('Disable Hyvor Blogs Branding on your blog'),
+
+            LicenseProperty::int('languages')
+                ->name('Languages')
+                ->description('Number of languages allowed per blog.')
+                ->note('Set to -1 for unlimited'),
         ];
     }
 
@@ -62,7 +68,7 @@ final class BlogsLicense extends License
             linkAnalysis: true,
             blogs: -1,
             noBranding: false,
+            languages: 2,
         );
     }
-
 }

@@ -27,6 +27,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: false,
                     blogs: -1,
                     noBranding: false,
+                    languages: -1,
                 )
             );
 
@@ -41,6 +42,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: true,
                     blogs: -1,
                     noBranding: true,
+                    languages: -1,
                 )
             );
 
@@ -55,6 +57,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: true,
                     blogs: -1,
                     noBranding: true,
+                    languages: -1,
                 )
             );
         });
@@ -72,6 +75,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: false,
                     blogs: 1,
                     noBranding: false,
+                    languages: -1,
                 ),
                 nameReadable: 'Personal',
                 annualOnly: true,
@@ -88,6 +92,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: false,
                     blogs: -1,
                     noBranding: true,
+                    languages: -1,
                 )
             );
 
@@ -102,6 +107,7 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: true,
                     blogs: -1,
                     noBranding: true,
+                    languages: -1,
                 )
             );
 
@@ -116,7 +122,76 @@ class BlogsPlan extends PlanAbstract
                     linkAnalysis: true,
                     blogs: -1,
                     noBranding: true,
+                    languages: -1,
                 )
+            );
+        });
+
+        // Version 3: 2026-11
+        $this->version(3, function () {
+            $this->plan(
+                'personal',
+                9,
+                new BlogsLicense(
+                    users: 1,
+                    storage: 2 * self::GB,
+                    aiCost: 0,
+                    seoAnalysis: false,
+                    linkAnalysis: false,
+                    blogs: 1,
+                    noBranding: false,
+                    languages: 1,
+                ),
+                nameReadable: 'Personal',
+                annualOnly: true,
+            );
+
+            $this->plan(
+                'pro',
+                29,
+                new BlogsLicense(
+                    users: 3,
+                    storage: 25 * self::GB,
+                    aiCost: 500, // $5.00
+                    seoAnalysis: true,
+                    linkAnalysis: false,
+                    blogs: 2,
+                    noBranding: true,
+                    languages: 3,
+                ),
+                nameReadable: 'Pro',
+            );
+
+            $this->plan(
+                'team',
+                79,
+                new BlogsLicense(
+                    users: 5,
+                    storage: 150 * self::GB,
+                    aiCost: 2000, // $20.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 5,
+                    noBranding: true,
+                    languages: 5,
+                ),
+                nameReadable: 'Team',
+            );
+
+            $this->plan(
+                'business',
+                199,
+                new BlogsLicense(
+                    users: 20,
+                    storage: 500 * self::GB,
+                    aiCost: 6000, // $60.00
+                    seoAnalysis: true,
+                    linkAnalysis: true,
+                    blogs: 10,
+                    noBranding: true,
+                    languages: 10,
+                ),
+                nameReadable: 'Business',
             );
         });
     }

@@ -23,16 +23,20 @@ class PlanTest extends TestCase
     public function testBlogsPlan(): void
     {
         $plan = new BlogsPlan();
-        $this->assertEquals(2, $plan->getCurrentVersion());
+        $this->assertEquals(3, $plan->getCurrentVersion());
 
         $this->assertCount(4, $plan->getCurrentPlans());
 
-        $starter = $plan->getPlan('starter');
-        $this->assertEquals(2, $starter->version);
-        $this->assertEquals("starter", $starter->name);
-        $this->assertEquals(12, $starter->monthlyPrice);
-        $this->assertEquals('Starter', $starter->nameReadable);
-        $this->assertEquals(5, $starter->license->users);
+        $pro = $plan->getPlan('pro');
+        $this->assertEquals(3, $pro->version);
+        $this->assertEquals("pro", $pro->name);
+        $this->assertEquals(29, $pro->monthlyPrice);
+        $this->assertEquals('Pro', $pro->nameReadable);
+        $this->assertEquals(3, $pro->license->users);
+        $this->assertEquals(3, $pro->license->languages);
+
+        // older versions are still accessible
+        $this->assertEquals(12, $plan->getPlan('starter', 2)->monthlyPrice);
 
         $triedPlan = $plan->tryGetPlan('tried');
         $this->assertNull($triedPlan);
