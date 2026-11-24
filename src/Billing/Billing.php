@@ -21,6 +21,7 @@ class Billing implements BillingInterface
     ) {}
 
     /**
+     * @param int|null $planVersion null for the latest (current) version
      * @return array{urlNew: string, urlChange: string}
      * @see SubscriptionIntent
      */
@@ -30,11 +31,13 @@ class Billing implements BillingInterface
         bool $isAnnual,
         ?Component $component = null,
         ?float $customMonthlyPrice = null,
+        ?int $planVersion = null,
     ): array {
         $component ??= $this->internalConfig->getComponent();
 
         // this validates the plan name as well
-        $plan = $component->plans()->getPlan($planName);
+        // $planVersion = null means the current (latest) version
+        $plan = $component->plans()->getPlan($planName, $planVersion);
 
         $intent = new SubscriptionIntent(
             $component,

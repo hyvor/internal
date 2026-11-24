@@ -9,6 +9,7 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\License\GetLicenses;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\License\GetLicensesResponse;
 use Hyvor\Internal\Bundle\Comms\MockComms;
+use Hyvor\Internal\Billing\SubscriptionIntent;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
@@ -38,6 +39,31 @@ trait BillingTestTrait
             "&change=1",
             $intent['urlChange']
         );
+    }
+
+    public function testSubscriptionIntentWithPlanVersion(): void
+    {
+        $billing = $this->getBilling();
+        $plans = Component::TALK->plans();
+        $this->assertGreaterThan(1, $plans->getCurrentVersion());
+
+        $decode = function (string $url): SubscriptionIntent {
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $params);
+            $intent = unserialize((string) hex2bin(urldecode((string) $params['intent'])));
+            $this->assertInstanceOf(SubscriptionIntent::class, $intent);
+            return $intent;
+        };
+
+        // default: latest version
+        $latest = $decode($billing->subscriptionIntent(1, 'premium_1', false, Component::TALK)['urlNew']);
+        $this->assertSame($plans->getCurrentVersion(), $latest->planVersion);
+
+        // old version
+        $old = $decode(
+            $billing->subscriptionIntent(1, 'premium_1', false, Component::TALK, null, 1)['urlNew']
+        );
+        $this->assertSame(1, $old->planVersion);
+        $this->assertSame($plans->getPlan('premium_1', 1)->monthlyPrice, $old->monthlyPrice);
     }
 
     abstract function setComms(MockComms $comms): void;
