@@ -49,7 +49,8 @@ trait BillingTestTrait
 
         $decode = function (string $url): SubscriptionIntent {
             parse_str((string) parse_url($url, PHP_URL_QUERY), $params);
-            $intent = unserialize((string) hex2bin(urldecode((string) $params['intent'])));
+            $this->assertIsString($params['intent']);
+            $intent = unserialize((string) hex2bin(urldecode($params['intent'])));
             $this->assertInstanceOf(SubscriptionIntent::class, $intent);
             return $intent;
         };
