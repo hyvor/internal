@@ -48,9 +48,6 @@ class TalkPlan extends PlanAbstract
                     websites: 1,
                     moderators: 1,
                     rules: false,
-                    aiAnalysisChecks: 1,
-                    rulesV2: 1,
-                    customQueues: 0,
                 ),
                 nameReadable: "Personal",
                 annualOnly: true,
@@ -83,9 +80,6 @@ class TalkPlan extends PlanAbstract
             websites: -1,
             moderators: -1,
             rules: true,
-            aiAnalysisChecks: 5,
-            rulesV2: 5,
-            customQueues: 3,
         );
 
         $nameSuffix = $credits / 1_000_000;
@@ -114,9 +108,6 @@ class TalkPlan extends PlanAbstract
             websites: -1,
             moderators: -1,
             rules: true,
-            aiAnalysisChecks: 20,
-            rulesV2: 20,
-            customQueues: 10,
         );
 
         $nameSuffix = $credits / 1_000_000;
