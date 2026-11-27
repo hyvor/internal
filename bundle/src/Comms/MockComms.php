@@ -9,7 +9,7 @@ use PHPUnit\Framework\Assert;
 class MockComms extends Comms {
 
     /**
-     * @var array{event: AbstractEvent, to: Component, async: bool}[]
+     * @var array{event: AbstractEvent, to: Component, async: bool, transport: ?string}[]
      */
     private array $sent = [];
 
@@ -26,6 +26,7 @@ class MockComms extends Comms {
             'event' => $event,
             'to' => $to,
             'async' => false,
+            'transport' => null,
         ];
 
         $response = $this->responses[get_class($event)] ?? null;
@@ -46,6 +47,7 @@ class MockComms extends Comms {
             'event' => $event,
             'to' => $to,
             'async' => true,
+            'transport' => $transport,
         ];
     }
 
@@ -58,7 +60,7 @@ class MockComms extends Comms {
     }
 
     /**
-     * @return array{event: AbstractEvent, to: Component, async: bool}[]
+     * @return array{event: AbstractEvent, to: Component, async: bool, transport: ?string}[]
      */
     public function getSents(): array
     {
@@ -67,7 +69,7 @@ class MockComms extends Comms {
 
     /**
      * @param class-string<AbstractEvent> $eventClass
-     * @return array{event: AbstractEvent, to: Component, async: bool}[]
+     * @return array{event: AbstractEvent, to: Component, async: bool, transport: ?string}[]
      */
     public function getSentsByEventClass(string $eventClass): array
     {

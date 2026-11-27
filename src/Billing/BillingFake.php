@@ -89,23 +89,25 @@ class BillingFake implements BillingInterface
     }
 
     /**
-     * @var array<int, array{organizationId: int, amount: int, idempotencyKey: string, component: Component}>
+     * @var array<int, array{organizationId: int, amount: int, usageDate: \DateTimeImmutable, force: bool, async: bool, transport: string}>
      */
     public array $recordedUsage = [];
 
     public function recordMeteredUsage(
         int $organizationId,
         int $amount,
-        string $idempotencyKey,
-        ?Component $component = null
+        \DateTimeImmutable $usageDate,
+        bool $force = false,
+        bool $async = false,
+        string $transport = 'async',
     ): void {
-        $component ??= $this->internalConfig->getComponent();
-
         $this->recordedUsage[] = [
             'organizationId' => $organizationId,
             'amount' => $amount,
-            'idempotencyKey' => $idempotencyKey,
-            'component' => $component,
+            'usageDate' => $usageDate,
+            'force' => $force,
+            'async' => $async,
+            'transport' => $transport,
         ];
     }
     /**
