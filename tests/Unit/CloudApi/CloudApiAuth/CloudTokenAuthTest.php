@@ -233,4 +233,15 @@ class CloudTokenAuthTest extends TestCase
         );
     }
 
+
+    public function test_percent_encoded_base_path_does_not_bypass_authorization(): void
+    {
+        $this->expectException(AccessDeniedHttpException::class);
+        $this->expectExceptionMessageIsOrContains('Authorization header must be a Bearer token');
+
+        $this->invokeListener(
+            path: '/api/%63onsole/test',
+            headers: ['Authorization' => 'Basic abc'],
+        );
+    }
 }

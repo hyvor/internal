@@ -63,7 +63,7 @@ class SudoAuthorizationListener
 
     public function __invoke(ControllerEvent $event): void
     {
-        if (!$this->isSudoPath($event->getRequest()->getPathInfo())) {
+        if (!$this->isSudoPath(rawurldecode($event->getRequest()->getPathInfo()))) {
             return;
         }
 

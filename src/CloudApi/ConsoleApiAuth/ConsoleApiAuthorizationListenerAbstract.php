@@ -102,7 +102,7 @@ abstract class ConsoleApiAuthorizationListenerAbstract
     public function __invoke(ControllerEvent $event): void
     {
         $request =  $event->getRequest();
-        $path = $request->getPathInfo();
+        $path = rawurldecode($request->getPathInfo());
 
         if (!str_starts_with($path, $this->getBasePath())) {
             return;
@@ -284,5 +284,4 @@ abstract class ConsoleApiAuthorizationListenerAbstract
             );
         }
     }
-
 }
