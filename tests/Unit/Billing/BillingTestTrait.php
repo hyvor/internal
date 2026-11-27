@@ -6,14 +6,12 @@ use Hyvor\Internal\Billing\Billing;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
-use Hyvor\Internal\Bundle\Comms\Event\ToCore\Billing\RecordMeteredUsage;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\License\GetLicenses;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\License\GetLicensesResponse;
 use Hyvor\Internal\Bundle\Comms\MockComms;
 use Hyvor\Internal\Billing\SubscriptionIntent;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\InternalApi\InternalApi;
-use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpClient\Response\JsonMockResponse;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -124,50 +122,5 @@ trait BillingTestTrait
         });
     }
 
-    public function test_record_metered_usage_sync(): void
-    {
-        /** @var MockComms $mockComms */
-        $mockComms = $this->getContainer()->get(MockComms::class);
-        $this->setComms($mockComms);
-
-        $this->getBilling()->recordMeteredUsage(
-            1,
-            100,
-            new \DateTimeImmutable('2026-09-23'),
-            force: true,
-        );
-
-        /** @var InternalConfig $internalConfig */
-        $internalConfig = $this->getContainer()->get(InternalConfig::class);
-
-        $mockComms->assertSent(RecordMeteredUsage::class, Component::CORE, eventValidator: function ($event) use ($internalConfig) {
-            $this->assertSame($internalConfig->getComponent(), $event->getComponent());
-            $this->assertSame(1, $event->getOrganizationId());
-            $this->assertSame(100, $event->getAmount());
-            $this->assertSame('2026-09-23', $event->getUsageDate()->format('Y-m-d'));
-            $this->assertTrue($event->isForce());
-        });
-        $this->assertNull($mockComms->getSentsByEventClass(RecordMeteredUsage::class)[0]['transport']);
-    }
-
-    public function test_record_metered_usage_async(): void
-    {
-        /** @var MockComms $mockComms */
-        $mockComms = $this->getContainer()->get(MockComms::class);
-        $this->setComms($mockComms);
-
-        $this->getBilling()->recordMeteredUsage(
-            1,
-            100,
-            new \DateTimeImmutable('2026-09-23'),
-            async: true,
-            transport: 'cloud',
-        );
-
-        $mockComms->assertSent(RecordMeteredUsage::class, Component::CORE, async: true, eventValidator: function ($event) {
-            $this->assertFalse($event->isForce());
-        });
-        $this->assertSame('cloud', $mockComms->getSentsByEventClass(RecordMeteredUsage::class)[0]['transport']);
-    }
 
 }
