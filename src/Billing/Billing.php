@@ -9,6 +9,7 @@ use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Component\InstanceUrlResolver;
 use Hyvor\Internal\InternalConfig;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Billing\RecordMeteredUsage;
 
 class Billing implements BillingInterface
@@ -99,24 +100,30 @@ class Billing implements BillingInterface
     }
 
     /**
-     * @throws CommsApiFailedException
+     * @throws CommsApiFailedException when sent synchronously
+     * @throws ExceptionInterface when dispatching async fails
      */
     public function recordMeteredUsage(
         int $organizationId,
         int $amount,
-        string $idempotencyKey,
-        ?Component $component = null
+        \DateTimeImmutable $usageDate,
+        bool $force = false,
+        bool $async = false,
+        string $transport = 'async',
     ): void {
-        $component ??= $this->internalConfig->getComponent();
-
-        $this->comms->send(
-            new RecordMeteredUsage(
-                $component,
-                $organizationId,
-                $amount,
-                $idempotencyKey
-            ),
-            Component::CORE
+        $event = new RecordMeteredUsage(
+            $this->internalConfig->getComponent(),
+            $organizationId,
+            $amount,
+            $usageDate,
+            $force,
         );
+
+        if ($async) {
+            $this->comms->sendAsync($event, Component::CORE, $transport);
+            return;
+        }
+
+        $this->comms->send($event, Component::CORE);
     }
 }

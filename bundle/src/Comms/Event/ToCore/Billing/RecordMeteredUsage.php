@@ -11,7 +11,8 @@ class RecordMeteredUsage extends AbstractEvent
         private Component $component,
         private int $organizationId,
         private int $amount,
-        private string $idempotencyKey,
+        private \DateTimeImmutable $usageDate,
+        private bool $force = false,
     ) {}
 
     public function getComponent(): Component
@@ -29,9 +30,14 @@ class RecordMeteredUsage extends AbstractEvent
         return $this->amount;
     }
 
-    public function getIdempotencyKey(): string
+    public function getUsageDate(): \DateTimeImmutable
     {
-        return $this->idempotencyKey;
+        return $this->usageDate;
+    }
+
+    public function isForce(): bool
+    {
+        return $this->force;
     }
 
     public function from(): array
