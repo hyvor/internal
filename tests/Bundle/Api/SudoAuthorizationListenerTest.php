@@ -236,4 +236,28 @@ class SudoAuthorizationListenerTest extends SymfonyTestCase
             $this->assertSame('auth_required', $e->getMessage());
         }
     }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function percentEncodedSudoPaths(): iterable
+    {
+        yield 'encoded first letter' => ['/api/%73udo/servers'];
+        yield 'encoded slash-adjacent' => ['/api%2Fsudo/servers'];
+        yield 'fully encoded' => ['/%61pi/%73%75%64%6f/servers'];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('percentEncodedSudoPaths')]
+    public function test_percent_encoded_sudo_path_does_not_bypass_authorization(string $path): void
+    {
+        AuthFake::enableForSymfony($this->container, null);
+        $sudoService = $this->createStub(SudoUserService::class);
+
+        $listener = $this->getListener($sudoService);
+        $event = $this->createEvent($path);
+
+        $this->expectException(DataCarryingHttpException::class);
+        $this->expectExceptionMessage('auth_required');
+        $listener($event);
+    }
 }

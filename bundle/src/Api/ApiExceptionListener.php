@@ -32,7 +32,7 @@ class ApiExceptionListener
     {
         $shouldThrowOnInternalError = $this->env === 'test' || $this->env === 'dev';
 
-        $path = $event->getRequest()->getPathInfo();
+        $path = rawurldecode($event->getRequest()->getPathInfo());
 
         if (!str_starts_with($path, $this->prefix())) {
             return;
